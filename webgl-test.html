@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebGL Test</title>
+</head>
+<body>
+
+<script>
+const canvas = document.createElement("canvas");
+const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+
+if (gl) {
+  alert("WebGL works");
+} else {
+  alert("WebGL NOT supported");
+}
+</script>
+
+</body>
+</html>

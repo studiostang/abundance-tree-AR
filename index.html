@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Abundance Tree AR</title>
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <style>
+    @font-face {
+  font-family: 'MyFont';
+  src: url('/Myfont.ttf') format('truetype');
+}
+   body { margin: 0; overflow: hidden; font-family: 'MyFont', cursive; }
+
+  #ui-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.5);
+  overflow-y: auto;
+}
+a-scene {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+}
+    #landing-screen {
+      text-align: center;
+      color: white;
+      padding: 40px;
+    }
+
+    #landing-screen h1 {
+      font-size: 3em;
+      margin-bottom: 10px;
+      font-weight: normal;
+    }
+
+    #landing-screen p {
+      font-size: 2em;
+      margin-bottom: 40px;
+      opacity: 0.8;
+    }
+
+    .main-button {
+      display: block;
+      width: 240px;
+      padding: 16px;
+      margin: 10px auto;
+      font-size: 2.1em;
+      font-family: 'MyFont', cursive;
+      border: 1px solid white;
+      border-radius: 4px;
+      cursor: pointer;
+      background: transparent;
+      color: white;
+      letter-spacing: 0.05em;
+    }
+
+    .main-button:active {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .hidden { display: none !important; }
+  #leaf-selection-screen {
+  text-align: center;
+  color: white;
+  padding: 20px;
+  width: 100%;
+}
+
+#leaf-selection-screen h2 {
+  font-size: 1.8em;
+  font-weight: normal;
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+
+
+#leaf-options {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;
+}
+
+.leaf-option {
+  cursor: pointer;
+  width: 87vw;
+  max-width: 370px;
+}
+
+.leaf-option img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: filter 0.3s ease;
+}
+
+.leaf-option.selected img {
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.9)) brightness(1.2);
+}
+
+#leaf-form-screen {
+  width: 100%;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+#form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+#selected-leaf-img {
+  width: 60vw;
+  max-width: 250px;
+  height: auto;
+  transition: filter 0.3s ease;
+}
+
+
+textarea#leaf-message {
+  width: 85vw;
+  max-width: 350px;
+  height: 120px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 8px;
+  color: white;
+  font-family: 'MyFont', cursive;
+  font-size: 1.6em;
+  padding: 12px;
+  resize: none;
+}
+
+#color-picker {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  justify-content: center;
+}
+
+.color-swatch {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+.color-swatch.selected {
+  transform: scale(1.3);
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+.back-button {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  font-family: 'MyFont', cursive;
+  font-size: 1em;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+  </style>
+</head>
+<body>
+  <a-scene mindar-image="imageTargetSrc: /targets.mind" color-space="sRGB" renderer="colorManagement: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+ <a-entity mindar-image-target="targetIndex: 0">
+</a-entity>
+
+<button id="ar-back-btn" style="
+  display: none;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 100;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: 1px solid white;
+  border-radius: 4px;
+  padding: 10px 16px;
+  font-family: 'MyFont', cursive;
+  font-size: 1.2em;
+  cursor: pointer;
+">← back</button>
+
+<script>
+document.getElementById('ar-back-btn').addEventListener('click', function() {
+  this.style.display = 'none';
+  document.getElementById('ui-overlay').classList.remove('hidden');
+  document.getElementById('landing-screen').classList.remove('hidden');
+  document.getElementById('leaf-selection-screen').classList.add('hidden');
+  document.getElementById('leaf-form-screen').classList.add('hidden');
+});
+</script>
+  </a-scene>
+
+  <div id="ui-overlay">
+    <div id="landing-screen">
+      <h1>Abundance Tree</h1>
+      <p>A living record of collective gratitude</p>
+      <button class="main-button" id="btn-see">See the tree</button>
+      <button class="main-button" id="btn-add">Add your leaf</button>
+    </div>
+    <div id="leaf-selection-screen" class="hidden">
+      <h2>Choose your leaf</h2>
+     
+      <div id="leaf-options">
+        <div class="leaf-option" data-leaf="1">
+          <img src="/Leaf-1.png" alt="Leaf 1" />
+        </div>
+        <div class="leaf-option" data-leaf="2">
+          <img src="/Leaf-2.png" alt="Leaf 2" />
+        </div>
+        <div class="leaf-option" data-leaf="3">
+          <img src="/Leaf-3.png" alt="Leaf 3" />
+        </div>
+      </div>
+    </div>
+
+    <div id="leaf-form-screen" class="hidden">
+  <div id="form-container">
+   <img id="selected-leaf-img" src="" alt="" style="display:none;" />
+<div id="content-warning" class="hidden" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); border-radius: 8px; padding: 12px 16px; color: white; font-size: 1.2em; line-height: 1.4;">
+  Please revise your message to keep this space kind and respectful for everyone.
+</div>
+    <textarea id="leaf-message" placeholder="write your response here..." maxlength="280"></textarea>
+    <div id="color-picker">
+      <div class="color-swatch" data-color="pale-yellow" style="background:#FFF9A0"></div>
+<div class="color-swatch" data-color="peach" style="background:#FFAA80"></div>
+<div class="color-swatch" data-color="turquoise" style="background:#7FFFD4"></div>
+<div class="color-swatch" data-color="lime" style="background:#CCFF90"></div>
+<div class="color-swatch" data-color="purple" style="background:#D4AAFF"></div>
+<div class="color-swatch" data-color="pink" style="background:#FFB7C5"></div>
+    </div>
+    <button class="main-button" id="btn-submit">place my leaf</button>
+    <button class="back-button" id="btn-back">← choose a different leaf</button>
+  </div>
+</div>
+
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+  <script>
+document.getElementById('btn-see').addEventListener('click', async function() {
+  document.getElementById('ui-overlay').classList.add('hidden');
+  document.getElementById('ar-back-btn').style.display = 'block';
+  try {
+    await window.spawnLeavesInAR();
+  } catch(e) {
+  alert('Error: ' + e.message);
+  }
+});
+
+  document.getElementById('btn-add').addEventListener('click', function() {
+    showLeafSelection();
+  });
+
+  function showLeafSelection() {
+     document.getElementById('landing-screen').classList.add('hidden');
+  document.getElementById('leaf-selection-screen').classList.remove('hidden');
+   
+  }
+document.querySelectorAll('.leaf-option').forEach(function(leaf) {
+  leaf.addEventListener('click', function() {
+    document.querySelectorAll('.leaf-option').forEach(function(l) {
+      l.classList.remove('selected');
+    });
+    this.classList.add('selected');
+    const leafNumber = this.getAttribute('data-leaf');
+    setTimeout(function() {
+      showLeafForm(leafNumber);
+    }, 470);
+  });
+});
+
+function showLeafForm(leafNumber) {
+  document.getElementById('leaf-selection-screen').classList.add('hidden');
+  document.getElementById('leaf-form-screen').classList.remove('hidden');
+  
+  const leafImages = {
+    '1': '/Leaf-1.png',
+    '2': '/Leaf-2.png',
+    '3': '/Leaf-3.png'
+  };
+document.getElementById('selected-leaf-img').src = leafImages[leafNumber];
+document.getElementById('selected-leaf-img').style.display = 'block';
+}
+
+// Back button
+document.getElementById('btn-back').addEventListener('click', function() {
+  document.getElementById('leaf-form-screen').classList.add('hidden');
+  document.getElementById('leaf-selection-screen').classList.remove('hidden');
+  document.querySelectorAll('.leaf-option').forEach(function(l) {
+    l.classList.remove('selected');
+  });
+  document.getElementById('leaf-message').value = '';
+  document.querySelectorAll('.color-swatch').forEach(function(s) {
+    s.classList.remove('selected');
+  });
+  document.getElementById('selected-leaf-img').style.filter = 'none';
+  document.getElementById('content-warning').classList.add('hidden');
+});
+
+// Color swatch selection
+document.querySelectorAll('.color-swatch').forEach(function(swatch) {
+  swatch.addEventListener('click', function() {
+    document.querySelectorAll('.color-swatch').forEach(function(s) {
+      s.classList.remove('selected');
+    });
+    this.classList.add('selected');
+    const color = this.style.background;
+    document.getElementById('selected-leaf-img').style.filter = 
+      'drop-shadow(0 0 8px ' + color + ') brightness(1.2) saturate(3)';
+  });
+});
+
+// Submit button
+document.getElementById('btn-submit').addEventListener('click', async function() {
+  const message = document.getElementById('leaf-message').value.trim();
+  // Banned word check
+  const bannedWords = ['fuck', 'shit', 'bitch', 'asshole', 'cunt', 'dick', 
+  'pussy', 'nigger', 'faggot', 'retard', 'whore', 'slut', 'bastard',
+  'chink', 'spic', 'kike', 'wetback', 'cracker', 'tranny', 'dyke',
+  'rape', 'molest', 'lynch', 'nazi', 'hitler', 'kill yourself', 'go die'];
+  
+  const messageLower = message.toLowerCase();
+  const hasBannedWord = bannedWords.some(word => messageLower.includes(word));
+  
+  if (hasBannedWord) {
+    document.getElementById('content-warning').classList.remove('hidden');
+    return;
+  }
+  const selectedSwatch = document.querySelector('.color-swatch.selected');
+  const selectedLeaf = document.querySelector('.leaf-option.selected');
+  
+  // Validation
+  if (!message) {
+    alert('Please write something on your leaf first.');
+    return;
+  }
+  if (!selectedSwatch) {
+    alert('Please choose a color for your leaf.');
+    return;
+  }
+
+  const color = selectedSwatch.getAttribute('data-color');
+  const leafNumber = selectedLeaf.getAttribute('data-leaf');
+
+  // Disable button to prevent double submit
+  this.disabled = true;
+  this.textContent = 'placing your leaf...';
+
+ try {
+  await window.saveLeaf(leafNumber, message, color);
+document.getElementById('leaf-message').value = '';
+document.querySelectorAll('.color-swatch').forEach(function(s) {
+  s.classList.remove('selected');
+});
+document.getElementById('selected-leaf-img').style.filter = 'none';
+document.getElementById('content-warning').classList.add('hidden');
+document.getElementById('leaf-form-screen').classList.add('hidden');
+document.getElementById('ui-overlay').classList.add('hidden');
+  } catch (e) {
+    console.error(e);
+    alert('Something went wrong. Please try again.');
+    this.disabled = false;
+    this.textContent = 'place my leaf';
+  }
+});
+
+</script>
+</body>
+</html>
