@@ -300,6 +300,7 @@ document.getElementById('btn-see').addEventListener('click', async function() {
 
 const target = document.querySelector('a-entity[mindar-image-target]');
 target.addEventListener('targetFound', function() {
+      console.log('Target found!');
   instruction.style.opacity = '0';
   setTimeout(() => { instruction.style.display = 'none'; }, 3000);
 });
