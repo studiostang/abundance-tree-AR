@@ -191,6 +191,16 @@ export async function spawnLeavesInAR(pendingLeaf) {
     return;
   }
 
+// TEMP TEST - delete after
+const testEl = document.createElement('a-image');
+testEl.setAttribute('src', '/Leaf-1.png');
+testEl.setAttribute('position', '-0.4 1.4 0');
+testEl.setAttribute('width', '0.64');
+testEl.setAttribute('height', '0.32');
+testEl.setAttribute('transparent', 'true');
+testEl.setAttribute('material', 'color: red');
+target.appendChild(testEl);
+
   const font = new FontFace('MyFont', 'url(/Myfont.ttf)');
   await font.load();
   document.fonts.add(font);
