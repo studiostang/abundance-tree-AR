@@ -259,6 +259,7 @@ document.getElementById('ar-back-btn').addEventListener('click', function() {
     </div>
     <div id="leaf-selection-screen" class="hidden">
       <h2>Choose your leaf</h2>
+      <button class="back-button" id="btn-back-to-landing">← back</button>
      
       <div id="leaf-options">
         <div class="leaf-option" data-leaf="1">
@@ -372,6 +373,11 @@ document.getElementById('selected-leaf-img').style.display = 'block';
 }
 
 // Back button
+document.getElementById('btn-back-to-landing').addEventListener('click', function() {
+  document.getElementById('leaf-selection-screen').classList.add('hidden');
+  document.getElementById('landing-screen').classList.remove('hidden');
+});
+
 document.getElementById('btn-back').addEventListener('click', function() {
   document.getElementById('leaf-form-screen').classList.add('hidden');
   document.getElementById('leaf-selection-screen').classList.remove('hidden');
