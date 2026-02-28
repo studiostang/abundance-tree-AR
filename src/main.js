@@ -191,23 +191,35 @@ export async function spawnLeavesInAR(pendingLeaf) {
     return;
   }
 
-// TEMP TEST GRID - delete after
-const testPoints = [
-  { x: -0.5, y: 1.5 }, { x: 0.0, y: 1.5 }, { x: 0.5, y: 1.5 },
-  { x: -0.5, y: 1.2 }, { x: 0.0, y: 1.2 }, { x: 0.5, y: 1.2 },
-  { x: -0.5, y: 0.9 }, { x: 0.0, y: 0.9 }, { x: 0.5, y: 0.9 },
-  { x: -0.5, y: 0.6 }, { x: 0.0, y: 0.6 }, { x: 0.5, y: 0.6 },
+export const SNAP_POINTS = [
+  // Blue trunk - top tips (leftmost, tallest)
+  { x: -0.4, y: 1.45, z: 0.0  },
+  { x: -0.5, y: 1.35, z: 0.02 },
+  { x: -0.3, y: 1.40, z: -0.01},
+  { x: -0.45, y: 1.25, z: 0.01},
+  { x: -0.35, y: 1.30, z: 0.02},
+
+  // Pink trunk - top tips (center-right)
+  { x: 0.1,  y: 1.40, z: 0.0  },
+  { x: 0.2,  y: 1.30, z: 0.01 },
+  { x: 0.0,  y: 1.35, z: -0.01},
+  { x: 0.15, y: 1.20, z: 0.02 },
+  { x: 0.05, y: 1.25, z: 0.0  },
+
+  // Orange trunk - upper area (left, curves forward)
+  { x: -0.2, y: 1.20, z: 0.05 },
+  { x: -0.3, y: 1.10, z: 0.04 },
+  { x: -0.1, y: 1.15, z: 0.03 },
+  { x: -0.25,y: 1.05, z: 0.05 },
+  { x: -0.15,y: 1.00, z: 0.04 },
+
+  // Secondary points - where trunks meet upper area
+  { x: -0.1, y: 1.10, z: 0.01 },
+  { x: 0.1,  y: 1.10, z: 0.0  },
+  { x: -0.2, y: 0.95, z: 0.02 },
+  { x: 0.0,  y: 1.00, z: 0.01 },
+  { x: 0.2,  y: 1.05, z: -0.01},
 ];
-testPoints.forEach(p => {
-  const el = document.createElement('a-image');
-  el.setAttribute('src', '/Leaf-1.png');
-  el.setAttribute('position', p.x + ' ' + p.y + ' 0');
-  el.setAttribute('width', '0.32');
-  el.setAttribute('height', '0.16');
-  el.setAttribute('transparent', 'true');
-  el.setAttribute('material', 'color: red');
-  target.appendChild(el);
-});
 
   const font = new FontFace('MyFont', 'url(/Myfont.ttf)');
   await font.load();
