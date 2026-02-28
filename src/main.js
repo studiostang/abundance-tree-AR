@@ -195,9 +195,12 @@ export async function spawnLeavesInAR(pendingLeaf) {
   await font.load();
   document.fonts.add(font);
 
-  // Assign snap points to existing leaves in order
+ // Reset taken snap points
+  Object.keys(takenSnapPoints).forEach(k => delete takenSnapPoints[k]);
+  
+  // Assign snap points to existing leaves, leaving last 3 free
   leaves.forEach((leaf, index) => {
-    if (index >= SNAP_POINTS.length) return;
+    if (index >= SNAP_POINTS.length - 3) return;
     takenSnapPoints[index] = leaf.id;
   });
 
@@ -211,13 +214,21 @@ export async function spawnLeavesInAR(pendingLeaf) {
 
  // Fade all existing leaves in over 2 seconds
   // Wait for elements to be mounted in DOM first
-  setTimeout(() => {
+ setTimeout(() => {
     document.querySelectorAll('.ar-leaf').forEach((el, i) => {
-      // Stagger each leaf slightly for a more organic feel
       setTimeout(() => {
-        el.setAttribute('animation__fade', 
-          'property: material.opacity; from: 0; to: 1; dur: 1000; easing: easeInQuad');
-      }, i * 50);
+        let opacity = 0;
+        const fadeInterval = setInterval(() => {
+          opacity += 0.05;
+          if (opacity >= 1) {
+            opacity = 1;
+            clearInterval(fadeInterval);
+          }
+          el.object3D && el.object3D.traverse(child => {
+            if (child.material) child.material.opacity = opacity;
+          });
+        }, 40);
+      }, i * 80);
     });
   }, 300);
 
