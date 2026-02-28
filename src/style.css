@@ -98,3 +98,6 @@ button:focus-visible {
 .mindar-ui-scanning {
   display: none !important;
 }
+.mindar-ui-overlay {
+  display: none !important;
+}
