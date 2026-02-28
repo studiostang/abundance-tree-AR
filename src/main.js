@@ -191,15 +191,23 @@ export async function spawnLeavesInAR(pendingLeaf) {
     return;
   }
 
-// TEMP TEST - delete after
-const testEl = document.createElement('a-image');
-testEl.setAttribute('src', '/Leaf-1.png');
-testEl.setAttribute('position', '0.1 1.55 0');
-testEl.setAttribute('width', '0.64');
-testEl.setAttribute('height', '0.32');
-testEl.setAttribute('transparent', 'true');
-testEl.setAttribute('material', 'color: red');
-target.appendChild(testEl);
+// TEMP TEST GRID - delete after
+const testPoints = [
+  { x: -0.5, y: 1.5 }, { x: 0.0, y: 1.5 }, { x: 0.5, y: 1.5 },
+  { x: -0.5, y: 1.2 }, { x: 0.0, y: 1.2 }, { x: 0.5, y: 1.2 },
+  { x: -0.5, y: 0.9 }, { x: 0.0, y: 0.9 }, { x: 0.5, y: 0.9 },
+  { x: -0.5, y: 0.6 }, { x: 0.0, y: 0.6 }, { x: 0.5, y: 0.6 },
+];
+testPoints.forEach(p => {
+  const el = document.createElement('a-image');
+  el.setAttribute('src', '/Leaf-1.png');
+  el.setAttribute('position', p.x + ' ' + p.y + ' 0');
+  el.setAttribute('width', '0.32');
+  el.setAttribute('height', '0.16');
+  el.setAttribute('transparent', 'true');
+  el.setAttribute('material', 'color: red');
+  target.appendChild(el);
+});
 
   const font = new FontFace('MyFont', 'url(/Myfont.ttf)');
   await font.load();
