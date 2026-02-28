@@ -203,7 +203,7 @@ textarea#leaf-message {
   transition: opacity 3s ease;
   text-shadow: 0 0 10px rgba(0,0,0,0.8);
   white-space: nowrap;
-">Point your camera at the tree</div>
+">Step back and point your Camera at the whole tree</div>
 
 <button id="ar-back-btn" style="
   display: none;
@@ -224,6 +224,18 @@ textarea#leaf-message {
 <script>
 document.getElementById('ar-back-btn').addEventListener('click', function() {
   this.style.display = 'none';
+  
+  // Hide instruction text
+  const instruction = document.getElementById('ar-instruction');
+  instruction.style.opacity = '0';
+  instruction.style.display = 'none';
+  
+  // Hide all AR leaves
+  document.querySelectorAll('.ar-leaf').forEach(function(leaf) {
+    leaf.setAttribute('visible', 'false');
+  });
+
+  // Show landing screen
   document.getElementById('ui-overlay').classList.remove('hidden');
   document.getElementById('landing-screen').classList.remove('hidden');
   document.getElementById('leaf-selection-screen').classList.add('hidden');
