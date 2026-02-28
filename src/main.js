@@ -160,5 +160,13 @@ export async function saveLeaf(leafNumber, message, color) {
   }
 }
 
+// Hide MindAR scanning UI
+const hideMindarUI = setInterval(() => {
+  const scanningEl = document.querySelector('.mindar-ui-scanning');
+  const overlayEl = document.querySelector('.mindar-ui-overlay');
+  if (scanningEl) scanningEl.style.display = 'none';
+  if (overlayEl) overlayEl.style.display = 'none';
+}, 100);
+
 window.saveLeaf = saveLeaf;
 window.spawnLeavesInAR = spawnLeavesInAR;
