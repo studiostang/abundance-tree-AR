@@ -188,6 +188,23 @@ textarea#leaf-message {
  <a-entity mindar-image-target="targetIndex: 0">
 </a-entity>
 
+<div id="ar-instruction" style="
+  display: none;
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  color: white;
+  font-family: 'MyFont', cursive;
+  font-size: 1.5em;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  text-shadow: 0 0 10px rgba(0,0,0,0.8);
+  white-space: nowrap;
+">Point your camera at the tree</div>
+
 <button id="ar-back-btn" style="
   display: none;
   position: fixed;
@@ -265,6 +282,9 @@ document.getElementById('ar-back-btn').addEventListener('click', function() {
 document.getElementById('btn-see').addEventListener('click', async function() {
   document.getElementById('ui-overlay').classList.add('hidden');
   document.getElementById('ar-back-btn').style.display = 'block';
+  const instruction = document.getElementById('ar-instruction');
+  instruction.style.display = 'block';
+  setTimeout(() => { instruction.style.opacity = '1'; }, 500);
   try {
     await window.spawnLeavesInAR();
   } catch(e) {
