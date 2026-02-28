@@ -222,10 +222,6 @@ textarea#leaf-message {
 ">← back</button>
 
 <script>
-let hideTimeout;
-let instruction;
-let inARMode = false;
-
 document.getElementById('ar-back-btn').addEventListener('click', function() {
   this.style.display = 'none';
   inARMode = false;
@@ -301,6 +297,10 @@ document.getElementById('ar-back-btn').addEventListener('click', function() {
 
   <script type="module" src="/src/main.js"></script>
   <script>
+let hideTimeout;
+let instruction;
+let inARMode = false;
+
 document.getElementById('btn-see').addEventListener('click', async function() {
   document.getElementById('ui-overlay').classList.add('hidden');
   document.getElementById('ar-back-btn').style.display = 'block';
