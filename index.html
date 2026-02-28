@@ -216,7 +216,7 @@ a {
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
-  color: #FFAA80;
+  color: #FFD4B0;
   font-family: 'MyFont', cursive;
   font-size: 1.5em;
   text-align: center;
@@ -369,6 +369,23 @@ document.getElementById('btn-see').addEventListener('click', async function() {
 
   const target = document.querySelector('a-entity[mindar-image-target]');
 
+  // Check if already tracking when AR opens
+setTimeout(() => {
+  if (target.object3D && target.object3D.visible) {
+    instruction.style.opacity = '0';
+    hideTimeout = setTimeout(() => {
+      instruction.style.display = 'none';
+      const tapRead = document.getElementById('tap-read-prompt');
+      tapRead.style.display = 'block';
+      setTimeout(() => { tapRead.style.opacity = '1'; }, 100);
+      setTimeout(() => {
+        tapRead.style.opacity = '0';
+        setTimeout(() => { tapRead.style.display = 'none'; }, 1000);
+      }, 4000);
+    }, 500);
+  }
+}, 500);
+  
   target.addEventListener('targetFound', function() {
     console.log('Target found!');
     instruction.style.opacity = '0';
@@ -529,6 +546,19 @@ document.getElementById('btn-submit').addEventListener('click', async function()
   setTimeout(() => { instruction.style.opacity = '1'; }, 100);
 
   const target = document.querySelector('a-entity[mindar-image-target]');
+
+// Check if already tracking when AR opens
+setTimeout(() => {
+  if (target.object3D && target.object3D.visible) {
+    instruction.style.opacity = '0';
+    hideTimeout = setTimeout(() => {
+      instruction.style.display = 'none';
+      const tapPlace = document.getElementById('tap-place-prompt');
+      tapPlace.style.display = 'block';
+      setTimeout(() => { tapPlace.style.opacity = '1'; }, 100);
+    }, 500);
+  }
+}, 500);
 
   target.addEventListener('targetFound', function onFound() {
     instruction.style.opacity = '0';
