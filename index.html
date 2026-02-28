@@ -200,7 +200,7 @@ textarea#leaf-message {
   font-size: 1.5em;
   text-align: center;
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 2s ease;
   text-shadow: 0 0 10px rgba(0,0,0,0.8);
   white-space: nowrap;
 ">Point your camera at the tree</div>
@@ -284,7 +284,7 @@ document.getElementById('btn-see').addEventListener('click', async function() {
   document.getElementById('ar-back-btn').style.display = 'block';
   const instruction = document.getElementById('ar-instruction');
   instruction.style.display = 'block';
-  setTimeout(() => { instruction.style.opacity = '1'; }, 500);
+  setTimeout(() => { instruction.style.opacity = '1'; }, 100);
   try {
     await window.spawnLeavesInAR();
   } catch(e) {
