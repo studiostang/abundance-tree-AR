@@ -125,6 +125,7 @@ export async function spawnLeavesInAR() {
       const dataURL = canvas.toDataURL();
 
       const el = document.createElement('a-image');
+      el.classList.add('ar-leaf');
       el.setAttribute('src', dataURL);
       el.setAttribute('position', point.x + ' ' + point.y + ' ' + point.z);
       el.setAttribute('width', '0.32');

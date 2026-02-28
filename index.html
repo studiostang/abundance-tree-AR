@@ -230,10 +230,10 @@ document.getElementById('ar-back-btn').addEventListener('click', function() {
   instruction.style.opacity = '0';
   instruction.style.display = 'none';
   
-  // Hide all AR leaves
-  document.querySelectorAll('.ar-leaf').forEach(function(leaf) {
-    leaf.setAttribute('visible', 'false');
-  });
+// Hide all AR leaves
+document.querySelectorAll('a-image').forEach(function(leaf) {
+  leaf.setAttribute('visible', 'false');
+});
 
   // Show landing screen
   document.getElementById('ui-overlay').classList.remove('hidden');
