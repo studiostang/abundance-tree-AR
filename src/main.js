@@ -194,7 +194,7 @@ export async function spawnLeavesInAR(pendingLeaf) {
 // TEMP TEST - delete after
 const testEl = document.createElement('a-image');
 testEl.setAttribute('src', '/Leaf-1.png');
-testEl.setAttribute('position', '-0.4 1.4 0');
+testEl.setAttribute('position', '-0.55 1.45 0');
 testEl.setAttribute('width', '0.64');
 testEl.setAttribute('height', '0.32');
 testEl.setAttribute('transparent', 'true');
