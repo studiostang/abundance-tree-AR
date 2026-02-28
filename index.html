@@ -224,10 +224,12 @@ textarea#leaf-message {
 <script>
 let hideTimeout;
 let instruction;
+let inARMode = false;
 
 document.getElementById('ar-back-btn').addEventListener('click', function() {
   this.style.display = 'none';
-  
+  inARMode = false;
+
   // Cancel any pending hide timer
   clearTimeout(hideTimeout);
   
@@ -303,6 +305,7 @@ document.getElementById('btn-see').addEventListener('click', async function() {
   document.getElementById('ui-overlay').classList.add('hidden');
   document.getElementById('ar-back-btn').style.display = 'block';
   instruction = document.getElementById('ar-instruction');
+  inARMode = true;
   instruction.style.display = 'block';
   setTimeout(() => { instruction.style.opacity = '1'; }, 100);
 
@@ -315,6 +318,7 @@ target.addEventListener('targetFound', function() {
 });
 
 target.addEventListener('targetLost', function() {
+  if (!inARMode) return;
   clearTimeout(hideTimeout);
   instruction.style.transition = 'none';
   instruction.style.opacity = '0';
