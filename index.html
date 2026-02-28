@@ -222,9 +222,16 @@ textarea#leaf-message {
 ">← back</button>
 
 <script>
+let hideTimeout;
+let instruction;
+
 document.getElementById('ar-back-btn').addEventListener('click', function() {
   this.style.display = 'none';
-  
+  clearTimeout(hideTimeout);
+instruction.style.transition = 'none';
+instruction.style.opacity = '0';
+instruction.style.display = 'none';
+
   // Hide instruction text
   const instruction = document.getElementById('ar-instruction');
   instruction.style.opacity = '0';
@@ -294,12 +301,12 @@ document.querySelectorAll('a-image').forEach(function(leaf) {
 document.getElementById('btn-see').addEventListener('click', async function() {
   document.getElementById('ui-overlay').classList.add('hidden');
   document.getElementById('ar-back-btn').style.display = 'block';
-  const instruction = document.getElementById('ar-instruction');
+  instruction = document.getElementById('ar-instruction');
   instruction.style.display = 'block';
   setTimeout(() => { instruction.style.opacity = '1'; }, 100);
 
 const target = document.querySelector('a-entity[mindar-image-target]');
-let hideTimeout;
+hideTimeout;
 target.addEventListener('targetFound', function() {
   console.log('Target found!');
   instruction.style.opacity = '0';
