@@ -216,7 +216,7 @@ a {
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
-  color: white;
+  color: #FFAA80;
   font-family: 'MyFont', cursive;
   font-size: 1.5em;
   text-align: center;
@@ -225,6 +225,40 @@ a {
   text-shadow: 0 0 10px rgba(0,0,0,0.8);
   white-space: nowrap;
 ">Point your Camera at the whole tree</div>
+
+<div id="tap-place-prompt" style="
+  display: none;
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  color: white;
+  font-family: 'MyFont', cursive;
+  font-size: 1.5em;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 1s ease;
+  text-shadow: 0 0 10px rgba(0,0,0,0.8);
+  white-space: nowrap;
+">Tap a spot to place your leaf</div>
+
+<div id="tap-read-prompt" style="
+  display: none;
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  color: white;
+  font-family: 'MyFont', cursive;
+  font-size: 1.5em;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 1s ease;
+  text-shadow: 0 0 10px rgba(0,0,0,0.8);
+  white-space: nowrap;
+">Tap a leaf to read it</div>
 
 <button id="ar-back-btn" style="
   display: none;
@@ -333,30 +367,44 @@ document.getElementById('btn-see').addEventListener('click', async function() {
   instruction.style.display = 'block';
   setTimeout(() => { instruction.style.opacity = '1'; }, 100);
 
-const target = document.querySelector('a-entity[mindar-image-target]');
-hideTimeout;
-target.addEventListener('targetFound', function() {
-  console.log('Target found!');
-  instruction.style.opacity = '0';
-  hideTimeout = setTimeout(() => { instruction.style.display = 'none'; }, 1500);
-});
+  const target = document.querySelector('a-entity[mindar-image-target]');
 
-target.addEventListener('targetLost', function() {
-  if (!inARMode) return;
-  clearTimeout(hideTimeout);
-  instruction.style.transition = 'none';
-  instruction.style.opacity = '0';
-  instruction.style.display = 'block';
-  setTimeout(() => { 
-    instruction.style.transition = 'opacity 1.5s ease';
-    instruction.style.opacity = '1'; 
-  }, 50);
-});
+  target.addEventListener('targetFound', function() {
+    console.log('Target found!');
+    instruction.style.opacity = '0';
+    hideTimeout = setTimeout(() => { 
+      instruction.style.display = 'none';
+      // Show tap-read prompt
+      const tapRead = document.getElementById('tap-read-prompt');
+      tapRead.style.display = 'block';
+      setTimeout(() => { tapRead.style.opacity = '1'; }, 100);
+      // Fade out after 4 seconds
+      setTimeout(() => {
+        tapRead.style.opacity = '0';
+        setTimeout(() => { tapRead.style.display = 'none'; }, 1000);
+      }, 4000);
+    }, 1500);
+  });
+
+  target.addEventListener('targetLost', function() {
+    if (!inARMode) return;
+    clearTimeout(hideTimeout);
+    const tapRead = document.getElementById('tap-read-prompt');
+    tapRead.style.opacity = '0';
+    tapRead.style.display = 'none';
+    instruction.style.transition = 'none';
+    instruction.style.opacity = '0';
+    instruction.style.display = 'block';
+    setTimeout(() => {
+      instruction.style.transition = 'opacity 1.5s ease';
+      instruction.style.opacity = '1';
+    }, 50);
+  });
 
   try {
-    await window.spawnLeavesInAR();
+    await window.spawnLeavesInAR(null);
   } catch(e) {
-  alert('Error: ' + e.message);
+    alert('Error: ' + e.message);
   }
 });
 
@@ -431,7 +479,6 @@ document.querySelectorAll('.color-swatch').forEach(function(swatch) {
 // Submit button
 document.getElementById('btn-submit').addEventListener('click', async function() {
   const message = document.getElementById('leaf-message').value.trim();
-  // Banned word check
   const bannedWords = ['fuck', 'shit', 'bitch', 'asshole', 'cunt', 'dick', 
   'pussy', 'nigger', 'faggot', 'retard', 'whore', 'slut', 'bastard',
   'chink', 'spic', 'kike', 'wetback', 'cracker', 'tranny', 'dyke',
@@ -444,10 +491,10 @@ document.getElementById('btn-submit').addEventListener('click', async function()
     document.getElementById('content-warning').classList.remove('hidden');
     return;
   }
+
   const selectedSwatch = document.querySelector('.color-swatch.selected');
   const selectedLeaf = document.querySelector('.leaf-option.selected');
   
-  // Validation
   if (!message) {
     alert('Please write something on your leaf first.');
     return;
@@ -460,26 +507,95 @@ document.getElementById('btn-submit').addEventListener('click', async function()
   const color = selectedSwatch.getAttribute('data-color');
   const leafNumber = selectedLeaf.getAttribute('data-leaf');
 
-  // Disable button to prevent double submit
   this.disabled = true;
   this.textContent = 'placing your leaf...';
 
- try {
-  await window.saveLeaf(leafNumber, message, color);
-document.getElementById('leaf-message').value = '';
-document.querySelectorAll('.color-swatch').forEach(function(s) {
-  s.classList.remove('selected');
-});
-document.getElementById('selected-leaf-img').style.filter = 'none';
-document.getElementById('content-warning').classList.add('hidden');
-document.getElementById('leaf-form-screen').classList.add('hidden');
-document.getElementById('ui-overlay').classList.add('hidden');
-  } catch (e) {
-    console.error(e);
-    alert('Something went wrong. Please try again.');
-    this.disabled = false;
-    this.textContent = 'place my leaf';
+  const pendingLeaf = { leafNumber, message, color };
+
+  document.getElementById('leaf-message').value = '';
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+  document.getElementById('selected-leaf-img').style.filter = 'none';
+  document.getElementById('content-warning').classList.add('hidden');
+  document.getElementById('leaf-form-screen').classList.add('hidden');
+  document.getElementById('ui-overlay').classList.add('hidden');
+
+  this.disabled = false;
+  this.textContent = 'place my leaf';
+
+  document.getElementById('ar-back-btn').style.display = 'block';
+  instruction = document.getElementById('ar-instruction');
+  inARMode = true;
+  instruction.style.display = 'block';
+  setTimeout(() => { instruction.style.opacity = '1'; }, 100);
+
+  const target = document.querySelector('a-entity[mindar-image-target]');
+
+  target.addEventListener('targetFound', function onFound() {
+    instruction.style.opacity = '0';
+    hideTimeout = setTimeout(() => {
+      instruction.style.display = 'none';
+      const tapPlace = document.getElementById('tap-place-prompt');
+      tapPlace.style.display = 'block';
+      setTimeout(() => { tapPlace.style.opacity = '1'; }, 100);
+    }, 1500);
+  });
+
+  target.addEventListener('targetLost', function() {
+    if (!inARMode) return;
+    clearTimeout(hideTimeout);
+    const tapPlace = document.getElementById('tap-place-prompt');
+    tapPlace.style.opacity = '0';
+    tapPlace.style.display = 'none';
+    instruction.style.transition = 'none';
+    instruction.style.opacity = '0';
+    instruction.style.display = 'block';
+    setTimeout(() => {
+      instruction.style.transition = 'opacity 1.5s ease';
+      instruction.style.opacity = '1';
+    }, 50);
+  });
+
+  try {
+    await window.spawnLeavesInAR(pendingLeaf);
+  } catch(e) {
+    alert('Error: ' + e.message);
   }
+
+  const scene = document.querySelector('a-scene');
+  scene.addEventListener('click', function onTap(e) {
+    if (!window._tapToPlaceActive) return;
+    scene.removeEventListener('click', onTap);
+
+    const camera = document.querySelector('a-camera');
+    const raycaster = camera.components.raycaster;
+    if (raycaster && raycaster.intersectedEls.length > 0) {
+      const intersection = raycaster.intersections[0];
+      const point = intersection.point;
+      window.placeLeafAtTap(point.x, point.y);
+    } else {
+      const rect = scene.getBoundingClientRect();
+      const screenX = (e.clientX - rect.left) / rect.width;
+      const screenY = (e.clientY - rect.top) / rect.height;
+      const arX = (screenX - 0.5) * 1.35;
+      const arY = (0.5 - screenY) * 3.2 + 0.8;
+      window.placeLeafAtTap(arX, arY);
+    }
+
+    const tapPlace = document.getElementById('tap-place-prompt');
+    tapPlace.style.opacity = '0';
+    setTimeout(() => { tapPlace.style.display = 'none'; }, 1000);
+  });
+
+  window.addEventListener('leafPlaced', function onPlaced() {
+    window.removeEventListener('leafPlaced', onPlaced);
+    const tapRead = document.getElementById('tap-read-prompt');
+    tapRead.style.display = 'block';
+    setTimeout(() => { tapRead.style.opacity = '1'; }, 100);
+    setTimeout(() => {
+      tapRead.style.opacity = '0';
+      setTimeout(() => { tapRead.style.display = 'none'; }, 1000);
+    }, 4000);
+  });
 });
 
 </script>
