@@ -34,7 +34,7 @@ const COLOR_MAP = {
 };
 
 export async function loadApprovedLeaves() {
-  const q = query(collection(db, 'leaves'), where('approved', '==', true));
+  const q = query(collection(db, 'leaves'));
   const snapshot = await getDocs(q);
   const leaves = [];
   snapshot.forEach(doc => {
