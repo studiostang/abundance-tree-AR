@@ -308,8 +308,13 @@ target.addEventListener('targetFound', function() {
 
 target.addEventListener('targetLost', function() {
   clearTimeout(hideTimeout);
+  instruction.style.transition = 'none';
+  instruction.style.opacity = '0';
   instruction.style.display = 'block';
-  setTimeout(() => { instruction.style.opacity = '1'; }, 100);
+  setTimeout(() => { 
+    instruction.style.transition = 'opacity 1.5s ease';
+    instruction.style.opacity = '1'; 
+  }, 50);
 });
 
   try {
