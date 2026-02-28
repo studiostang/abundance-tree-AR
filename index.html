@@ -227,20 +227,21 @@ let instruction;
 
 document.getElementById('ar-back-btn').addEventListener('click', function() {
   this.style.display = 'none';
-  clearTimeout(hideTimeout);
-instruction.style.transition = 'none';
-instruction.style.opacity = '0';
-instruction.style.display = 'none';
-
-  // Hide instruction text
-  const instruction = document.getElementById('ar-instruction');
-  instruction.style.opacity = '0';
-  instruction.style.display = 'none';
   
-// Hide all AR leaves
-document.querySelectorAll('a-image').forEach(function(leaf) {
-  leaf.setAttribute('visible', 'false');
-});
+  // Cancel any pending hide timer
+  clearTimeout(hideTimeout);
+  
+  // Hide instruction
+  if (instruction) {
+    instruction.style.transition = 'none';
+    instruction.style.opacity = '0';
+    instruction.style.display = 'none';
+  }
+
+  // Hide all AR leaves
+  document.querySelectorAll('a-image').forEach(function(leaf) {
+    leaf.setAttribute('visible', 'false');
+  });
 
   // Show landing screen
   document.getElementById('ui-overlay').classList.remove('hidden');
