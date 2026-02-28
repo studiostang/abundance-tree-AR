@@ -374,7 +374,7 @@ function showTapReadPrompt() {
   setTimeout(() => {
     tapRead.style.opacity = '0';
     setTimeout(() => { tapRead.style.display = 'none'; }, 1000);
-  }, 4000);
+  }, 6000);
 }
 
 function showTapPlacePrompt() {
@@ -427,7 +427,7 @@ document.getElementById('btn-see').addEventListener('click', async function() {
     hideTimeout = setTimeout(() => {
       instruction.style.display = 'none';
       showTapReadPrompt();
-    }, 500);
+    }, 2500);
   }
 
   function onLost() {

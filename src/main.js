@@ -220,7 +220,7 @@ export async function spawnLeavesInAR(pendingLeaf) {
       // Stagger each leaf slightly for a more organic feel
       setTimeout(() => {
         el.setAttribute('animation__fade', 
-          'property: material.opacity; from: 0; to: 1; dur: 2000; easing: easeInQuad');
+          'property: material.opacity; from: 0; to: 1; dur: 1000; easing: easeInQuad');
       }, i * 50);
     });
   }, 300);
