@@ -603,9 +603,41 @@ document.getElementById('btn-submit').addEventListener('click', async function()
     hideTapPlacePrompt();
   });
 
-  window.addEventListener('leafPlaced', function onPlaced() {
+window.addEventListener('leafPlaced', function onPlaced() {
     window.removeEventListener('leafPlaced', onPlaced);
-    showTapReadPrompt();
+
+    // Swap targetFound to show tap-read instead of tap-place from now on
+    if (onTargetFound) target.removeEventListener('targetFound', onTargetFound);
+    if (onTargetLost) target.removeEventListener('targetLost', onTargetLost);
+
+    onTargetFound = function() {
+      instruction.style.opacity = '0';
+      clearTimeout(hideTimeout);
+      hideTimeout = setTimeout(() => {
+        instruction.style.display = 'none';
+        showTapReadPrompt();
+      }, 500);
+    };
+
+    onTargetLost = function() {
+      if (!inARMode) return;
+      clearTimeout(hideTimeout);
+      document.getElementById('tap-read-prompt').style.opacity = '0';
+      document.getElementById('tap-read-prompt').style.display = 'none';
+      instruction.style.transition = 'none';
+      instruction.style.opacity = '0';
+      instruction.style.display = 'block';
+      setTimeout(() => {
+        instruction.style.transition = 'opacity 1.5s ease';
+        instruction.style.opacity = '1';
+      }, 50);
+    };
+
+    target.addEventListener('targetFound', onTargetFound);
+    target.addEventListener('targetLost', onTargetLost);
+
+    // Show tap-read prompt with a slight delay so it feels distinct
+    setTimeout(() => showTapReadPrompt(), 800);
   });
 });
 </script>

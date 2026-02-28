@@ -168,12 +168,19 @@ async function spawnLeafElement(leaf, point, initialOpacity, pulse) {
   target.appendChild(el);
 
   if (pulse) {
-    // Pulse effect: scale up then back down
-    el.setAttribute('scale', '1 1 1');
-    setTimeout(() => el.setAttribute('scale', '1.4 1.4 1'), 50);
-    setTimeout(() => el.setAttribute('scale', '1 1 1'), 400);
-    setTimeout(() => el.setAttribute('scale', '1.15 1.15 1'), 600);
-    setTimeout(() => el.setAttribute('scale', '1 1 1'), 900);
+    // Wait for element to be mounted before animating
+    setTimeout(() => {
+      el.setAttribute('animation__pulse1', 'property: scale; to: 1.4 1.4 1; dur: 200; easing: easeOutQuad');
+      setTimeout(() => {
+        el.setAttribute('animation__pulse2', 'property: scale; to: 1 1 1; dur: 200; easing: easeInQuad');
+        setTimeout(() => {
+          el.setAttribute('animation__pulse3', 'property: scale; to: 1.15 1.15 1; dur: 150; easing: easeOutQuad');
+          setTimeout(() => {
+            el.setAttribute('animation__pulse4', 'property: scale; to: 1 1 1; dur: 150; easing: easeInQuad');
+          }, 150);
+        }, 200);
+      }, 200);
+    }, 100);
   }
 
   return el;
@@ -206,13 +213,17 @@ export async function spawnLeavesInAR(pendingLeaf) {
 
   await Promise.all(spawnPromises.filter(Boolean));
 
-  // Fade all existing leaves in over 2 seconds
+ // Fade all existing leaves in over 2 seconds
+  // Wait for elements to be mounted in DOM first
   setTimeout(() => {
-    document.querySelectorAll('.ar-leaf').forEach(el => {
-      el.setAttribute('material', 'alphaTest: 0.1; transparent: true; opacity: 1');
-      el.setAttribute('animation', 'property: material.opacity; from: 0; to: 1; dur: 2000; easing: easeInQuad');
+    document.querySelectorAll('.ar-leaf').forEach((el, i) => {
+      // Stagger each leaf slightly for a more organic feel
+      setTimeout(() => {
+        el.setAttribute('animation__fade', 
+          'property: material.opacity; from: 0; to: 1; dur: 2000; easing: easeInQuad');
+      }, i * 50);
     });
-  }, 100);
+  }, 300);
 
   console.log('Spawned ' + leaves.length + ' existing leaves');
 
