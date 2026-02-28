@@ -168,20 +168,16 @@ async function spawnLeafElement(leaf, point, initialOpacity, pulse) {
   target.appendChild(el);
 
   if (pulse) {
-    // Wait for element to be mounted before animating
-    setTimeout(() => {
-      el.setAttribute('animation__pulse1', 'property: scale; to: 1.4 1.4 1; dur: 200; easing: easeOutQuad');
-      setTimeout(() => {
-        el.setAttribute('animation__pulse2', 'property: scale; to: 1 1 1; dur: 200; easing: easeInQuad');
-        setTimeout(() => {
-          el.setAttribute('animation__pulse3', 'property: scale; to: 1.15 1.15 1; dur: 150; easing: easeOutQuad');
-          setTimeout(() => {
-            el.setAttribute('animation__pulse4', 'property: scale; to: 1 1 1; dur: 150; easing: easeInQuad');
-          }, 150);
-        }, 200);
-      }, 200);
-    }, 100);
-  }
+  setTimeout(() => {
+    const obj = el.object3D;
+    if (!obj) return;
+    obj.scale.set(1, 1, 1);
+    setTimeout(() => obj.scale.set(1.4, 1.4, 1), 50);
+    setTimeout(() => obj.scale.set(1, 1, 1), 250);
+    setTimeout(() => obj.scale.set(1.15, 1.15, 1), 400);
+    setTimeout(() => obj.scale.set(1, 1, 1), 600);
+  }, 200);
+}
 
   return el;
 }
