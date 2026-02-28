@@ -305,6 +305,11 @@ target.addEventListener('targetFound', function() {
   setTimeout(() => { instruction.style.display = 'none'; }, 3000);
 });
 
+target.addEventListener('targetLost', function() {
+  instruction.style.display = 'block';
+  setTimeout(() => { instruction.style.opacity = '1'; }, 100);
+});
+
   try {
     await window.spawnLeavesInAR();
   } catch(e) {
