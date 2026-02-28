@@ -214,21 +214,18 @@ export async function spawnLeavesInAR(pendingLeaf) {
 
  // Fade all existing leaves in over 2 seconds
   // Wait for elements to be mounted in DOM first
- setTimeout(() => {
+setTimeout(() => {
     document.querySelectorAll('.ar-leaf').forEach((el, i) => {
       setTimeout(() => {
-        let opacity = 0;
-        const fadeInterval = setInterval(() => {
-          opacity += 0.05;
-          if (opacity >= 1) {
-            opacity = 1;
-            clearInterval(fadeInterval);
-          }
-          el.object3D && el.object3D.traverse(child => {
-            if (child.material) child.material.opacity = opacity;
+        if (el.object3D) {
+          el.object3D.traverse(child => {
+            if (child.material) {
+              child.material.opacity = 1;
+              child.material.needsUpdate = true;
+            }
           });
-        }, 40);
-      }, i * 80);
+        }
+      }, i * 100);
     });
   }, 300);
 
