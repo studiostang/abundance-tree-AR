@@ -103,14 +103,17 @@ button:focus-visible {
 }
 
 #studio-link {
-  display: block;
-  margin-top: 16px;
-  color: rgba(255, 255, 255, 0.5);
+  position: fixed;
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6) !important;
   font-size: 0.75rem;
-  text-decoration: none;
+  text-decoration: none !important;
   letter-spacing: 0.05em;
 }
 
 #studio-link:hover {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.85) !important;
 }
