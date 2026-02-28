@@ -299,13 +299,15 @@ document.getElementById('btn-see').addEventListener('click', async function() {
   setTimeout(() => { instruction.style.opacity = '1'; }, 100);
 
 const target = document.querySelector('a-entity[mindar-image-target]');
+let hideTimeout;
 target.addEventListener('targetFound', function() {
-      console.log('Target found!');
+  console.log('Target found!');
   instruction.style.opacity = '0';
-  setTimeout(() => { instruction.style.display = 'none'; }, 3000);
+  hideTimeout = setTimeout(() => { instruction.style.display = 'none'; }, 1500);
 });
 
 target.addEventListener('targetLost', function() {
+  clearTimeout(hideTimeout);
   instruction.style.display = 'block';
   setTimeout(() => { instruction.style.opacity = '1'; }, 100);
 });
