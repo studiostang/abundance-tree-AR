@@ -108,7 +108,7 @@ button:focus-visible {
   right: 0;
   text-align: center;
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.9rem;
+  font-size: 1 rem;
   text-decoration: none;
   letter-spacing: 0.05em;
 }
