@@ -591,19 +591,7 @@ document.getElementById('btn-submit').addEventListener('click', async function()
 const screenX = (e.clientX - rect.left) / rect.width;
 const screenY = (e.clientY - rect.top) / rect.height;
 const arX = (screenX - 0.5) * 4.0;
-const arY = (0.5 - screenY) * 2.5 + 0.95;
-
-function debugLog(msg) {
-  let el = document.getElementById('debug-log');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'debug-log';
-    el.style.cssText = 'position:fixed;top:10px;left:10px;z-index:99999;background:rgba(0,0,0,0.7);color:lime;font-size:12px;padding:8px;border-radius:6px;max-width:80vw;pointer-events:none;';
-    document.body.appendChild(el);
-  }
-  el.innerHTML += msg + '<br>';
-}
-debugLog(`screen:(${screenX.toFixed(3)}, ${screenY.toFixed(3)}) AR:(${arX.toFixed(3)}, ${arY.toFixed(3)})`);
+const arY = (0.5 - screenY) * 2.5 + 1.0;
 
 window.placeLeafAtTap(arX, arY);
 
