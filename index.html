@@ -328,6 +328,17 @@ a {
   <script type="module" src="/src/main.js"></script>
   
 <script>
+window.debugLog = function(msg) {
+  let el = document.getElementById('debug-log');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'debug-log';
+    el.style.cssText = 'position:fixed;top:10px;left:10px;z-index:99999;background:rgba(0,0,0,0.7);color:lime;font-size:12px;padding:8px;border-radius:6px;max-width:90vw;pointer-events:none;';
+    document.body.appendChild(el);
+  }
+  el.innerHTML += msg + '<br>';
+};
+
 let hideTimeout;
 let instruction;
 let inARMode = false;

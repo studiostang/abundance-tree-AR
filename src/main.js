@@ -315,7 +315,9 @@ async function placeLeafAtTap(tapX, tapY) {
   }
 
   const { point, index } = nearest;
-  console.log('placeLeafAtTap | tap:', tapX.toFixed(3), tapY.toFixed(3), '| leafCount:', _totalLeafCount, '| unlocked:', unlockedCount(_totalLeafCount), '| snap point:', point.x, point.y, '(index ' + index + ')');
+  const logMsg = 'tap:' + tapX.toFixed(3) + ',' + tapY.toFixed(3) + ' | leaves:' + _totalLeafCount + ' | unlocked:' + unlockedCount(_totalLeafCount) + ' | snap:' + point.x + ',' + point.y + ' #' + index;
+  console.log(logMsg);
+  if (window.debugLog) window.debugLog(logMsg);
   const leaf = window._pendingLeaf;
 
   // Apply ±0.05 organic offset then spawn at full opacity with pulse
