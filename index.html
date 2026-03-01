@@ -777,7 +777,7 @@ document.getElementById('leaf-modal').addEventListener('click', hideLeafModal);
 document.querySelector('a-scene').addEventListener('click', function(e) {
   if (window._tapToPlaceActive) return;
   if (!inARMode) return;
-  if (document.getElementById('leaf-modal').style.display !== 'none') return;
+  if (document.getElementById('leaf-modal').style.display === 'flex') return;
 
   const rect = this.getBoundingClientRect();
   const screenX = (e.clientX - rect.left) / rect.width;
@@ -798,7 +798,7 @@ document.querySelector('a-scene').addEventListener('click', function(e) {
     }
   });
 
-  if (nearest && nearestDist < 0.25) {
+  if (nearest) {
     showLeafModal(nearest);
   }
 });
