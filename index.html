@@ -95,10 +95,12 @@ a-scene {
   gap: 0px;
 }
 
+/* Fix 2: position:relative so .leaf-prompt can overlay absolutely */
 .leaf-option {
   cursor: pointer;
   width: 87vw;
   max-width: 370px;
+  position: relative;
 }
 
 .leaf-option img {
@@ -112,13 +114,25 @@ a-scene {
   filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.9)) brightness(1.2);
 }
 
+/* Base leaf-prompt style (used by #form-leaf-prompt in form screen) */
 .leaf-prompt {
   font-family: 'MyFont', system-ui, -apple-system, sans-serif;
   font-style: italic;
   font-size: 0.85em;
   color: rgba(255,255,255,0.72);
-  margin: -4px 0 8px 0;
   text-align: center;
+  margin: 0;
+}
+
+/* Fix 2: overlay prompt on lower portion of leaf image */
+.leaf-option .leaf-prompt {
+  position: absolute;
+  bottom: 14%;
+  left: 30%;
+  right: 5%;
+  font-size: 0.7em;
+  color: rgba(60, 40, 20, 0.75);
+  pointer-events: none;
 }
 
 #leaf-form-screen {
@@ -232,6 +246,7 @@ a {
   background: rgba(0,0,0,0.72);
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -294,6 +309,29 @@ a {
 }
 
 #leaf-modal-close:active {
+  color: white;
+}
+
+/* Fix 3: translate button below leaf card */
+#leaf-modal-actions {
+  margin-top: 10px;
+  text-align: center;
+}
+
+#leaf-modal-translate {
+  color: rgba(255,255,255,0.55);
+  font-family: 'MyFont', cursive;
+  font-size: 0.9em;
+  font-style: italic;
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  padding: 8px 16px;
+  display: inline-block;
+  min-height: 44px;
+  line-height: 44px;
+}
+
+#leaf-modal-translate:active {
   color: white;
 }
 
@@ -473,17 +511,17 @@ a {
       <h2 data-i18n="chooseLeaf">Choose your leaf</h2>
 
       <div id="leaf-options">
-        <div class="leaf-option" data-leaf="1" role="button" aria-label="Leaf 1: I feel most alive when">
+        <div class="leaf-option" data-leaf="1" role="button" aria-label="Leaf 1">
           <img src="/Leaf-1.png" alt="Leaf 1" />
-          <p class="leaf-prompt" data-i18n="leaf1prompt">I feel most alive when...</p>
+          <p class="leaf-prompt" data-i18n="leaf1prompt">I feel rich because...</p>
         </div>
-        <div class="leaf-option" data-leaf="2" role="button" aria-label="Leaf 2: I share my abundance by">
+        <div class="leaf-option" data-leaf="2" role="button" aria-label="Leaf 2">
           <img src="/Leaf-2.png" alt="Leaf 2" />
           <p class="leaf-prompt" data-i18n="leaf2prompt">I share my abundance by...</p>
         </div>
-        <div class="leaf-option" data-leaf="3" role="button" aria-label="Leaf 3: I feel rich because">
+        <div class="leaf-option" data-leaf="3" role="button" aria-label="Leaf 3">
           <img src="/Leaf-3.png" alt="Leaf 3" />
-          <p class="leaf-prompt" data-i18n="leaf3prompt">I feel rich because...</p>
+          <p class="leaf-prompt" data-i18n="leaf3prompt">I feel most alive when...</p>
         </div>
       </div>
          <button class="back-button" id="btn-back-to-landing" data-i18n="back" aria-label="Back to main menu">← back</button>
@@ -514,6 +552,7 @@ a {
 
   </div>
 
+  <!-- Fix 3: flex-direction column so translate link sits below leaf card -->
   <div id="leaf-modal" role="dialog" aria-modal="true" aria-labelledby="leaf-modal-message">
     <div id="leaf-modal-leaf">
       <img id="leaf-modal-img" src="" alt="Leaf" />
@@ -521,6 +560,9 @@ a {
         <p id="leaf-modal-message" aria-live="assertive"></p>
       </div>
       <button id="leaf-modal-close" aria-label="Close leaf message">✕</button>
+    </div>
+    <div id="leaf-modal-actions">
+      <a id="leaf-modal-translate" target="_blank" rel="noopener noreferrer" aria-label="Translate this message">translate →</a>
     </div>
   </div>
 
@@ -561,9 +603,11 @@ const TRANSLATIONS = {
     tapRead: 'Tap a leaf to read it',
     studioLink: 'Click to see more at studiostang.com',
     contentWarning: 'Please revise your message to keep this space kind and respectful for everyone.',
-    leaf1prompt: 'I feel most alive when...',
+    /* Fix 1: leaf1 = "I feel rich because", leaf3 = "I feel most alive when" */
+    leaf1prompt: 'I feel rich because...',
     leaf2prompt: 'I share my abundance by...',
-    leaf3prompt: 'I feel rich because...',
+    leaf3prompt: 'I feel most alive when...',
+    translate: 'translate →',
   },
   es: {
     title: 'Árbol de Abundancia',
@@ -581,9 +625,10 @@ const TRANSLATIONS = {
     tapRead: 'Toca una hoja para leerla',
     studioLink: 'Haz clic para ver más en studiostang.com',
     contentWarning: 'Por favor revisa tu mensaje para mantener este espacio amable y respetuoso.',
-    leaf1prompt: 'Me siento más vivo/a cuando...',
+    leaf1prompt: 'Me siento rico/a porque...',
     leaf2prompt: 'Comparto mi abundancia...',
-    leaf3prompt: 'Me siento rico/a porque...',
+    leaf3prompt: 'Me siento más vivo/a cuando...',
+    translate: 'traducir →',
   },
   hmn: {
     title: 'Tsob Ntoo Kev Vam Meej',
@@ -601,9 +646,10 @@ const TRANSLATIONS = {
     tapRead: 'Kov ib daim nplooj los nyeem',
     studioLink: 'Nyem los saib ntxiv ntawm studiostang.com',
     contentWarning: 'Thov kho koj cov lus kom chaw no zoo thiab hwm.',
-    leaf1prompt: 'Kuv xav tshaj plaws thaum...',
+    leaf1prompt: 'Kuv xav nplua nuj vim...',
     leaf2prompt: 'Kuv qhia kuv kev vam meej los ntawm...',
-    leaf3prompt: 'Kuv xav nplua nuj vim...',
+    leaf3prompt: 'Kuv xav tshaj plaws thaum...',
+    translate: 'txhais →',
   },
   ar: {
     title: 'شجرة الوفرة',
@@ -621,9 +667,10 @@ const TRANSLATIONS = {
     tapRead: 'اضغط على ورقة لقراءتها',
     studioLink: 'انقر لرؤية المزيد في studiostang.com',
     contentWarning: 'يرجى مراجعة رسالتك للحفاظ على هذه المساحة لطيفة ومحترمة.',
-    leaf1prompt: 'أشعر بالحيوية أكثر عندما...',
+    leaf1prompt: 'أشعر بالثراء لأن...',
     leaf2prompt: 'أشارك وفرتي من خلال...',
-    leaf3prompt: 'أشعر بالثراء لأن...',
+    leaf3prompt: 'أشعر بالحيوية أكثر عندما...',
+    translate: 'ترجم →',
   },
   fr: {
     title: "Arbre d'Abondance",
@@ -641,9 +688,10 @@ const TRANSLATIONS = {
     tapRead: 'Touchez une feuille pour la lire',
     studioLink: 'Cliquez pour en voir plus sur studiostang.com',
     contentWarning: 'Veuillez réviser votre message pour garder cet espace bienveillant et respectueux.',
-    leaf1prompt: 'Je me sens le plus vivant(e) quand...',
+    leaf1prompt: 'Je me sens riche parce que...',
     leaf2prompt: 'Je partage mon abondance en...',
-    leaf3prompt: 'Je me sens riche parce que...',
+    leaf3prompt: 'Je me sens le plus vivant(e) quand...',
+    translate: 'traduire →',
   },
   de: {
     title: 'Baum der Fülle',
@@ -661,9 +709,10 @@ const TRANSLATIONS = {
     tapRead: 'Tippe auf ein Blatt, um es zu lesen',
     studioLink: 'Klick für mehr auf studiostang.com',
     contentWarning: 'Bitte überarbeite deine Nachricht, damit dieser Raum freundlich und respektvoll bleibt.',
-    leaf1prompt: 'Ich fühle mich am lebendigsten, wenn...',
+    leaf1prompt: 'Ich fühle mich reich, weil...',
     leaf2prompt: 'Ich teile meinen Überfluss, indem...',
-    leaf3prompt: 'Ich fühle mich reich, weil...',
+    leaf3prompt: 'Ich fühle mich am lebendigsten, wenn...',
+    translate: 'übersetzen →',
   },
   hi: {
     title: 'प्रचुरता वृक्ष',
@@ -681,9 +730,10 @@ const TRANSLATIONS = {
     tapRead: 'पत्ती पढ़ने के लिए उसे दबाएँ',
     studioLink: 'studiostang.com पर अधिक देखने के लिए क्लिक करें',
     contentWarning: 'कृपया अपना संदेश संशोधित करें ताकि यह स्थान सभी के लिए दयालु और सम्मानजनक रहे।',
-    leaf1prompt: 'मैं सबसे जीवंत महसूस करता/करती हूँ जब...',
+    leaf1prompt: 'मैं समृद्ध महसूस करता/करती हूँ क्योंकि...',
     leaf2prompt: 'मैं अपनी प्रचुरता इस तरह साझा करता/करती हूँ...',
-    leaf3prompt: 'मैं समृद्ध महसूस करता/करती हूँ क्योंकि...',
+    leaf3prompt: 'मैं सबसे जीवंत महसूस करता/करती हूँ जब...',
+    translate: 'अनुवाद करें →',
   },
   ja: {
     title: '豊かさの木',
@@ -701,9 +751,10 @@ const TRANSLATIONS = {
     tapRead: '葉をタップして読む',
     studioLink: 'studiostang.comでもっと見る',
     contentWarning: 'このスペースをみんなに優しく敬意ある場所に保つため、メッセージを見直してください。',
-    leaf1prompt: '一番生き生きとするのは...',
+    leaf1prompt: '豊かだと感じるのは...',
     leaf2prompt: '豊かさをシェアするのは...',
-    leaf3prompt: '豊かだと感じるのは...',
+    leaf3prompt: '一番生き生きとするのは...',
+    translate: '翻訳 →',
   },
   ko: {
     title: '풍요의 나무',
@@ -721,9 +772,10 @@ const TRANSLATIONS = {
     tapRead: '나뭇잎을 탭해서 읽어보세요',
     studioLink: 'studiostang.com에서 더 보기',
     contentWarning: '이 공간을 모두에게 친절하고 존중하는 공간으로 유지하기 위해 메시지를 수정해 주세요.',
-    leaf1prompt: '가장 살아있다고 느낄 때는...',
+    leaf1prompt: '풍요롭다고 느끼는 이유는...',
     leaf2prompt: '나의 풍요를 나누는 방법은...',
-    leaf3prompt: '풍요롭다고 느끼는 이유는...',
+    leaf3prompt: '가장 살아있다고 느낄 때는...',
+    translate: '번역 →',
   },
   pt: {
     title: 'Árvore da Abundância',
@@ -741,9 +793,10 @@ const TRANSLATIONS = {
     tapRead: 'Toque em uma folha para lê-la',
     studioLink: 'Clique para ver mais em studiostang.com',
     contentWarning: 'Por favor, revise sua mensagem para manter este espaço gentil e respeitoso para todos.',
-    leaf1prompt: 'Eu me sinto mais vivo/a quando...',
+    leaf1prompt: 'Eu me sinto rico/a porque...',
     leaf2prompt: 'Eu compartilho minha abundância...',
-    leaf3prompt: 'Eu me sinto rico/a porque...',
+    leaf3prompt: 'Eu me sinto mais vivo/a quando...',
+    translate: 'traduzir →',
   },
   zh: {
     title: '丰盛之树',
@@ -761,11 +814,15 @@ const TRANSLATIONS = {
     tapRead: '点击一片叶子来阅读',
     studioLink: '点击在studiostang.com上查看更多',
     contentWarning: '请修改您的留言，以保持这个空间对所有人友善和尊重。',
-    leaf1prompt: '我最有活力的时候是...',
+    leaf1prompt: '我感到富足，因为...',
     leaf2prompt: '我通过...分享我的丰盛',
-    leaf3prompt: '我感到富足，因为...',
+    leaf3prompt: '我最有活力的时候是...',
+    translate: '翻译 →',
   },
 };
+
+/* Fix 3: Google Translate language code map */
+const GT_LANG = { en:'en', es:'es', hmn:'hmn', ar:'ar', fr:'fr', de:'de', hi:'hi', ja:'ja', ko:'ko', pt:'pt', zh:'zh-CN' };
 
 let currentLang = 'en';
 let currentLeafNumber = '1';
@@ -1160,6 +1217,12 @@ function showLeafModal(leafEl) {
 
   document.getElementById('leaf-modal-message').textContent = message;
 
+  /* Fix 3: set translate link for current UI language */
+  const tl = GT_LANG[currentLang] || 'en';
+  const translateEl = document.getElementById('leaf-modal-translate');
+  translateEl.href = 'https://translate.google.com/?text=' + encodeURIComponent(message) + '&tl=' + tl + '&op=translate&sl=auto';
+  translateEl.textContent = (TRANSLATIONS[currentLang] || TRANSLATIONS.en).translate;
+
   const modal = document.getElementById('leaf-modal');
   modal.style.display = 'flex';
   setTimeout(function() { modal.style.opacity = '1'; }, 10);
@@ -1177,6 +1240,9 @@ function hideLeafModal() {
 
 document.getElementById('leaf-modal-close').addEventListener('click', hideLeafModal);
 document.getElementById('leaf-modal-leaf').addEventListener('click', function(e) {
+  e.stopPropagation();
+});
+document.getElementById('leaf-modal-actions').addEventListener('click', function(e) {
   e.stopPropagation();
 });
 document.getElementById('leaf-modal').addEventListener('click', hideLeafModal);
