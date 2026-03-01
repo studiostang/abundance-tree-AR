@@ -228,35 +228,26 @@ a {
 
 #leaf-modal-text {
   position: absolute;
-  top: 35%;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding-left: 22%;
-  padding-right: 8%;
+  left: 30%;
+  top: 38%;
+  width: 58%;
+  height: 40%;
   box-sizing: border-box;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   pointer-events: none;
+  overflow: hidden;
 }
 
 #leaf-modal-message {
   font-family: 'MyFont', cursive;
-  font-size: clamp(0.9em, 3.8vw, 1.25em);
+  font-size: 1.3em;
   color: #2a1a00;
   line-height: 1.4;
-  margin: 0 0 6px;
-  word-wrap: break-word;
-}
-
-#leaf-modal-date {
-  font-family: 'MyFont', cursive;
-  font-size: clamp(0.65em, 2.2vw, 0.8em);
-  color: rgba(42, 26, 0, 0.6);
   margin: 0;
+  word-wrap: break-word;
 }
 
 #leaf-modal-close {
@@ -410,7 +401,6 @@ a {
       <img id="leaf-modal-img" src="" alt="leaf" />
       <div id="leaf-modal-text">
         <p id="leaf-modal-message"></p>
-        <p id="leaf-modal-date"></p>
       </div>
       <button id="leaf-modal-close">✕</button>
     </div>
@@ -736,29 +726,35 @@ const COLOR_MAP_MODAL = {
   'pink':        '#FFB7C5',
 };
 
+function fitModalText() {
+  const msgEl = document.getElementById('leaf-modal-message');
+  const box = document.getElementById('leaf-modal-text');
+  let size = 1.3;
+  msgEl.style.fontSize = size + 'em';
+  while (size > 0.75 && (msgEl.scrollHeight > box.clientHeight || msgEl.scrollWidth > box.clientWidth)) {
+    size = Math.round((size - 0.05) * 100) / 100;
+    msgEl.style.fontSize = size + 'em';
+  }
+}
+
 function showLeafModal(leafEl) {
   const message = leafEl.dataset.message || '';
   const leafNumber = leafEl.dataset.leafNumber || '1';
   const color = leafEl.dataset.color || '';
-  const timestamp = leafEl.dataset.timestamp || '';
 
   const img = document.getElementById('leaf-modal-img');
-  img.src = '/Leaf-' + leafNumber + '.png';
   const hex = COLOR_MAP_MODAL[color] || '#ffffff';
   img.style.filter = 'drop-shadow(0 0 14px ' + hex + ') brightness(1.15)';
 
   document.getElementById('leaf-modal-message').textContent = message;
 
-  let dateStr = '';
-  if (timestamp) {
-    const d = new Date(Number(timestamp));
-    dateStr = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-  }
-  document.getElementById('leaf-modal-date').textContent = dateStr;
-
   const modal = document.getElementById('leaf-modal');
   modal.style.display = 'flex';
   setTimeout(function() { modal.style.opacity = '1'; }, 10);
+
+  img.onload = fitModalText;
+  img.src = '/Leaf-' + leafNumber + '.png';
+  if (img.complete) fitModalText();
 }
 
 function hideLeafModal() {
