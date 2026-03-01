@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -590,6 +592,7 @@ const screenX = (e.clientX - rect.left) / rect.width;
 const screenY = (e.clientY - rect.top) / rect.height;
 const arX = (screenX - 0.5) * 0.4;
 const arY = (0.5 - screenY) * 0.6 + 1.2;
+console.log(`TAP → screen:(${screenX.toFixed(3)}, ${screenY.toFixed(3)}) → AR:(${arX.toFixed(3)}, ${arY.toFixed(3)})`);
 console.log('tap:', screenX.toFixed(2), screenY.toFixed(2), '-> AR:', arX.toFixed(3), arY.toFixed(3));
 window.placeLeafAtTap(arX, arY);
 
