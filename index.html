@@ -393,8 +393,8 @@ a {
 <div id="content-warning" class="hidden" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); border-radius: 8px; padding: 12px 16px; color: white; font-size: 1.2em; line-height: 1.4;">
   Please revise your message to keep this space kind and respectful for everyone.
 </div>
-    <textarea id="leaf-message" placeholder="write your response here..." maxlength="280"></textarea>
-    <div id="char-counter">280 characters remaining</div>
+    <textarea id="leaf-message" placeholder="write your response here..." maxlength="150"></textarea>
+    <div id="char-counter">150 characters remaining</div>
     <div id="color-picker">
       <div class="color-swatch" data-color="pale-yellow" style="background:#FFF9A0"></div>
 <div class="color-swatch" data-color="peach" style="background:#FFAA80"></div>
@@ -586,14 +586,14 @@ document.getElementById('btn-back').addEventListener('click', function() {
   document.getElementById('leaf-selection-screen').classList.remove('hidden');
   document.querySelectorAll('.leaf-option').forEach(l => l.classList.remove('selected'));
   document.getElementById('leaf-message').value = '';
-  document.getElementById('char-counter').textContent = '280 characters remaining';
+  document.getElementById('char-counter').textContent = '150 characters remaining';
   document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
   document.getElementById('selected-leaf-img').style.filter = 'none';
   document.getElementById('content-warning').classList.add('hidden');
 });
 
 document.getElementById('leaf-message').addEventListener('input', function() {
-  const remaining = 280 - this.value.length;
+  const remaining = 150 - this.value.length;
   document.getElementById('char-counter').textContent = remaining + ' characters remaining';
 });
 
