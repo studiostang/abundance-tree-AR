@@ -315,6 +315,7 @@ async function placeLeafAtTap(tapX, tapY) {
   }
 
   const { point, index } = nearest;
+  console.log('placeLeafAtTap | tap:', tapX.toFixed(3), tapY.toFixed(3), '| leafCount:', _totalLeafCount, '| unlocked:', unlockedCount(_totalLeafCount), '| snap point:', point.x, point.y, '(index ' + index + ')');
   const leaf = window._pendingLeaf;
 
   // Apply ±0.05 organic offset then spawn at full opacity with pulse
