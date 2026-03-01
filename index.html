@@ -34,6 +34,7 @@ a-scene {
   z-index: 0;
 }
     #landing-screen {
+      position: relative;
       text-align: center;
       color: white;
       padding: 40px;
@@ -109,6 +110,15 @@ a-scene {
 
 .leaf-option.selected img {
   filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.9)) brightness(1.2);
+}
+
+.leaf-prompt {
+  font-family: 'MyFont', system-ui, -apple-system, sans-serif;
+  font-style: italic;
+  font-size: 0.85em;
+  color: rgba(255,255,255,0.72);
+  margin: -4px 0 8px 0;
+  text-align: center;
 }
 
 #leaf-form-screen {
@@ -286,6 +296,93 @@ a {
 #leaf-modal-close:active {
   color: white;
 }
+
+#lang-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 4px;
+  color: white;
+  font-family: 'MyFont', system-ui, sans-serif;
+  font-size: 0.9em;
+  padding: 6px 12px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#lang-btn:active {
+  background: rgba(255,255,255,0.1);
+}
+
+#lang-picker {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 300;
+  background: rgba(0,0,0,0.88);
+  align-items: center;
+  justify-content: center;
+}
+
+#lang-picker-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.lang-option {
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 1.3em;
+  color: rgba(255,255,255,0.8);
+  background: transparent;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  min-height: 44px;
+  width: 100%;
+  text-align: center;
+  border-radius: 4px;
+}
+
+.lang-option:active {
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+
+.lang-option.active-lang {
+  color: white;
+  font-weight: bold;
+}
+
+#lang-picker-close {
+  margin-top: 12px;
+  font-size: 1.5em;
+  color: rgba(255,255,255,0.5);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px 16px;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+#lang-picker-close:active {
+  color: white;
+}
   </style>
 
 </head>
@@ -295,7 +392,7 @@ a {
  <a-entity mindar-image-target="targetIndex: 0">
 </a-entity>
 
-<div id="ar-instruction" style="
+<div id="ar-instruction" data-i18n="cameraInstruction" style="
   display: none;
   position: fixed;
   bottom: 80px;
@@ -312,7 +409,7 @@ a {
   white-space: nowrap;
 ">Point your Camera at the whole tree</div>
 
-<div id="tap-place-prompt" style="
+<div id="tap-place-prompt" data-i18n="tapPlace" style="
   display: none;
   position: fixed;
   bottom: 80px;
@@ -329,7 +426,7 @@ a {
   white-space: nowrap;
 ">Tap a spot to place your leaf</div>
 
-<div id="tap-read-prompt" style="
+<div id="tap-read-prompt" data-i18n="tapRead" style="
   display: none;
   position: fixed;
   bottom: 80px;
@@ -346,7 +443,7 @@ a {
   white-space: nowrap;
 ">Tap a leaf to read it</div>
 
-<button id="ar-back-btn" style="
+<button id="ar-back-btn" data-i18n="back" aria-label="Back to main menu" style="
   display: none;
   position: fixed;
   top: 20px;
@@ -365,66 +462,352 @@ a {
 
   <div id="ui-overlay">
     <div id="landing-screen">
-      <h1>Abundance Tree</h1>
-      <p>A living record of collective gratitude</p>
-      <button class="main-button" id="btn-see">See the tree</button>
-      <button class="main-button" id="btn-add">Add your leaf</button>
-      <a href="https://www.studiostang.com" target="_blank" rel="noopener noreferrer" id="studio-link">Click to see more at studiostang.com</a>
+      <button id="lang-btn" aria-label="Select language">EN</button>
+      <h1 data-i18n="title">Abundance Tree</h1>
+      <p data-i18n="subtitle">A living record of collective gratitude</p>
+      <button class="main-button" id="btn-see" data-i18n="btnSee" aria-label="See the tree">See the tree</button>
+      <button class="main-button" id="btn-add" data-i18n="btnAdd" aria-label="Add your leaf">Add your leaf</button>
+      <a href="https://www.studiostang.com" target="_blank" rel="noopener noreferrer" id="studio-link" data-i18n="studioLink" aria-label="Visit Studio Stang website">Click to see more at studiostang.com</a>
     </div>
     <div id="leaf-selection-screen" class="hidden">
-      <h2>Choose your leaf</h2>
-     
+      <h2 data-i18n="chooseLeaf">Choose your leaf</h2>
+
       <div id="leaf-options">
-        <div class="leaf-option" data-leaf="1">
+        <div class="leaf-option" data-leaf="1" role="button" aria-label="Leaf 1: I feel most alive when">
           <img src="/Leaf-1.png" alt="Leaf 1" />
+          <p class="leaf-prompt" data-i18n="leaf1prompt">I feel most alive when...</p>
         </div>
-        <div class="leaf-option" data-leaf="2">
+        <div class="leaf-option" data-leaf="2" role="button" aria-label="Leaf 2: I share my abundance by">
           <img src="/Leaf-2.png" alt="Leaf 2" />
+          <p class="leaf-prompt" data-i18n="leaf2prompt">I share my abundance by...</p>
         </div>
-        <div class="leaf-option" data-leaf="3">
+        <div class="leaf-option" data-leaf="3" role="button" aria-label="Leaf 3: I feel rich because">
           <img src="/Leaf-3.png" alt="Leaf 3" />
+          <p class="leaf-prompt" data-i18n="leaf3prompt">I feel rich because...</p>
         </div>
       </div>
-         <button class="back-button" id="btn-back-to-landing">← back</button>
+         <button class="back-button" id="btn-back-to-landing" data-i18n="back" aria-label="Back to main menu">← back</button>
     </div>
 
 
     <div id="leaf-form-screen" class="hidden">
   <div id="form-container">
-   <img id="selected-leaf-img" src="" alt="" style="display:none;" />
-<div id="content-warning" class="hidden" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); border-radius: 8px; padding: 12px 16px; color: white; font-size: 1.2em; line-height: 1.4;">
+   <img id="selected-leaf-img" src="" alt="Selected leaf" style="display:none;" />
+   <p id="form-leaf-prompt" class="leaf-prompt"></p>
+<div id="content-warning" class="hidden" data-i18n="contentWarning" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); border-radius: 8px; padding: 12px 16px; color: white; font-size: 1.2em; line-height: 1.4;">
   Please revise your message to keep this space kind and respectful for everyone.
 </div>
-    <textarea id="leaf-message" placeholder="write your response here..." maxlength="150" autocorrect="off" spellcheck="false" autocomplete="off"></textarea>
-    <div id="char-counter">150 characters remaining</div>
-    <div id="color-picker">
-      <div class="color-swatch" data-color="pale-yellow" style="background:#FFF9A0"></div>
-<div class="color-swatch" data-color="peach" style="background:#FFAA80"></div>
-<div class="color-swatch" data-color="turquoise" style="background:#7FFFD4"></div>
-<div class="color-swatch" data-color="lime" style="background:#CCFF90"></div>
-<div class="color-swatch" data-color="purple" style="background:#D4AAFF"></div>
-<div class="color-swatch" data-color="pink" style="background:#FFB7C5"></div>
+    <textarea id="leaf-message" placeholder="write your response here..." maxlength="150" autocorrect="off" spellcheck="false" autocomplete="off" aria-label="Write your leaf message"></textarea>
+    <div id="char-counter" aria-live="polite">150 characters remaining</div>
+    <div id="color-picker" role="group" aria-label="Choose leaf color">
+      <div class="color-swatch" data-color="pale-yellow" style="background:#FFF9A0" role="button" aria-label="Pale yellow"></div>
+<div class="color-swatch" data-color="peach" style="background:#FFAA80" role="button" aria-label="Peach"></div>
+<div class="color-swatch" data-color="turquoise" style="background:#7FFFD4" role="button" aria-label="Turquoise"></div>
+<div class="color-swatch" data-color="lime" style="background:#CCFF90" role="button" aria-label="Lime green"></div>
+<div class="color-swatch" data-color="purple" style="background:#D4AAFF" role="button" aria-label="Purple"></div>
+<div class="color-swatch" data-color="pink" style="background:#FFB7C5" role="button" aria-label="Pink"></div>
     </div>
-    <button class="main-button" id="btn-submit">place my leaf</button>
-    <button class="back-button" id="btn-back">← choose a different leaf</button>
+    <button class="main-button" id="btn-submit" data-i18n="placeLeaf" aria-label="Place my leaf on the tree">place my leaf</button>
+    <button class="back-button" id="btn-back" data-i18n="chooseDiff" aria-label="Choose a different leaf">← choose a different leaf</button>
   </div>
 </div>
 
   </div>
 
-  <div id="leaf-modal">
+  <div id="leaf-modal" role="dialog" aria-modal="true" aria-labelledby="leaf-modal-message">
     <div id="leaf-modal-leaf">
-      <img id="leaf-modal-img" src="" alt="leaf" />
+      <img id="leaf-modal-img" src="" alt="Leaf" />
       <div id="leaf-modal-text">
-        <p id="leaf-modal-message"></p>
+        <p id="leaf-modal-message" aria-live="assertive"></p>
       </div>
-      <button id="leaf-modal-close">✕</button>
+      <button id="leaf-modal-close" aria-label="Close leaf message">✕</button>
+    </div>
+  </div>
+
+  <div id="lang-picker" role="dialog" aria-label="Select language" aria-modal="true">
+    <div id="lang-picker-inner">
+      <button class="lang-option active-lang" data-lang="en">English</button>
+      <button class="lang-option" data-lang="es">Español</button>
+      <button class="lang-option" data-lang="hmn">Hmoob</button>
+      <button class="lang-option" data-lang="ar">العربية</button>
+      <button class="lang-option" data-lang="fr">Français</button>
+      <button class="lang-option" data-lang="de">Deutsch</button>
+      <button class="lang-option" data-lang="hi">हिन्दी</button>
+      <button class="lang-option" data-lang="ja">日本語</button>
+      <button class="lang-option" data-lang="ko">한국어</button>
+      <button class="lang-option" data-lang="pt">Português</button>
+      <button class="lang-option" data-lang="zh">中文</button>
+      <button id="lang-picker-close" aria-label="Close language picker">✕</button>
     </div>
   </div>
 
   <script type="module" src="/src/main.js"></script>
-  
+
 <script>
+const TRANSLATIONS = {
+  en: {
+    title: 'Abundance Tree',
+    subtitle: 'A living record of collective gratitude',
+    btnSee: 'See the tree',
+    btnAdd: 'Add your leaf',
+    chooseLeaf: 'Choose your leaf',
+    placeholder: 'write your response here...',
+    placeLeaf: 'place my leaf',
+    chooseDiff: '← choose a different leaf',
+    charsRemaining: 'characters remaining',
+    back: '← back',
+    cameraInstruction: 'Point your camera at the whole tree',
+    tapPlace: 'Tap a spot to place your leaf',
+    tapRead: 'Tap a leaf to read it',
+    studioLink: 'Click to see more at studiostang.com',
+    contentWarning: 'Please revise your message to keep this space kind and respectful for everyone.',
+    leaf1prompt: 'I feel most alive when...',
+    leaf2prompt: 'I share my abundance by...',
+    leaf3prompt: 'I feel rich because...',
+  },
+  es: {
+    title: 'Árbol de Abundancia',
+    subtitle: 'Un registro vivo de gratitud colectiva',
+    btnSee: 'Ver el árbol',
+    btnAdd: 'Añadir tu hoja',
+    chooseLeaf: 'Elige tu hoja',
+    placeholder: 'escribe tu respuesta aquí...',
+    placeLeaf: 'colocar mi hoja',
+    chooseDiff: '← elegir otra hoja',
+    charsRemaining: 'caracteres restantes',
+    back: '← volver',
+    cameraInstruction: 'Apunta tu cámara al árbol completo',
+    tapPlace: 'Toca un lugar para poner tu hoja',
+    tapRead: 'Toca una hoja para leerla',
+    studioLink: 'Haz clic para ver más en studiostang.com',
+    contentWarning: 'Por favor revisa tu mensaje para mantener este espacio amable y respetuoso.',
+    leaf1prompt: 'Me siento más vivo/a cuando...',
+    leaf2prompt: 'Comparto mi abundancia...',
+    leaf3prompt: 'Me siento rico/a porque...',
+  },
+  hmn: {
+    title: 'Tsob Ntoo Kev Vam Meej',
+    subtitle: 'Ib qho kev sau tseg ntawm kev ua tsaug ua ke',
+    btnSee: 'Saib tsob ntoo',
+    btnAdd: 'Ntxiv koj daim nplooj',
+    chooseLeaf: 'Xaiv koj daim nplooj',
+    placeholder: 'sau koj lus teb ntawm no...',
+    placeLeaf: 'tso kuv daim nplooj',
+    chooseDiff: '← xaiv daim nplooj sib txawv',
+    charsRemaining: 'tus cim seem',
+    back: '← rov qab',
+    cameraInstruction: 'Taw koj lub koob yees duab rau tsob ntoo',
+    tapPlace: 'Kov ib qho chaw tso koj daim nplooj',
+    tapRead: 'Kov ib daim nplooj los nyeem',
+    studioLink: 'Nyem los saib ntxiv ntawm studiostang.com',
+    contentWarning: 'Thov kho koj cov lus kom chaw no zoo thiab hwm.',
+    leaf1prompt: 'Kuv xav tshaj plaws thaum...',
+    leaf2prompt: 'Kuv qhia kuv kev vam meej los ntawm...',
+    leaf3prompt: 'Kuv xav nplua nuj vim...',
+  },
+  ar: {
+    title: 'شجرة الوفرة',
+    subtitle: 'سجل حي من الامتنان الجماعي',
+    btnSee: 'شاهد الشجرة',
+    btnAdd: 'أضف ورقتك',
+    chooseLeaf: 'اختر ورقتك',
+    placeholder: 'اكتب ردك هنا...',
+    placeLeaf: 'ضع ورقتي',
+    chooseDiff: '← اختر ورقة مختلفة',
+    charsRemaining: 'حرف متبقي',
+    back: '← رجوع',
+    cameraInstruction: 'وجّه كاميرتك نحو الشجرة بأكملها',
+    tapPlace: 'اضغط على مكان لوضع ورقتك',
+    tapRead: 'اضغط على ورقة لقراءتها',
+    studioLink: 'انقر لرؤية المزيد في studiostang.com',
+    contentWarning: 'يرجى مراجعة رسالتك للحفاظ على هذه المساحة لطيفة ومحترمة.',
+    leaf1prompt: 'أشعر بالحيوية أكثر عندما...',
+    leaf2prompt: 'أشارك وفرتي من خلال...',
+    leaf3prompt: 'أشعر بالثراء لأن...',
+  },
+  fr: {
+    title: "Arbre d'Abondance",
+    subtitle: 'Un enregistrement vivant de gratitude collective',
+    btnSee: "Voir l'arbre",
+    btnAdd: 'Ajouter votre feuille',
+    chooseLeaf: 'Choisissez votre feuille',
+    placeholder: 'écrivez votre réponse ici...',
+    placeLeaf: 'placer ma feuille',
+    chooseDiff: '← choisir une autre feuille',
+    charsRemaining: 'caractères restants',
+    back: '← retour',
+    cameraInstruction: "Pointez votre caméra sur tout l'arbre",
+    tapPlace: 'Touchez un endroit pour placer votre feuille',
+    tapRead: 'Touchez une feuille pour la lire',
+    studioLink: 'Cliquez pour en voir plus sur studiostang.com',
+    contentWarning: 'Veuillez réviser votre message pour garder cet espace bienveillant et respectueux.',
+    leaf1prompt: 'Je me sens le plus vivant(e) quand...',
+    leaf2prompt: 'Je partage mon abondance en...',
+    leaf3prompt: 'Je me sens riche parce que...',
+  },
+  de: {
+    title: 'Baum der Fülle',
+    subtitle: 'Ein lebendiges Zeugnis kollektiver Dankbarkeit',
+    btnSee: 'Den Baum sehen',
+    btnAdd: 'Dein Blatt hinzufügen',
+    chooseLeaf: 'Wähle dein Blatt',
+    placeholder: 'schreib deine Antwort hier...',
+    placeLeaf: 'mein Blatt platzieren',
+    chooseDiff: '← anderes Blatt wählen',
+    charsRemaining: 'Zeichen übrig',
+    back: '← zurück',
+    cameraInstruction: 'Richte deine Kamera auf den ganzen Baum',
+    tapPlace: 'Tippe auf eine Stelle, um dein Blatt zu platzieren',
+    tapRead: 'Tippe auf ein Blatt, um es zu lesen',
+    studioLink: 'Klick für mehr auf studiostang.com',
+    contentWarning: 'Bitte überarbeite deine Nachricht, damit dieser Raum freundlich und respektvoll bleibt.',
+    leaf1prompt: 'Ich fühle mich am lebendigsten, wenn...',
+    leaf2prompt: 'Ich teile meinen Überfluss, indem...',
+    leaf3prompt: 'Ich fühle mich reich, weil...',
+  },
+  hi: {
+    title: 'प्रचुरता वृक्ष',
+    subtitle: 'सामूहिक कृतज्ञता का एक जीवंत अभिलेख',
+    btnSee: 'वृक्ष देखें',
+    btnAdd: 'अपनी पत्ती जोड़ें',
+    chooseLeaf: 'अपनी पत्ती चुनें',
+    placeholder: 'यहाँ अपना उत्तर लिखें...',
+    placeLeaf: 'मेरी पत्ती रखें',
+    chooseDiff: '← अलग पत्ती चुनें',
+    charsRemaining: 'अक्षर शेष',
+    back: '← वापस',
+    cameraInstruction: 'अपना कैमरा पूरे वृक्ष पर करें',
+    tapPlace: 'अपनी पत्ती रखने के लिए कोई स्थान दबाएँ',
+    tapRead: 'पत्ती पढ़ने के लिए उसे दबाएँ',
+    studioLink: 'studiostang.com पर अधिक देखने के लिए क्लिक करें',
+    contentWarning: 'कृपया अपना संदेश संशोधित करें ताकि यह स्थान सभी के लिए दयालु और सम्मानजनक रहे।',
+    leaf1prompt: 'मैं सबसे जीवंत महसूस करता/करती हूँ जब...',
+    leaf2prompt: 'मैं अपनी प्रचुरता इस तरह साझा करता/करती हूँ...',
+    leaf3prompt: 'मैं समृद्ध महसूस करता/करती हूँ क्योंकि...',
+  },
+  ja: {
+    title: '豊かさの木',
+    subtitle: '集合的な感謝の生きた記録',
+    btnSee: '木を見る',
+    btnAdd: '葉を追加する',
+    chooseLeaf: '葉を選んでください',
+    placeholder: 'ここに返答を書いてください...',
+    placeLeaf: '葉を置く',
+    chooseDiff: '← 別の葉を選ぶ',
+    charsRemaining: '文字残り',
+    back: '← 戻る',
+    cameraInstruction: 'カメラを木全体に向けてください',
+    tapPlace: '葉を置く場所をタップしてください',
+    tapRead: '葉をタップして読む',
+    studioLink: 'studiostang.comでもっと見る',
+    contentWarning: 'このスペースをみんなに優しく敬意ある場所に保つため、メッセージを見直してください。',
+    leaf1prompt: '一番生き生きとするのは...',
+    leaf2prompt: '豊かさをシェアするのは...',
+    leaf3prompt: '豊かだと感じるのは...',
+  },
+  ko: {
+    title: '풍요의 나무',
+    subtitle: '집단적 감사의 살아있는 기록',
+    btnSee: '나무 보기',
+    btnAdd: '나뭇잎 추가하기',
+    chooseLeaf: '나뭇잎을 선택하세요',
+    placeholder: '여기에 응답을 작성하세요...',
+    placeLeaf: '내 나뭇잎 놓기',
+    chooseDiff: '← 다른 나뭇잎 선택',
+    charsRemaining: '글자 남음',
+    back: '← 뒤로',
+    cameraInstruction: '카메라를 나무 전체에 맞추세요',
+    tapPlace: '나뭇잎을 놓을 자리를 탭하세요',
+    tapRead: '나뭇잎을 탭해서 읽어보세요',
+    studioLink: 'studiostang.com에서 더 보기',
+    contentWarning: '이 공간을 모두에게 친절하고 존중하는 공간으로 유지하기 위해 메시지를 수정해 주세요.',
+    leaf1prompt: '가장 살아있다고 느낄 때는...',
+    leaf2prompt: '나의 풍요를 나누는 방법은...',
+    leaf3prompt: '풍요롭다고 느끼는 이유는...',
+  },
+  pt: {
+    title: 'Árvore da Abundância',
+    subtitle: 'Um registro vivo de gratidão coletiva',
+    btnSee: 'Ver a árvore',
+    btnAdd: 'Adicionar sua folha',
+    chooseLeaf: 'Escolha sua folha',
+    placeholder: 'escreva sua resposta aqui...',
+    placeLeaf: 'colocar minha folha',
+    chooseDiff: '← escolher uma folha diferente',
+    charsRemaining: 'caracteres restantes',
+    back: '← voltar',
+    cameraInstruction: 'Aponte sua câmera para a árvore inteira',
+    tapPlace: 'Toque em um lugar para colocar sua folha',
+    tapRead: 'Toque em uma folha para lê-la',
+    studioLink: 'Clique para ver mais em studiostang.com',
+    contentWarning: 'Por favor, revise sua mensagem para manter este espaço gentil e respeitoso para todos.',
+    leaf1prompt: 'Eu me sinto mais vivo/a quando...',
+    leaf2prompt: 'Eu compartilho minha abundância...',
+    leaf3prompt: 'Eu me sinto rico/a porque...',
+  },
+  zh: {
+    title: '丰盛之树',
+    subtitle: '集体感恩的生动记录',
+    btnSee: '查看树木',
+    btnAdd: '添加你的叶子',
+    chooseLeaf: '选择你的叶子',
+    placeholder: '在此写下你的回应...',
+    placeLeaf: '放置我的叶子',
+    chooseDiff: '← 选择不同的叶子',
+    charsRemaining: '字符剩余',
+    back: '← 返回',
+    cameraInstruction: '将相机对准整棵树',
+    tapPlace: '点击一个位置放置你的叶子',
+    tapRead: '点击一片叶子来阅读',
+    studioLink: '点击在studiostang.com上查看更多',
+    contentWarning: '请修改您的留言，以保持这个空间对所有人友善和尊重。',
+    leaf1prompt: '我最有活力的时候是...',
+    leaf2prompt: '我通过...分享我的丰盛',
+    leaf3prompt: '我感到富足，因为...',
+  },
+};
+
+let currentLang = 'en';
+let currentLeafNumber = '1';
+const LANG_LABELS = { en:'EN', es:'ES', hmn:'HM', ar:'AR', fr:'FR', de:'DE', hi:'HI', ja:'JP', ko:'KO', pt:'PT', zh:'ZH' };
+
+function setLang(code) {
+  currentLang = code;
+  const t = TRANSLATIONS[code] || TRANSLATIONS.en;
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    const key = el.dataset.i18n;
+    if (t[key] !== undefined) el.textContent = t[key];
+  });
+  document.getElementById('leaf-message').placeholder = t.placeholder;
+  const remaining = 150 - document.getElementById('leaf-message').value.length;
+  document.getElementById('char-counter').textContent = remaining + ' ' + t.charsRemaining;
+  document.getElementById('form-leaf-prompt').textContent = t['leaf' + currentLeafNumber + 'prompt'] || '';
+  document.getElementById('lang-btn').textContent = LANG_LABELS[code] || 'EN';
+  document.querySelectorAll('.lang-option').forEach(function(btn) {
+    btn.classList.toggle('active-lang', btn.dataset.lang === code);
+  });
+}
+
+// Lang picker
+document.getElementById('lang-btn').addEventListener('click', function() {
+  document.getElementById('lang-picker').style.display = 'flex';
+});
+
+document.getElementById('lang-picker-close').addEventListener('click', function() {
+  document.getElementById('lang-picker').style.display = 'none';
+});
+
+document.getElementById('lang-picker').addEventListener('click', function(e) {
+  if (e.target === this) this.style.display = 'none';
+});
+
+document.querySelectorAll('.lang-option').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    setLang(this.dataset.lang);
+    document.getElementById('lang-picker').style.display = 'none';
+  });
+});
+
 let hideTimeout;
 let instruction;
 let inARMode = false;
@@ -458,9 +841,9 @@ function enterAR() {
   inARMode = true;
   resetPrompts();
   instruction.style.display = 'block';
-  setTimeout(() => { 
+  setTimeout(() => {
     instruction.style.transition = 'opacity 1.5s ease';
-    instruction.style.opacity = '1'; 
+    instruction.style.opacity = '1';
   }, 100);
 }
 
@@ -571,11 +954,14 @@ document.querySelectorAll('.leaf-option').forEach(function(leaf) {
 });
 
 function showLeafForm(leafNumber) {
+  currentLeafNumber = leafNumber;
   document.getElementById('leaf-selection-screen').classList.add('hidden');
   document.getElementById('leaf-form-screen').classList.remove('hidden');
   const leafImages = { '1': '/Leaf-1.png', '2': '/Leaf-2.png', '3': '/Leaf-3.png' };
   document.getElementById('selected-leaf-img').src = leafImages[leafNumber];
   document.getElementById('selected-leaf-img').style.display = 'block';
+  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+  document.getElementById('form-leaf-prompt').textContent = t['leaf' + leafNumber + 'prompt'] || '';
 }
 
 document.getElementById('btn-back-to-landing').addEventListener('click', function() {
@@ -588,7 +974,8 @@ document.getElementById('btn-back').addEventListener('click', function() {
   document.getElementById('leaf-selection-screen').classList.remove('hidden');
   document.querySelectorAll('.leaf-option').forEach(l => l.classList.remove('selected'));
   document.getElementById('leaf-message').value = '';
-  document.getElementById('char-counter').textContent = '150 characters remaining';
+  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+  document.getElementById('char-counter').textContent = '150 ' + t.charsRemaining;
   document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
   document.getElementById('selected-leaf-img').style.filter = 'none';
   document.getElementById('content-warning').classList.add('hidden');
@@ -596,7 +983,8 @@ document.getElementById('btn-back').addEventListener('click', function() {
 
 document.getElementById('leaf-message').addEventListener('input', function() {
   const remaining = 150 - this.value.length;
-  document.getElementById('char-counter').textContent = remaining + ' characters remaining';
+  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+  document.getElementById('char-counter').textContent = remaining + ' ' + t.charsRemaining;
 });
 
 document.querySelectorAll('.color-swatch').forEach(function(swatch) {
@@ -645,7 +1033,8 @@ document.getElementById('btn-submit').addEventListener('click', async function()
   document.getElementById('content-warning').classList.add('hidden');
 
   this.disabled = false;
-  this.textContent = 'place my leaf';
+  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+  this.textContent = t.placeLeaf;
 
   cleanupARListeners();
   enterAR();
