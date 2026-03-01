@@ -207,58 +207,71 @@ a {
   top: 0; left: 0;
   width: 100%; height: 100%;
   z-index: 200;
-  background: rgba(0,0,0,0.65);
+  background: rgba(0,0,0,0.72);
   align-items: center;
   justify-content: center;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
-#leaf-modal-inner {
-  background: rgba(12,12,12,0.96);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 14px;
-  padding: 32px 24px 28px;
-  max-width: 80vw;
-  width: 300px;
-  text-align: center;
-  font-family: 'MyFont', cursive;
+#leaf-modal-leaf {
+  position: relative;
+  width: 80vw;
+  max-width: 380px;
 }
 
 #leaf-modal-img {
-  width: 65%;
-  max-width: 180px;
+  width: 100%;
   height: auto;
-  margin-bottom: 18px;
+  display: block;
+}
+
+#leaf-modal-text {
+  position: absolute;
+  top: 50%;
+  left: 57%;
+  transform: translate(-50%, -50%);
+  width: 62%;
+  text-align: center;
+  pointer-events: none;
 }
 
 #leaf-modal-message {
-  font-size: 1.4em;
-  line-height: 1.45;
-  color: white;
-  margin: 0 0 12px;
+  font-family: 'MyFont', cursive;
+  font-size: clamp(0.9em, 3.8vw, 1.25em);
+  color: #2a1a00;
+  line-height: 1.4;
+  margin: 0 0 6px;
+  word-wrap: break-word;
 }
 
 #leaf-modal-date {
-  font-size: 1.05em;
-  color: rgba(255,255,255,0.5);
-  margin: 0 0 22px;
+  font-family: 'MyFont', cursive;
+  font-size: clamp(0.65em, 2.2vw, 0.8em);
+  color: rgba(42, 26, 0, 0.6);
+  margin: 0;
 }
 
 #leaf-modal-close {
+  position: absolute;
+  top: 4px;
+  right: 4px;
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.35);
-  border-radius: 4px;
-  color: white;
-  font-family: 'MyFont', cursive;
-  font-size: 1.2em;
-  padding: 10px 32px;
+  border: none;
+  color: rgba(255,255,255,0.65);
+  font-size: 1.5em;
+  line-height: 1;
+  padding: 8px 10px;
   cursor: pointer;
+  min-width: 44px;
   min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #leaf-modal-close:active {
-  background: rgba(255,255,255,0.1);
+  color: white;
 }
   </style>
 
@@ -386,11 +399,13 @@ a {
   </div>
 
   <div id="leaf-modal">
-    <div id="leaf-modal-inner">
+    <div id="leaf-modal-leaf">
       <img id="leaf-modal-img" src="" alt="leaf" />
-      <p id="leaf-modal-message"></p>
-      <p id="leaf-modal-date"></p>
-      <button id="leaf-modal-close">close</button>
+      <div id="leaf-modal-text">
+        <p id="leaf-modal-message"></p>
+        <p id="leaf-modal-date"></p>
+      </div>
+      <button id="leaf-modal-close">✕</button>
     </div>
   </div>
 
@@ -746,9 +761,10 @@ function hideLeafModal() {
 }
 
 document.getElementById('leaf-modal-close').addEventListener('click', hideLeafModal);
-document.getElementById('leaf-modal').addEventListener('click', function(e) {
-  if (e.target === this) hideLeafModal();
+document.getElementById('leaf-modal-leaf').addEventListener('click', function(e) {
+  e.stopPropagation();
 });
+document.getElementById('leaf-modal').addEventListener('click', hideLeafModal);
 
 // Persistent scene click handler for tap-to-read
 document.querySelector('a-scene').addEventListener('click', function(e) {
