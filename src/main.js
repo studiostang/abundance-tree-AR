@@ -236,18 +236,16 @@ async function placeLeafAtTap(tapX, tapY) {
   if (!window._tapToPlaceActive || !window._pendingLeaf) return;
   window._tapToPlaceActive = false;
 
-  const nearest = getNearestSnapPoint(tapX, tapY);
-  if (!nearest) {
-    console.warn('No available snap points');
-    return;
-  }
-
-  const { point, index } = nearest;
   const leaf = window._pendingLeaf;
+
+  const point = {
+    x: tapX + (Math.random() - 0.5) * 0.1,
+    y: tapY + (Math.random() - 0.5) * 0.1,
+    z: 0,
+  };
 
   // Spawn their leaf at full opacity with pulse
   await spawnLeafElement(leaf, point, 1, true);
-  takenSnapPoints[index] = leaf.id;
 
   // Save to Firebase
   try {
@@ -257,7 +255,6 @@ async function placeLeafAtTap(tapX, tapY) {
       color: leaf.color,
       timestamp: Date.now(),
       approved: false,
-      snapPointIndex: index,
     });
     console.log('Leaf saved with ID: ', docRef.id);
   } catch (e) {
