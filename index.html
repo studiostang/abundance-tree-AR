@@ -591,7 +591,7 @@ document.getElementById('btn-submit').addEventListener('click', async function()
 const screenX = (e.clientX - rect.left) / rect.width;
 const screenY = (e.clientY - rect.top) / rect.height;
 const arX = (screenX - 0.5) * 4.0;
-const arY = (0.5 - screenY) * 2.5 + 1.0;
+const arY = (0.5 - screenY) * 2.5 + 0.95;
 
 function debugLog(msg) {
   let el = document.getElementById('debug-log');
