@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
   <title>Abundance Tree AR</title>
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
@@ -125,6 +125,7 @@ a-scene {
   gap: 15px;
   max-width: 400px;
   margin: 0 auto;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
 }
 
 #selected-leaf-img {
