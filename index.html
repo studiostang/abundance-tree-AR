@@ -149,6 +149,16 @@ textarea#leaf-message {
   resize: none;
 }
 
+#char-counter {
+  width: 85vw;
+  max-width: 350px;
+  text-align: right;
+  font-family: 'MyFont', cursive;
+  font-size: 0.9em;
+  color: rgba(255,255,255,0.6);
+  margin-top: -8px;
+}
+
 #color-picker {
   display: flex;
   flex-direction: row;
@@ -247,7 +257,10 @@ a {
   color: #2a1a00;
   line-height: 1.4;
   margin: 0;
+  width: 100%;
+  white-space: normal;
   word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 #leaf-modal-close {
@@ -381,6 +394,7 @@ a {
   Please revise your message to keep this space kind and respectful for everyone.
 </div>
     <textarea id="leaf-message" placeholder="write your response here..." maxlength="280"></textarea>
+    <div id="char-counter">280 characters remaining</div>
     <div id="color-picker">
       <div class="color-swatch" data-color="pale-yellow" style="background:#FFF9A0"></div>
 <div class="color-swatch" data-color="peach" style="background:#FFAA80"></div>
@@ -572,9 +586,15 @@ document.getElementById('btn-back').addEventListener('click', function() {
   document.getElementById('leaf-selection-screen').classList.remove('hidden');
   document.querySelectorAll('.leaf-option').forEach(l => l.classList.remove('selected'));
   document.getElementById('leaf-message').value = '';
+  document.getElementById('char-counter').textContent = '280 characters remaining';
   document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
   document.getElementById('selected-leaf-img').style.filter = 'none';
   document.getElementById('content-warning').classList.add('hidden');
+});
+
+document.getElementById('leaf-message').addEventListener('input', function() {
+  const remaining = 280 - this.value.length;
+  document.getElementById('char-counter').textContent = remaining + ' characters remaining';
 });
 
 document.querySelectorAll('.color-swatch').forEach(function(swatch) {
