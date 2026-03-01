@@ -584,7 +584,7 @@ document.getElementById('btn-submit').addEventListener('click', async function()
 
   const scene = document.querySelector('a-scene');
   scene.addEventListener('click', function onTap(e) {
-    if (!window._tapToPlaceActive) return;
+    //if (!window._tapToPlaceActive) return;
     scene.removeEventListener('click', onTap);
 
     const rect = scene.getBoundingClientRect();
