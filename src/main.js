@@ -199,8 +199,10 @@ export async function spawnLeavesInAR(pendingLeaf) {
 
   // Spawn existing leaves at opacity 0, then fade in
   const spawnPromises = leaves.map((leaf, index) => {
-    if (index >= SNAP_POINTS.length) return;
-    return spawnLeafElement(leaf, SNAP_POINTS[index], 0, false);
+    const point = (typeof leaf.x === 'number' && typeof leaf.y === 'number')
+      ? { x: leaf.x, y: leaf.y, z: leaf.z || 0 }
+      : SNAP_POINTS[index % SNAP_POINTS.length];
+    return spawnLeafElement(leaf, point, 0, false);
   });
 
   await Promise.all(spawnPromises.filter(Boolean));
@@ -255,6 +257,9 @@ async function placeLeafAtTap(tapX, tapY) {
       color: leaf.color,
       timestamp: Date.now(),
       approved: false,
+      x: point.x,
+      y: point.y,
+      z: point.z,
     });
     console.log('Leaf saved with ID: ', docRef.id);
   } catch (e) {

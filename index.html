@@ -590,8 +590,8 @@ document.getElementById('btn-submit').addEventListener('click', async function()
     const rect = scene.getBoundingClientRect();
 const screenX = (e.clientX - rect.left) / rect.width;
 const screenY = (e.clientY - rect.top) / rect.height;
-const arX = (screenX - 0.5) * 2.0;
-const arY = (0.5 - screenY) * 1.8 + 0.9;
+const arX = (screenX - 0.5) * 4.0;
+const arY = (0.5 - screenY) * 2.5 + 1.2;
 
 function debugLog(msg) {
   let el = document.getElementById('debug-log');
