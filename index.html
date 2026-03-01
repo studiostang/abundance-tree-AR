@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>eruda.init();</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -202,6 +200,66 @@ a {
 #studio-link:hover {
   color: rgba(255, 255, 255, 0.85);
 }
+
+#leaf-modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 200;
+  background: rgba(0,0,0,0.65);
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#leaf-modal-inner {
+  background: rgba(12,12,12,0.96);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 14px;
+  padding: 32px 24px 28px;
+  max-width: 80vw;
+  width: 300px;
+  text-align: center;
+  font-family: 'MyFont', cursive;
+}
+
+#leaf-modal-img {
+  width: 65%;
+  max-width: 180px;
+  height: auto;
+  margin-bottom: 18px;
+}
+
+#leaf-modal-message {
+  font-size: 1.4em;
+  line-height: 1.45;
+  color: white;
+  margin: 0 0 12px;
+}
+
+#leaf-modal-date {
+  font-size: 1.05em;
+  color: rgba(255,255,255,0.5);
+  margin: 0 0 22px;
+}
+
+#leaf-modal-close {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 4px;
+  color: white;
+  font-family: 'MyFont', cursive;
+  font-size: 1.2em;
+  padding: 10px 32px;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+#leaf-modal-close:active {
+  background: rgba(255,255,255,0.1);
+}
   </style>
 
 </head>
@@ -327,6 +385,15 @@ a {
 
   </div>
 
+  <div id="leaf-modal">
+    <div id="leaf-modal-inner">
+      <img id="leaf-modal-img" src="" alt="leaf" />
+      <p id="leaf-modal-message"></p>
+      <p id="leaf-modal-date"></p>
+      <button id="leaf-modal-close">close</button>
+    </div>
+  </div>
+
   <script type="module" src="/src/main.js"></script>
   
 <script>
@@ -405,6 +472,7 @@ document.getElementById('ar-back-btn').addEventListener('click', function() {
   inARMode = false;
   cleanupARListeners();
   resetPrompts();
+  hideLeafModal();
   window._tapToPlaceActive = false;
   window._pendingLeaf = null;
 
@@ -634,6 +702,82 @@ window.addEventListener('leafPlaced', function onPlaced() {
     // Show tap-read prompt with a slight delay so it feels distinct
     setTimeout(() => showTapReadPrompt(), 800);
   });
+});
+
+// --- Tap-to-read modal ---
+const COLOR_MAP_MODAL = {
+  'pale-yellow': '#FFF9A0',
+  'peach':       '#FFAA80',
+  'turquoise':   '#7FFFD4',
+  'lime':        '#CCFF90',
+  'purple':      '#D4AAFF',
+  'pink':        '#FFB7C5',
+};
+
+function showLeafModal(leafEl) {
+  const message = leafEl.dataset.message || '';
+  const leafNumber = leafEl.dataset.leafNumber || '1';
+  const color = leafEl.dataset.color || '';
+  const timestamp = leafEl.dataset.timestamp || '';
+
+  const img = document.getElementById('leaf-modal-img');
+  img.src = '/Leaf-' + leafNumber + '.png';
+  const hex = COLOR_MAP_MODAL[color] || '#ffffff';
+  img.style.filter = 'drop-shadow(0 0 14px ' + hex + ') brightness(1.15)';
+
+  document.getElementById('leaf-modal-message').textContent = message;
+
+  let dateStr = '';
+  if (timestamp) {
+    const d = new Date(Number(timestamp));
+    dateStr = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  }
+  document.getElementById('leaf-modal-date').textContent = dateStr;
+
+  const modal = document.getElementById('leaf-modal');
+  modal.style.display = 'flex';
+  setTimeout(function() { modal.style.opacity = '1'; }, 10);
+}
+
+function hideLeafModal() {
+  const modal = document.getElementById('leaf-modal');
+  modal.style.opacity = '0';
+  setTimeout(function() { modal.style.display = 'none'; }, 300);
+}
+
+document.getElementById('leaf-modal-close').addEventListener('click', hideLeafModal);
+document.getElementById('leaf-modal').addEventListener('click', function(e) {
+  if (e.target === this) hideLeafModal();
+});
+
+// Persistent scene click handler for tap-to-read
+document.querySelector('a-scene').addEventListener('click', function(e) {
+  if (window._tapToPlaceActive) return;
+  if (!inARMode) return;
+  if (document.getElementById('leaf-modal').style.display !== 'none') return;
+
+  const rect = this.getBoundingClientRect();
+  const screenX = (e.clientX - rect.left) / rect.width;
+  const screenY = (e.clientY - rect.top) / rect.height;
+  const arX = (screenX - 0.5) * 4.0;
+  const arY = (0.5 - screenY) * 2.5 + 1.0;
+
+  let nearest = null;
+  let nearestDist = Infinity;
+  document.querySelectorAll('.ar-leaf').forEach(function(el) {
+    const lx = parseFloat(el.dataset.arX);
+    const ly = parseFloat(el.dataset.arY);
+    if (isNaN(lx) || isNaN(ly)) return;
+    const dist = Math.sqrt(Math.pow(lx - arX, 2) + Math.pow(ly - arY, 2));
+    if (dist < nearestDist) {
+      nearestDist = dist;
+      nearest = el;
+    }
+  });
+
+  if (nearest && nearestDist < 0.25) {
+    showLeafModal(nearest);
+  }
 });
 </script>
 

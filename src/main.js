@@ -175,6 +175,11 @@ async function spawnLeafElement(leaf, point, initialOpacity, pulse) {
   el.setAttribute('rotation', rotation);
   el.dataset.message = leaf.message;
   el.dataset.leafId = leaf.id;
+  el.dataset.leafNumber = leaf.leafNumber || '';
+  el.dataset.color = leaf.color || '';
+  el.dataset.timestamp = leaf.timestamp || '';
+  el.dataset.arX = String(point.x);
+  el.dataset.arY = String(point.y);
 
   const target = document.querySelector('[mindar-image-target]');
   target.appendChild(el);
