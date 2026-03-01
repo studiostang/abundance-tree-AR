@@ -15,30 +15,30 @@ function buildSnapPoints() {
   const pts = [];
 
   // Tier 1 (indices 0–24): 25 hand-placed inner branch-line points
-  // y: 1.15–1.30, x: ±0.10 — tight cluster along visible branch lines
+  // y: 1.25–1.40, x: ±0.10 — tight cluster along visible branch lines
   [
-    [  0.00, 1.20,  0.00 ], [  0.05, 1.25,  0.01 ], [ -0.05, 1.23, -0.01 ],
-    [  0.08, 1.18,  0.01 ], [ -0.08, 1.20,  0.00 ], [  0.03, 1.28, -0.01 ],
-    [ -0.03, 1.27,  0.01 ], [  0.06, 1.22,  0.02 ], [ -0.06, 1.16, -0.01 ],
-    [  0.09, 1.26,  0.00 ], [ -0.09, 1.29,  0.01 ], [  0.02, 1.15,  0.01 ],
-    [ -0.02, 1.17, -0.01 ], [  0.07, 1.30,  0.00 ], [ -0.07, 1.24,  0.01 ],
-    [  0.04, 1.19, -0.01 ], [ -0.04, 1.21,  0.00 ], [  0.01, 1.26,  0.01 ],
-    [ -0.01, 1.22,  0.02 ], [  0.10, 1.17,  0.00 ], [ -0.10, 1.25, -0.01 ],
-    [  0.06, 1.15,  0.01 ], [ -0.06, 1.28,  0.00 ], [  0.09, 1.20, -0.01 ],
-    [ -0.09, 1.16,  0.01 ],
+    [  0.00, 1.30,  0.00 ], [  0.05, 1.35,  0.01 ], [ -0.05, 1.33, -0.01 ],
+    [  0.08, 1.28,  0.01 ], [ -0.08, 1.30,  0.00 ], [  0.03, 1.38, -0.01 ],
+    [ -0.03, 1.37,  0.01 ], [  0.06, 1.32,  0.02 ], [ -0.06, 1.26, -0.01 ],
+    [  0.09, 1.36,  0.00 ], [ -0.09, 1.39,  0.01 ], [  0.02, 1.25,  0.01 ],
+    [ -0.02, 1.27, -0.01 ], [  0.07, 1.40,  0.00 ], [ -0.07, 1.34,  0.01 ],
+    [  0.04, 1.29, -0.01 ], [ -0.04, 1.31,  0.00 ], [  0.01, 1.36,  0.01 ],
+    [ -0.01, 1.32,  0.02 ], [  0.10, 1.27,  0.00 ], [ -0.10, 1.35, -0.01 ],
+    [  0.06, 1.25,  0.01 ], [ -0.06, 1.38,  0.00 ], [  0.09, 1.30, -0.01 ],
+    [ -0.09, 1.26,  0.01 ],
   ].forEach(([x, y, z]) => pts.push({ x, y, z }));
 
   // Scatter N points uniformly inside an upward semi-ellipse:
-  // centre (0, 1.05), extends up (dy ≥ 0), clipped to y ≥ yMin
-  function scatter(count, rx, ry, yMin, seedBase) {
+  // centre (0, yMin), extends up to yMax, rx controls x spread
+  function scatter(count, rx, yMin, yMax, seedBase) {
+    const ry = yMax - yMin;
     const out = [];
     let s = seedBase;
     while (out.length < count) {
       s++;
       const px = (seeded(s * 3) * 2 - 1) * rx;
-      const py = 1.05 + seeded(s * 3 + 1) * ry;
-      if (py < yMin) continue;
-      const dy = py - 1.05;
+      const py = yMin + seeded(s * 3 + 1) * ry;
+      const dy = py - yMin;
       if ((px * px) / (rx * rx) + (dy * dy) / (ry * ry) > 1.0) continue;
       const pz = (seeded(s * 3 + 2) - 0.5) * 0.04;
       out.push({
@@ -50,14 +50,14 @@ function buildSnapPoints() {
     return out;
   }
 
-  // Tier 2 (indices 25–74):   50 pts — rx 0.18, ry 0.35 → max y 1.40
-  scatter(50,  0.18, 0.35, 1.05, 100).forEach(p => pts.push(p));
-  // Tier 3 (indices 75–149):  75 pts — rx 0.25, ry 0.45 → max y 1.50
-  scatter(75,  0.25, 0.45, 1.05, 200).forEach(p => pts.push(p));
-  // Tier 4 (indices 150–299): 150 pts — rx 0.35, ry 0.50 → max y 1.55
-  scatter(150, 0.35, 0.50, 1.05, 400).forEach(p => pts.push(p));
+  // Tier 2 (indices 25–74):   50 pts — y 1.20–1.45, x ±0.18
+  scatter(50,  0.18, 1.20, 1.45, 100).forEach(p => pts.push(p));
+  // Tier 3 (indices 75–149):  75 pts — y 1.15–1.50, x ±0.25
+  scatter(75,  0.25, 1.15, 1.50, 200).forEach(p => pts.push(p));
+  // Tier 4 (indices 150–299): 150 pts — y 1.10–1.55, x ±0.35
+  scatter(150, 0.35, 1.10, 1.55, 400).forEach(p => pts.push(p));
   // Tier 5 (indices 300–499): 200 pts — same zone, different seed
-  scatter(200, 0.35, 0.50, 1.05, 800).forEach(p => pts.push(p));
+  scatter(200, 0.35, 1.10, 1.55, 800).forEach(p => pts.push(p));
 
   return pts; // 25 + 50 + 75 + 150 + 200 = 500
 }
