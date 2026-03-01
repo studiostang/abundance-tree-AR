@@ -140,6 +140,25 @@ async function renderLeafCanvas(leaf) {
   });
 }
 
+// Smoothly animate a leaf element's material opacity
+function fadeOpacity(el, from, to, durationMs) {
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min(1, (now - start) / durationMs);
+    const opacity = from + (to - from) * t;
+    if (el.object3D) {
+      el.object3D.traverse(child => {
+        if (child.material) {
+          child.material.opacity = opacity;
+          child.material.needsUpdate = true;
+        }
+      });
+    }
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
 // Spawn a leaf element in AR at a given snap point
 async function spawnLeafElement(leaf, point, initialOpacity, pulse) {
   const dataURL = await renderLeafCanvas(leaf);
@@ -161,16 +180,18 @@ async function spawnLeafElement(leaf, point, initialOpacity, pulse) {
   target.appendChild(el);
 
   if (pulse) {
-  setTimeout(() => {
-    const obj = el.object3D;
-    if (!obj) return;
-    obj.scale.set(1, 1, 1);
-    setTimeout(() => obj.scale.set(1.8, 1.8, 1), 50);
-    setTimeout(() => obj.scale.set(0.9, 0.9, 1), 500);
-    setTimeout(() => obj.scale.set(1.3, 1.3, 1), 800);
-    setTimeout(() => obj.scale.set(1, 1, 1), 1200);
-  }, 200);
-}
+    setTimeout(() => {
+      const obj = el.object3D;
+      if (!obj) return;
+      obj.scale.set(1, 1, 1);
+      setTimeout(() => obj.scale.set(1.8, 1.8, 1), 50);
+      setTimeout(() => obj.scale.set(0.9, 0.9, 1), 500);
+      setTimeout(() => obj.scale.set(1.3, 1.3, 1), 800);
+      setTimeout(() => obj.scale.set(1, 1, 1), 1200);
+      // After pulse ends, fade from 1.0 down to resting opacity 0.80
+      setTimeout(() => fadeOpacity(el, 1.0, 0.80, 2500), 1400);
+    }, 200);
+  }
 
   return el;
 }
@@ -207,20 +228,10 @@ export async function spawnLeavesInAR(pendingLeaf) {
 
   await Promise.all(spawnPromises.filter(Boolean));
 
- // Fade all existing leaves in over 2 seconds
-  // Wait for elements to be mounted in DOM first
-setTimeout(() => {
+  // Fade in batches of 5 leaves, 150ms between batches, 0 → 0.80 over 1.5s
+  setTimeout(() => {
     document.querySelectorAll('.ar-leaf').forEach((el, i) => {
-      setTimeout(() => {
-        if (el.object3D) {
-          el.object3D.traverse(child => {
-            if (child.material) {
-              child.material.opacity = 1;
-              child.material.needsUpdate = true;
-            }
-          });
-        }
-      }, i * 100);
+      setTimeout(() => fadeOpacity(el, 0, 0.80, 1500), Math.floor(i / 5) * 150);
     });
   }, 300);
 
