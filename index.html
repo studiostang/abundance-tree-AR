@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
 
   <title>Abundance Tree AR</title>
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
@@ -12,7 +12,8 @@
   font-family: 'MyFont';
   src: url('/Myfont.ttf') format('truetype');
 }
-   body { margin: 0; overflow: hidden; font-family: 'MyFont', cursive; }
+html { overflow: hidden; }
+   body { margin: 0; overflow: hidden; position: fixed; width: 100%; height: 100%; font-family: 'MyFont', cursive; }
 
   #ui-overlay {
   position: fixed;
@@ -239,10 +240,10 @@ a {
 
 #leaf-modal-text {
   position: absolute;
-  left: 30%;
-  top: 38%;
-  width: 58%;
-  height: 32%;
+  left: 31%;
+  top: 40%;
+  width: 57%;
+  height: 30%;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -394,7 +395,7 @@ a {
 <div id="content-warning" class="hidden" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); border-radius: 8px; padding: 12px 16px; color: white; font-size: 1.2em; line-height: 1.4;">
   Please revise your message to keep this space kind and respectful for everyone.
 </div>
-    <textarea id="leaf-message" placeholder="write your response here..." maxlength="150"></textarea>
+    <textarea id="leaf-message" placeholder="write your response here..." maxlength="150" autocorrect="off" spellcheck="false" autocomplete="off"></textarea>
     <div id="char-counter">150 characters remaining</div>
     <div id="color-picker">
       <div class="color-swatch" data-color="pale-yellow" style="background:#FFF9A0"></div>
