@@ -2,33 +2,9 @@ import { db } from './firebase.js';
 import { collection, addDoc, getDocs, query } from 'firebase/firestore';
 
 export const SNAP_POINTS = [
-  // Very top - blue branch tips
-  { x: -0.05, y: 1.42, z: 0.0  },
-  { x: 0.05,  y: 1.45, z: 0.01 },
-  { x: -0.1,  y: 1.38, z: -0.01},
-  { x: 0.1,   y: 1.40, z: 0.02 },
-  { x: 0.0,   y: 1.35, z: 0.0  },
-
-  // Upper mid - branch spread
-  { x: -0.05, y: 1.28, z: 0.01 },
-  { x: 0.1,   y: 1.30, z: 0.0  },
-  { x: 0.0,   y: 1.25, z: 0.02 },
-  { x: 0.08,  y: 1.22, z: -0.01},
-  { x: -0.08, y: 1.25, z: 0.01 },
-
-  // Mid - trunk junction
-  { x: 0.05,  y: 1.18, z: 0.0  },
-  { x: -0.05, y: 1.15, z: 0.02 },
-  { x: 0.1,   y: 1.12, z: 0.01 },
-  { x: 0.0,   y: 1.10, z: 0.0  },
-  { x: -0.08, y: 1.08, z: 0.03 },
-
-  // Lower canopy
-  { x: 0.05,  y: 1.05, z: 0.01 },
-  { x: -0.05, y: 1.02, z: 0.02 },
-  { x: 0.1,   y: 1.00, z: 0.0  },
-  { x: 0.0,   y: 0.98, z: 0.01 },
-  { x: -0.08, y: 0.95, z: 0.02 },
+  { x: 0.0, y: 1.45, z: 0 },
+  { x: 0.0, y: 1.20, z: 0 },
+  { x: 0.0, y: 0.95, z: 0 },
 ];
 
 // Track which snap points are taken: snapPointIndex -> leafId
