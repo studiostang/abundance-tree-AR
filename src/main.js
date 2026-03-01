@@ -2,33 +2,33 @@ import { db } from './firebase.js';
 import { collection, addDoc, getDocs, query } from 'firebase/firestore';
 
 export const SNAP_POINTS = [
-  // Top branch tips - blue trunk (left)
-  { x: -0.45, y: 1.55, z: 0.0  },
-  { x: -0.55, y: 1.40, z: 0.02 },
-  { x: -0.35, y: 1.45, z: -0.01},
-  { x: -0.50, y: 1.25, z: 0.01 },
-  { x: -0.40, y: 1.30, z: 0.02 },
+  // Very top - blue branch tips
+  { x: -0.05, y: 1.42, z: 0.0  },
+  { x: 0.05,  y: 1.45, z: 0.01 },
+  { x: -0.1,  y: 1.38, z: -0.01},
+  { x: 0.1,   y: 1.40, z: 0.02 },
+  { x: 0.0,   y: 1.35, z: 0.0  },
 
-  // Top branch tips - pink trunk (center)
-  { x: 0.0,   y: 1.60, z: 0.0  },
-  { x: 0.10,  y: 1.50, z: 0.01 },
-  { x: -0.10, y: 1.48, z: -0.01},
-  { x: 0.05,  y: 1.35, z: 0.02 },
-  { x: -0.05, y: 1.38, z: 0.0  },
+  // Upper mid - branch spread
+  { x: -0.05, y: 1.28, z: 0.01 },
+  { x: 0.1,   y: 1.30, z: 0.0  },
+  { x: 0.0,   y: 1.25, z: 0.02 },
+  { x: 0.08,  y: 1.22, z: -0.01},
+  { x: -0.08, y: 1.25, z: 0.01 },
 
-  // Top branch tips - orange trunk (right)
-  { x: 0.45,  y: 1.45, z: 0.0  },
-  { x: 0.55,  y: 1.30, z: -0.01},
-  { x: 0.35,  y: 1.40, z: 0.02 },
-  { x: 0.50,  y: 1.20, z: 0.01 },
-  { x: 0.40,  y: 1.25, z: -0.02},
+  // Mid - trunk junction
+  { x: 0.05,  y: 1.18, z: 0.0  },
+  { x: -0.05, y: 1.15, z: 0.02 },
+  { x: 0.1,   y: 1.12, z: 0.01 },
+  { x: 0.0,   y: 1.10, z: 0.0  },
+  { x: -0.08, y: 1.08, z: 0.03 },
 
-  // Upper trunk areas
-  { x: -0.30, y: 1.15, z: 0.01 },
-  { x: 0.0,   y: 1.20, z: 0.0  },
-  { x: 0.30,  y: 1.10, z: -0.01},
-  { x: -0.20, y: 1.05, z: 0.02 },
-  { x: 0.20,  y: 1.00, z: 0.01 },
+  // Lower canopy
+  { x: 0.05,  y: 1.05, z: 0.01 },
+  { x: -0.05, y: 1.02, z: 0.02 },
+  { x: 0.1,   y: 1.00, z: 0.0  },
+  { x: 0.0,   y: 0.98, z: 0.01 },
+  { x: -0.08, y: 0.95, z: 0.02 },
 ];
 
 // Track which snap points are taken: snapPointIndex -> leafId
@@ -190,36 +190,6 @@ export async function spawnLeavesInAR(pendingLeaf) {
     console.error('No AR target found');
     return;
   }
-
-export const SNAP_POINTS = [
-  // Very top - blue branch tips
-  { x: -0.05, y: 1.42, z: 0.0  },
-  { x: 0.05,  y: 1.45, z: 0.01 },
-  { x: -0.1,  y: 1.38, z: -0.01},
-  { x: 0.1,   y: 1.40, z: 0.02 },
-  { x: 0.0,   y: 1.35, z: 0.0  },
-
-  // Upper mid - branch spread
-  { x: -0.05, y: 1.28, z: 0.01 },
-  { x: 0.1,   y: 1.30, z: 0.0  },
-  { x: 0.0,   y: 1.25, z: 0.02 },
-  { x: 0.08,  y: 1.22, z: -0.01},
-  { x: -0.08, y: 1.25, z: 0.01 },
-
-  // Mid - trunk junction
-  { x: 0.05,  y: 1.18, z: 0.0  },
-  { x: -0.05, y: 1.15, z: 0.02 },
-  { x: 0.1,   y: 1.12, z: 0.01 },
-  { x: 0.0,   y: 1.10, z: 0.0  },
-  { x: -0.08, y: 1.08, z: 0.03 },
-
-  // Lower canopy
-  { x: 0.05,  y: 1.05, z: 0.01 },
-  { x: -0.05, y: 1.02, z: 0.02 },
-  { x: 0.1,   y: 1.00, z: 0.0  },
-  { x: 0.0,   y: 0.98, z: 0.01 },
-  { x: -0.08, y: 0.95, z: 0.02 },
-];
 
   const font = new FontFace('MyFont', 'url(/Myfont.ttf)');
   await font.load();
