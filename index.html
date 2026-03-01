@@ -585,20 +585,13 @@ document.getElementById('btn-submit').addEventListener('click', async function()
     if (!window._tapToPlaceActive) return;
     scene.removeEventListener('click', onTap);
 
-    const camera = document.querySelector('a-camera');
-    const raycaster = camera.components.raycaster;
-    if (raycaster && raycaster.intersectedEls.length > 0) {
-      const intersection = raycaster.intersections[0];
-      const point = intersection.point;
-      window.placeLeafAtTap(point.x, point.y);
-    } else {
-      const rect = scene.getBoundingClientRect();
-      const screenX = (e.clientX - rect.left) / rect.width;
-      const screenY = (e.clientY - rect.top) / rect.height;
-      const arX = (screenX - 0.5) * 0.4;
-      const arY = (0.5 - screenY) * 0.6 + 1.2;
-      window.placeLeafAtTap(arX, arY);
-    }
+    const rect = scene.getBoundingClientRect();
+const screenX = (e.clientX - rect.left) / rect.width;
+const screenY = (e.clientY - rect.top) / rect.height;
+const arX = (screenX - 0.5) * 0.4;
+const arY = (0.5 - screenY) * 0.6 + 1.2;
+console.log('tap:', screenX.toFixed(2), screenY.toFixed(2), '-> AR:', arX.toFixed(3), arY.toFixed(3));
+window.placeLeafAtTap(arX, arY);
 
     hideTapPlacePrompt();
   });
