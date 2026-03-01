@@ -595,8 +595,8 @@ document.getElementById('btn-submit').addEventListener('click', async function()
       const rect = scene.getBoundingClientRect();
       const screenX = (e.clientX - rect.left) / rect.width;
       const screenY = (e.clientY - rect.top) / rect.height;
-      const arX = (screenX - 0.5) * 1.35;
-      const arY = (0.5 - screenY) * 3.2 + 0.8;
+      const arX = (screenX - 0.5) * 0.4;
+      const arY = (0.5 - screenY) * 0.6 + 1.2;
       window.placeLeafAtTap(arX, arY);
     }
 
