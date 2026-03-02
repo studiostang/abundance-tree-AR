@@ -1210,11 +1210,13 @@ function fitModalText() {
   }
 }
 
-// Show translate button only when message contains non-ASCII characters,
-// indicating a non-English script (CJK, Arabic, Devanagari, etc.).
-// Never prompt translation of English-script messages.
-function shouldShowTranslate(text) {
-  return !!text && /[^\x00-\x7F]/.test(text);
+// Show translate button:
+// - UI is non-English: always show (translate any message into the UI language)
+// - UI is English: only show for non-ASCII messages (non-English scripts)
+function shouldShowTranslate(text, lang) {
+  if (!text) return false;
+  if (lang !== 'en') return true;
+  return /[^\x00-\x7F]/.test(text);
 }
 
 function showLeafModal(leafEl) {
@@ -1228,12 +1230,13 @@ function showLeafModal(leafEl) {
 
   document.getElementById('leaf-modal-message').textContent = message;
 
-  // Show translate button if message appears non-English
+  // Show translate button based on UI language and message content
   const translateEl = document.getElementById('leaf-modal-translate');
   translateEl.dataset.originalMessage = message;
+  translateEl.dataset.targetLang = currentLang;
   translateEl.disabled = false;
   translateEl.textContent = (TRANSLATIONS[currentLang] || TRANSLATIONS.en).translate;
-  translateEl.style.display = shouldShowTranslate(message) ? 'inline-block' : 'none';
+  translateEl.style.display = shouldShowTranslate(message, currentLang) ? 'inline-block' : 'none';
 
   const modal = document.getElementById('leaf-modal');
   modal.style.display = 'flex';
@@ -1259,14 +1262,16 @@ document.getElementById('leaf-modal-actions').addEventListener('click', function
 });
 document.getElementById('leaf-modal').addEventListener('click', hideLeafModal);
 
-// Inline translation via MyMemory — always targets English, button disappears on success
+// Inline translation via MyMemory — targets UI language (or English if UI is English)
 document.getElementById('leaf-modal-translate').addEventListener('click', async function() {
   const message = this.dataset.originalMessage;
+  const targetLang = this.dataset.targetLang || 'en';
+  const langpair = targetLang === 'en' ? 'autodetect|en' : 'en|' + targetLang;
   this.disabled = true;
 
   try {
     const url = 'https://api.mymemory.translated.net/get?q=' +
-      encodeURIComponent(message) + '&langpair=autodetect|en';
+      encodeURIComponent(message) + '&langpair=' + langpair;
     const res = await fetch(url);
     const data = await res.json();
     if (data.responseStatus === 200 && data.responseData && data.responseData.translatedText) {
