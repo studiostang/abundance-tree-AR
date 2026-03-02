@@ -124,14 +124,16 @@ a-scene {
   margin: 0;
 }
 
-/* Fix 2: overlay prompt on lower portion of leaf image */
+/* Fix 2: overlay prompt on the white body of the leaf image */
 .leaf-option .leaf-prompt {
   position: absolute;
-  bottom: 14%;
-  left: 30%;
-  right: 5%;
-  font-size: 0.7em;
-  color: rgba(60, 40, 20, 0.75);
+  top: 55%;
+  left: 0;
+  right: 0;
+  padding-left: 30%;
+  padding-right: 10%;
+  font-size: 0.75em;
+  color: #2a1a00;
   pointer-events: none;
 }
 
@@ -323,29 +325,34 @@ a {
   font-family: 'MyFont', cursive;
   font-size: 0.9em;
   font-style: italic;
-  text-decoration: none;
   letter-spacing: 0.05em;
+  background: transparent;
+  border: none;
+  cursor: pointer;
   padding: 8px 16px;
-  display: inline-block;
   min-height: 44px;
-  line-height: 44px;
 }
 
 #leaf-modal-translate:active {
   color: white;
 }
 
+#leaf-modal-translate:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 #lang-btn {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 12px;
+  right: 12px;
   background: transparent;
   border: 1px solid rgba(255,255,255,0.5);
   border-radius: 4px;
   color: white;
   font-family: 'MyFont', system-ui, sans-serif;
-  font-size: 0.9em;
-  padding: 6px 12px;
+  font-size: 0.8em;
+  padding: 4px 9px;
   cursor: pointer;
   letter-spacing: 0.05em;
   min-width: 44px;
@@ -562,7 +569,7 @@ a {
       <button id="leaf-modal-close" aria-label="Close leaf message">✕</button>
     </div>
     <div id="leaf-modal-actions">
-      <a id="leaf-modal-translate" target="_blank" rel="noopener noreferrer" aria-label="Translate this message">translate →</a>
+      <button id="leaf-modal-translate" type="button" aria-label="Translate this message">translate →</button>
     </div>
   </div>
 
@@ -608,6 +615,7 @@ const TRANSLATIONS = {
     leaf2prompt: 'I share my abundance by...',
     leaf3prompt: 'I feel most alive when...',
     translate: 'translate →',
+    showOriginal: 'show original',
   },
   es: {
     title: 'Árbol de Abundancia',
@@ -629,6 +637,7 @@ const TRANSLATIONS = {
     leaf2prompt: 'Comparto mi abundancia...',
     leaf3prompt: 'Me siento más vivo/a cuando...',
     translate: 'traducir →',
+    showOriginal: 'ver original',
   },
   hmn: {
     title: 'Tsob Ntoo Kev Vam Meej',
@@ -650,6 +659,7 @@ const TRANSLATIONS = {
     leaf2prompt: 'Kuv qhia kuv kev vam meej los ntawm...',
     leaf3prompt: 'Kuv xav tshaj plaws thaum...',
     translate: 'txhais →',
+    showOriginal: 'qhia niam ntawv qub',
   },
   ar: {
     title: 'شجرة الوفرة',
@@ -671,6 +681,7 @@ const TRANSLATIONS = {
     leaf2prompt: 'أشارك وفرتي من خلال...',
     leaf3prompt: 'أشعر بالحيوية أكثر عندما...',
     translate: 'ترجم →',
+    showOriginal: 'عرض الأصل',
   },
   fr: {
     title: "Arbre d'Abondance",
@@ -692,6 +703,7 @@ const TRANSLATIONS = {
     leaf2prompt: 'Je partage mon abondance en...',
     leaf3prompt: 'Je me sens le plus vivant(e) quand...',
     translate: 'traduire →',
+    showOriginal: "afficher l'original",
   },
   de: {
     title: 'Baum der Fülle',
@@ -713,6 +725,7 @@ const TRANSLATIONS = {
     leaf2prompt: 'Ich teile meinen Überfluss, indem...',
     leaf3prompt: 'Ich fühle mich am lebendigsten, wenn...',
     translate: 'übersetzen →',
+    showOriginal: 'Original anzeigen',
   },
   hi: {
     title: 'प्रचुरता वृक्ष',
@@ -734,6 +747,7 @@ const TRANSLATIONS = {
     leaf2prompt: 'मैं अपनी प्रचुरता इस तरह साझा करता/करती हूँ...',
     leaf3prompt: 'मैं सबसे जीवंत महसूस करता/करती हूँ जब...',
     translate: 'अनुवाद करें →',
+    showOriginal: 'मूल दिखाएं',
   },
   ja: {
     title: '豊かさの木',
@@ -755,6 +769,7 @@ const TRANSLATIONS = {
     leaf2prompt: '豊かさをシェアするのは...',
     leaf3prompt: '一番生き生きとするのは...',
     translate: '翻訳 →',
+    showOriginal: '原文を表示',
   },
   ko: {
     title: '풍요의 나무',
@@ -776,6 +791,7 @@ const TRANSLATIONS = {
     leaf2prompt: '나의 풍요를 나누는 방법은...',
     leaf3prompt: '가장 살아있다고 느낄 때는...',
     translate: '번역 →',
+    showOriginal: '원문 보기',
   },
   pt: {
     title: 'Árvore da Abundância',
@@ -797,6 +813,7 @@ const TRANSLATIONS = {
     leaf2prompt: 'Eu compartilho minha abundância...',
     leaf3prompt: 'Eu me sinto mais vivo/a quando...',
     translate: 'traduzir →',
+    showOriginal: 'mostrar original',
   },
   zh: {
     title: '丰盛之树',
@@ -818,6 +835,7 @@ const TRANSLATIONS = {
     leaf2prompt: '我通过...分享我的丰盛',
     leaf3prompt: '我最有活力的时候是...',
     translate: '翻译 →',
+    showOriginal: '显示原文',
   },
 };
 
@@ -1206,6 +1224,14 @@ function fitModalText() {
   }
 }
 
+// Show translate button when: non-English UI (user may want English text translated),
+// or message contains non-ASCII characters (suggests a non-English message).
+function shouldShowTranslate(text) {
+  if (!text) return false;
+  if (currentLang !== 'en') return true;
+  return /[^\x00-\x7F]/.test(text);
+}
+
 function showLeafModal(leafEl) {
   const message = leafEl.dataset.message || '';
   const leafNumber = leafEl.dataset.leafNumber || '1';
@@ -1217,11 +1243,14 @@ function showLeafModal(leafEl) {
 
   document.getElementById('leaf-modal-message').textContent = message;
 
-  /* Fix 3: set translate link for current UI language */
-  const tl = GT_LANG[currentLang] || 'en';
+  // Fix 3: show/hide translate button based on detection; reset state
   const translateEl = document.getElementById('leaf-modal-translate');
-  translateEl.href = 'https://translate.google.com/?text=' + encodeURIComponent(message) + '&tl=' + tl + '&op=translate&sl=auto';
-  translateEl.textContent = (TRANSLATIONS[currentLang] || TRANSLATIONS.en).translate;
+  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+  translateEl.dataset.originalMessage = message;
+  translateEl.dataset.translated = 'false';
+  translateEl.disabled = false;
+  translateEl.textContent = t.translate;
+  translateEl.style.display = shouldShowTranslate(message) ? 'inline-block' : 'none';
 
   const modal = document.getElementById('leaf-modal');
   modal.style.display = 'flex';
@@ -1246,6 +1275,45 @@ document.getElementById('leaf-modal-actions').addEventListener('click', function
   e.stopPropagation();
 });
 document.getElementById('leaf-modal').addEventListener('click', hideLeafModal);
+
+// Fix 3: MyMemory inline translation
+document.getElementById('leaf-modal-translate').addEventListener('click', async function() {
+  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+
+  // Toggle back to original
+  if (this.dataset.translated === 'true') {
+    document.getElementById('leaf-modal-message').textContent = this.dataset.originalMessage;
+    this.textContent = t.translate;
+    this.dataset.translated = 'false';
+    fitModalText();
+    return;
+  }
+
+  const message = this.dataset.originalMessage;
+  const targetLang = GT_LANG[currentLang] || 'en';
+
+  this.disabled = true;
+  this.textContent = '...';
+
+  try {
+    const url = 'https://api.mymemory.translated.net/get?q=' +
+      encodeURIComponent(message) + '&langpair=|' + targetLang;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.responseStatus === 200 && data.responseData && data.responseData.translatedText) {
+      document.getElementById('leaf-modal-message').textContent = data.responseData.translatedText;
+      this.textContent = t.showOriginal;
+      this.dataset.translated = 'true';
+      fitModalText();
+    } else {
+      this.textContent = t.translate;
+    }
+  } catch (err) {
+    this.textContent = t.translate;
+  }
+
+  this.disabled = false;
+});
 
 // Persistent scene click handler for tap-to-read
 document.querySelector('a-scene').addEventListener('click', function(e) {
