@@ -292,7 +292,7 @@ a {
   left: 31%;
   top: 40%;
   width: 57%;
-  max-height: 46%;
+  height: 35%;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -1226,17 +1226,17 @@ const COLOR_MAP_MODAL = {
 };
 
 function fitModalText() {
-  const msgEl = document.getElementById('leaf-modal-message');
-  const box = document.getElementById('leaf-modal-text');
-  // clientHeight is 0 if parent (#leaf-modal-leaf) hasn't been laid out yet —
-  // caller will retry via img.onload once the image gives the parent its height
-  if (!box.clientHeight) return;
-  let size = 1.2;
-  msgEl.style.fontSize = size + 'em';
-  while (size > 0.5 && (msgEl.scrollHeight > box.clientHeight || msgEl.scrollWidth > box.clientWidth)) {
-    size = Math.round((size - 0.05) * 100) / 100;
+  setTimeout(function() {
+    const msgEl = document.getElementById('leaf-modal-message');
+    const box = document.getElementById('leaf-modal-text');
+    if (!box.clientHeight) return;
+    let size = 1.2;
     msgEl.style.fontSize = size + 'em';
-  }
+    while (size > 0.5 && (msgEl.scrollHeight > box.clientHeight || msgEl.scrollWidth > box.clientWidth)) {
+      size = Math.round((size - 0.05) * 100) / 100;
+      msgEl.style.fontSize = size + 'em';
+    }
+  }, 0);
 }
 
 // Detect the language of a message using a multi-tier approach:
@@ -1329,9 +1329,7 @@ function showLeafModal(leafEl) {
 
   img.onload = fitModalText;
   img.src = '/Leaf-' + leafNumber + '.png';
-  // Always schedule a post-layout run; if the image isn't loaded yet, img.onload
-  // fires later with accurate container dimensions and overrides this call
-  setTimeout(fitModalText, 0);
+  fitModalText();
 }
 
 function hideLeafModal() {
@@ -1367,7 +1365,7 @@ document.getElementById('leaf-modal-translate').addEventListener('click', async 
       tb.style.direction = targetLang === 'ar' ? 'rtl' : 'ltr';
       tb.style.textAlign = targetLang === 'ar' ? 'right' : 'center';
       this.style.display = 'none';
-      setTimeout(fitModalText, 0);
+      fitModalText();
     } else {
       this.disabled = false;
     }
