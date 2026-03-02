@@ -10,7 +10,7 @@
   <style>
     @font-face {
   font-family: 'MyFont';
-  src: url('/Myfont.ttf') format('truetype');
+  src: url('/Myfont1-Regular.ttf') format('truetype');
 }
 html { overflow: hidden; }
    body { margin: 0; overflow: hidden; position: fixed; width: 100%; height: 100%; font-family: 'MyFont', cursive; }
@@ -1234,11 +1234,29 @@ function fitModalText() {
   }
 }
 
-// Show translate button for any non-empty message. Non-ASCII detection was
-// too narrow (missed Latin-script languages like French, Portuguese), so we
-// always offer translation — translating an already-English message is harmless.
-function shouldShowTranslate(text) {
-  return !!text;
+// Detect the language of a message.
+// Non-Latin scripts are identified instantly by Unicode range.
+// Latin-script text is sent to MyMemory (autodetect→en): if the translation
+// matches the original the message is English; if it differs, it's another
+// Latin language ('other'). Returns a lang code, 'other', or null on failure.
+async function detectMessageLang(text) {
+  if (!text) return null;
+  if (/[\u4e00-\u9fff\u3400-\u4dbf]/.test(text))
+    return /[\u3040-\u309f\u30a0-\u30ff]/.test(text) ? 'ja' : 'zh';
+  if (/[\uac00-\ud7af]/.test(text)) return 'ko';
+  if (/[\u0600-\u06ff]/.test(text)) return 'ar';
+  if (/[\u0900-\u097f]/.test(text)) return 'hi';
+  try {
+    const snippet = text.slice(0, 80);
+    const res = await fetch('https://api.mymemory.translated.net/get?q=' +
+      encodeURIComponent(snippet) + '&langpair=autodetect|en');
+    const data = await res.json();
+    if (data.responseStatus === 200 && data.responseData && data.responseData.translatedText) {
+      const norm = s => s.trim().toLowerCase().replace(/[^\w ]/g, '').replace(/\s+/g, ' ');
+      return norm(data.responseData.translatedText) === norm(snippet) ? 'en' : 'other';
+    }
+  } catch (e) {}
+  return null; // Unknown — caller will err on the side of showing the button
 }
 
 function showLeafModal(leafEl) {
@@ -1252,13 +1270,21 @@ function showLeafModal(leafEl) {
 
   document.getElementById('leaf-modal-message').textContent = message;
 
-  // Show translate button based on UI language and message content
+  // Set up translate button — hidden while language detection runs asynchronously
   const translateEl = document.getElementById('leaf-modal-translate');
   translateEl.dataset.originalMessage = message;
   translateEl.dataset.targetLang = currentLang;
   translateEl.disabled = false;
+  translateEl.style.display = 'none';
   translateEl.textContent = (TRANSLATIONS[currentLang] || TRANSLATIONS.en).translate;
-  translateEl.style.display = shouldShowTranslate(message) ? 'inline-block' : 'none';
+  const uiLangAtOpen = currentLang;
+  detectMessageLang(message).then(function(detectedLang) {
+    // Abort if the modal was reopened with a different leaf before detection finished
+    if (translateEl.dataset.originalMessage !== message) return;
+    // Show if: detection failed (null → err safe), or detected lang differs from UI lang
+    const show = detectedLang === null || detectedLang !== uiLangAtOpen;
+    translateEl.style.display = show ? 'inline-block' : 'none';
+  });
 
   const modal = document.getElementById('leaf-modal');
   modal.style.display = 'flex';
@@ -1284,11 +1310,11 @@ document.getElementById('leaf-modal-actions').addEventListener('click', function
 });
 document.getElementById('leaf-modal').addEventListener('click', hideLeafModal);
 
-// Inline translation via MyMemory — targets UI language (or English if UI is English)
+// Inline translation via MyMemory — auto-detects source, translates to UI language
 document.getElementById('leaf-modal-translate').addEventListener('click', async function() {
   const message = this.dataset.originalMessage;
   const targetLang = this.dataset.targetLang || 'en';
-  const langpair = targetLang === 'en' ? 'autodetect|en' : 'en|' + targetLang;
+  const langpair = 'autodetect|' + targetLang;
   this.disabled = true;
 
   try {
