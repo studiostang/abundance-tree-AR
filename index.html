@@ -54,8 +54,10 @@ a-scene {
 
     .main-button {
       display: block;
-      width: 240px;
-      padding: 16px;
+      min-width: 200px;
+      width: fit-content;
+      max-width: 90vw;
+      padding: 16px 20px;
       margin: 10px auto;
       white-space: nowrap;
       font-size: 2.1em;
@@ -361,9 +363,9 @@ a {
   top: 8px;
   right: 12px;
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.5);
+  border: 1px solid rgba(200,200,200,0.2);
   border-radius: 4px;
-  color: white;
+  color: rgba(200,200,200,0.7);
   font-family: 'MyFont', system-ui, sans-serif;
   font-size: 0.8em;
   padding: 4px 9px;
@@ -1226,11 +1228,12 @@ const COLOR_MAP_MODAL = {
 function fitModalText() {
   const msgEl = document.getElementById('leaf-modal-message');
   const box = document.getElementById('leaf-modal-text');
-  // Use scrollHeight as guard — reliable with both fixed height and max-height
-  if (!box.scrollHeight) return;
+  // clientHeight is 0 if parent (#leaf-modal-leaf) hasn't been laid out yet —
+  // caller will retry via img.onload once the image gives the parent its height
+  if (!box.clientHeight) return;
   let size = 1.2;
   msgEl.style.fontSize = size + 'em';
-  while (size > 0.55 && (msgEl.scrollHeight > box.clientHeight || msgEl.scrollWidth > box.clientWidth)) {
+  while (size > 0.5 && (msgEl.scrollHeight > box.clientHeight || msgEl.scrollWidth > box.clientWidth)) {
     size = Math.round((size - 0.05) * 100) / 100;
     msgEl.style.fontSize = size + 'em';
   }
@@ -1326,8 +1329,9 @@ function showLeafModal(leafEl) {
 
   img.onload = fitModalText;
   img.src = '/Leaf-' + leafNumber + '.png';
-  // If image already cached, onload won't fire — defer via rAF so layout is fresh
-  if (img.complete) requestAnimationFrame(fitModalText);
+  // Always schedule a post-layout run; if the image isn't loaded yet, img.onload
+  // fires later with accurate container dimensions and overrides this call
+  setTimeout(fitModalText, 0);
 }
 
 function hideLeafModal() {
@@ -1363,7 +1367,7 @@ document.getElementById('leaf-modal-translate').addEventListener('click', async 
       tb.style.direction = targetLang === 'ar' ? 'rtl' : 'ltr';
       tb.style.textAlign = targetLang === 'ar' ? 'right' : 'center';
       this.style.display = 'none';
-      fitModalText();
+      setTimeout(fitModalText, 0);
     } else {
       this.disabled = false;
     }
