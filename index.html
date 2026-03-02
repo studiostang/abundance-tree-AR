@@ -841,7 +841,7 @@ const GT_LANG = { en:'en', es:'es', hmn:'hmn', ar:'ar', fr:'fr', de:'de', hi:'hi
 
 let currentLang = 'en';
 let currentLeafNumber = '1';
-const LANG_LABELS = { en:'EN', es:'ES', hmn:'HM', ar:'AR', fr:'FR', de:'DE', hi:'HI', ja:'JP', ko:'KO', pt:'PT', zh:'ZH' };
+const LANG_LABELS = { en:'EN', es:'ES', hmn:'HM', ar:'AR', fr:'FR', de:'DE', hi:'HI', ja:'JP', ko:'KO', pt:'PT', zh:'中文' };
 
 function setLang(code) {
   currentLang = code;
@@ -1234,13 +1234,11 @@ function fitModalText() {
   }
 }
 
-// Show translate button:
-// - UI is non-English: always show (translate any message into the UI language)
-// - UI is English: only show for non-ASCII messages (non-English scripts)
-function shouldShowTranslate(text, lang) {
-  if (!text) return false;
-  if (lang !== 'en') return true;
-  return /[^\x00-\x7F]/.test(text);
+// Show translate button for any non-empty message. Non-ASCII detection was
+// too narrow (missed Latin-script languages like French, Portuguese), so we
+// always offer translation — translating an already-English message is harmless.
+function shouldShowTranslate(text) {
+  return !!text;
 }
 
 function showLeafModal(leafEl) {
@@ -1260,7 +1258,7 @@ function showLeafModal(leafEl) {
   translateEl.dataset.targetLang = currentLang;
   translateEl.disabled = false;
   translateEl.textContent = (TRANSLATIONS[currentLang] || TRANSLATIONS.en).translate;
-  translateEl.style.display = shouldShowTranslate(message, currentLang) ? 'inline-block' : 'none';
+  translateEl.style.display = shouldShowTranslate(message) ? 'inline-block' : 'none';
 
   const modal = document.getElementById('leaf-modal');
   modal.style.display = 'flex';

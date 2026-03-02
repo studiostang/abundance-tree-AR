@@ -233,12 +233,12 @@ export async function spawnLeavesInAR(pendingLeaf) {
 
   await Promise.all(spawnPromises.filter(Boolean));
 
-  // Fade in batches of 5 leaves, 150ms between batches, 0 → 0.80 over 1.5s
+  // Fade in batches of 5 leaves, 80ms between batches, 0 → 0.80 over 1.5s
   setTimeout(() => {
     document.querySelectorAll('.ar-leaf').forEach((el, i) => {
-      setTimeout(() => fadeOpacity(el, 0, 0.80, 1500), Math.floor(i / 5) * 150);
+      setTimeout(() => fadeOpacity(el, 0, 0.80, 1500), Math.floor(i / 5) * 80);
     });
-  }, 300);
+  }, 50);
 
   console.log('Spawned ' + leaves.length + ' existing leaves');
 
