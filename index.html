@@ -57,6 +57,7 @@ a-scene {
       width: 240px;
       padding: 16px;
       margin: 10px auto;
+      white-space: nowrap;
       font-size: 2.1em;
       font-family: 'MyFont', cursive;
       border: 1px solid white;
@@ -1235,10 +1236,10 @@ function fitModalText() {
 }
 
 // Detect the language of a message.
-// Non-Latin scripts are identified instantly by Unicode range.
-// Latin-script text is sent to MyMemory (autodetect→en): if the translation
-// matches the original the message is English; if it differs, it's another
-// Latin language ('other'). Returns a lang code, 'other', or null on failure.
+// Non-Latin scripts identified instantly by Unicode range.
+// Latin-script text scored by language-specific marker words — no API call
+// needed, so there are no quota issues or rephrasing false-positives.
+// Always returns a language code string; null only for empty input.
 async function detectMessageLang(text) {
   if (!text) return null;
   if (/[\u4e00-\u9fff\u3400-\u4dbf]/.test(text))
@@ -1246,17 +1247,21 @@ async function detectMessageLang(text) {
   if (/[\uac00-\ud7af]/.test(text)) return 'ko';
   if (/[\u0600-\u06ff]/.test(text)) return 'ar';
   if (/[\u0900-\u097f]/.test(text)) return 'hi';
-  try {
-    const snippet = text.slice(0, 80);
-    const res = await fetch('https://api.mymemory.translated.net/get?q=' +
-      encodeURIComponent(snippet) + '&langpair=autodetect|en');
-    const data = await res.json();
-    if (data.responseStatus === 200 && data.responseData && data.responseData.translatedText) {
-      const norm = s => s.trim().toLowerCase().replace(/[^\w ]/g, '').replace(/\s+/g, ' ');
-      return norm(data.responseData.translatedText) === norm(snippet) ? 'en' : 'other';
-    }
-  } catch (e) {}
-  return null; // Unknown — caller will err on the side of showing the button
+  // Latin-script: find the language whose marker words appear most in the text
+  const words = new Set(text.toLowerCase().match(/[a-z\u00c0-\u024f]+/g) || []);
+  const markers = {
+    es: ['que', 'los', 'las', 'del', 'cuando', 'porque', 'más', 'siento', 'tengo'],
+    fr: ['les', 'des', 'dans', 'pour', 'quand', 'nous', 'une', 'parce', 'est'],
+    de: ['ich', 'und', 'ist', 'wenn', 'weil', 'bin', 'sind', 'für', 'mit'],
+    pt: ['uma', 'não', 'muito', 'sinto', 'tenho', 'mais', 'quando', 'porque'],
+    hmn: ['kuv', 'koj', 'peb', 'yog', 'tsis', 'tau', 'thiab'],
+  };
+  let best = null, bestScore = 0;
+  for (const [lang, list] of Object.entries(markers)) {
+    const score = list.filter(w => words.has(w)).length;
+    if (score > bestScore) { bestScore = score; best = lang; }
+  }
+  return best || 'en'; // Default to English when no non-English markers found
 }
 
 function showLeafModal(leafEl) {
@@ -1281,8 +1286,8 @@ function showLeafModal(leafEl) {
   detectMessageLang(message).then(function(detectedLang) {
     // Abort if the modal was reopened with a different leaf before detection finished
     if (translateEl.dataset.originalMessage !== message) return;
-    // Show if: detection failed (null → err safe), or detected lang differs from UI lang
-    const show = detectedLang === null || detectedLang !== uiLangAtOpen;
+    // Show only when detected language differs from UI language
+    const show = detectedLang !== null && detectedLang !== uiLangAtOpen;
     translateEl.style.display = show ? 'inline-block' : 'none';
   });
 
