@@ -290,7 +290,7 @@ a {
   left: 31%;
   top: 40%;
   width: 57%;
-  height: 30%;
+  max-height: 46%;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -1226,34 +1226,37 @@ const COLOR_MAP_MODAL = {
 function fitModalText() {
   const msgEl = document.getElementById('leaf-modal-message');
   const box = document.getElementById('leaf-modal-text');
-  if (!box.clientHeight) return;
+  // Use scrollHeight as guard — reliable with both fixed height and max-height
+  if (!box.scrollHeight) return;
   let size = 1.2;
   msgEl.style.fontSize = size + 'em';
-  while (size > 0.6 && (msgEl.scrollHeight > box.clientHeight || msgEl.scrollWidth > box.clientWidth)) {
+  while (size > 0.55 && (msgEl.scrollHeight > box.clientHeight || msgEl.scrollWidth > box.clientWidth)) {
     size = Math.round((size - 0.05) * 100) / 100;
     msgEl.style.fontSize = size + 'em';
   }
 }
 
-// Detect the language of a message.
-// Non-Latin scripts identified instantly by Unicode range.
-// Latin-script text scored by language-specific marker words — no API call
-// needed, so there are no quota issues or rephrasing false-positives.
-// Always returns a language code string; null only for empty input.
+// Detect the language of a message using a multi-tier approach:
+// 1. Non-Latin scripts via Unicode range (instant, reliable)
+// 2. Latin text: word-marker scoring for common phrases
+// 3. Non-ASCII characters present but no markers → 'other' (not English)
+// 4. Pure ASCII with no markers → MyMemory API, check matches[].source
+// 5. Default to 'en'
 async function detectMessageLang(text) {
   if (!text) return null;
+  // Tier 1: Non-Latin script detection
   if (/[\u4e00-\u9fff\u3400-\u4dbf]/.test(text))
     return /[\u3040-\u309f\u30a0-\u30ff]/.test(text) ? 'ja' : 'zh';
   if (/[\uac00-\ud7af]/.test(text)) return 'ko';
   if (/[\u0600-\u06ff]/.test(text)) return 'ar';
   if (/[\u0900-\u097f]/.test(text)) return 'hi';
-  // Latin-script: find the language whose marker words appear most in the text
+  // Tier 2: word-marker scoring (handles accented + plain Latin)
   const words = new Set(text.toLowerCase().match(/[a-z\u00c0-\u024f]+/g) || []);
   const markers = {
     es: ['que', 'los', 'las', 'del', 'cuando', 'porque', 'más', 'siento', 'tengo'],
     fr: ['les', 'des', 'dans', 'pour', 'quand', 'nous', 'une', 'parce', 'est'],
     de: ['ich', 'und', 'ist', 'wenn', 'weil', 'bin', 'sind', 'für', 'mit'],
-    pt: ['uma', 'não', 'muito', 'sinto', 'tenho', 'mais', 'quando', 'porque'],
+    pt: ['uma', 'não', 'muito', 'sinto', 'tenho', 'quando', 'porque', 'mais'],
     hmn: ['kuv', 'koj', 'peb', 'yog', 'tsis', 'tau', 'thiab'],
   };
   let best = null, bestScore = 0;
@@ -1261,7 +1264,27 @@ async function detectMessageLang(text) {
     const score = list.filter(w => words.has(w)).length;
     if (score > bestScore) { bestScore = score; best = lang; }
   }
-  return best || 'en'; // Default to English when no non-English markers found
+  if (best) return best;
+  // Tier 3: any non-ASCII character without a marker match → not plain English
+  if (/[^\x00-\x7F]/.test(text)) return 'other';
+  // Tier 4: pure ASCII with no markers — ask MyMemory for detected source language
+  try {
+    const snippet = text.slice(0, 80);
+    const res = await fetch('https://api.mymemory.translated.net/get?q=' +
+      encodeURIComponent(snippet) + '&langpair=autodetect|en');
+    const d = await res.json();
+    if (d.responseStatus === 200) {
+      if (d.matches && d.matches.length > 0) {
+        const src = (d.matches[0].source || '').split('-')[0].toLowerCase();
+        if (src) return src; // 'en', 'fr', 'es', etc.
+      }
+      if (d.responseData && d.responseData.translatedText) {
+        const norm = s => s.trim().toLowerCase().replace(/[^\w ]/g, '').replace(/\s+/g, ' ');
+        return norm(d.responseData.translatedText) === norm(snippet) ? 'en' : 'other';
+      }
+    }
+  } catch (e) {}
+  return 'en';
 }
 
 function showLeafModal(leafEl) {
@@ -1274,6 +1297,12 @@ function showLeafModal(leafEl) {
   img.style.filter = 'drop-shadow(0 0 14px ' + hex + ') brightness(1.15)';
 
   document.getElementById('leaf-modal-message').textContent = message;
+
+  // RTL support: set direction based on message script
+  const textBox = document.getElementById('leaf-modal-text');
+  const isRTL = /[\u0600-\u06ff]/.test(message);
+  textBox.style.direction = isRTL ? 'rtl' : 'ltr';
+  textBox.style.textAlign = isRTL ? 'right' : 'center';
 
   // Set up translate button — hidden while language detection runs asynchronously
   const translateEl = document.getElementById('leaf-modal-translate');
@@ -1297,7 +1326,8 @@ function showLeafModal(leafEl) {
 
   img.onload = fitModalText;
   img.src = '/Leaf-' + leafNumber + '.png';
-  if (img.complete) fitModalText();
+  // If image already cached, onload won't fire — defer via rAF so layout is fresh
+  if (img.complete) requestAnimationFrame(fitModalText);
 }
 
 function hideLeafModal() {
@@ -1329,6 +1359,9 @@ document.getElementById('leaf-modal-translate').addEventListener('click', async 
     const data = await res.json();
     if (data.responseStatus === 200 && data.responseData && data.responseData.translatedText) {
       document.getElementById('leaf-modal-message').textContent = data.responseData.translatedText;
+      const tb = document.getElementById('leaf-modal-text');
+      tb.style.direction = targetLang === 'ar' ? 'rtl' : 'ltr';
+      tb.style.textAlign = targetLang === 'ar' ? 'right' : 'center';
       this.style.display = 'none';
       fitModalText();
     } else {
