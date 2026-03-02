@@ -74,7 +74,7 @@ export async function loadLeaves() {
 
 // Render a single leaf onto a canvas and return a data URL
 async function renderLeafCanvas(leaf) {
-  const font = new FontFace('MyFont', 'url(/Myfont.ttf)');
+  const font = new FontFace('MyFont', 'url(/Myfont1-Regular.ttf)');
   await font.load();
   document.fonts.add(font);
 
@@ -210,7 +210,7 @@ export async function spawnLeavesInAR(pendingLeaf) {
     return;
   }
 
-  const font = new FontFace('MyFont', 'url(/Myfont.ttf)');
+  const font = new FontFace('MyFont', 'url(/Myfont1-Regular.ttf)');
   await font.load();
   document.fonts.add(font);
 
