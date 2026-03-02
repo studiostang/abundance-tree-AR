@@ -127,7 +127,7 @@ a-scene {
 .leaf-option .leaf-prompt {
   display: none; /* hidden by default; shown for non-English UI only */
   position: absolute;
-  top: 42%;
+  top: 45%;
   left: 0;
   right: 0;
   padding-left: 31%;
@@ -155,11 +155,30 @@ a-scene {
   padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
 }
 
-#selected-leaf-img {
+#selected-leaf-wrap {
+  position: relative;
   width: 75vw;
   max-width: 320px;
+}
+
+#selected-leaf-img {
+  width: 100%;
   height: auto;
   transition: filter 0.3s ease;
+}
+
+#form-leaf-prompt {
+  display: none; /* shown for non-English UI only */
+  position: absolute;
+  top: 45%;
+  left: 0;
+  right: 0;
+  padding-left: 31%;
+  padding-right: 18%;
+  font-size: 1em;
+  color: #2a1a00;
+  pointer-events: none;
+  margin: 0;
 }
 
 
@@ -514,8 +533,10 @@ a {
 
     <div id="leaf-form-screen" class="hidden">
   <div id="form-container">
-   <img id="selected-leaf-img" src="" alt="Selected leaf" style="display:none;" />
-   <p id="form-leaf-prompt" class="leaf-prompt"></p>
+   <div id="selected-leaf-wrap">
+     <img id="selected-leaf-img" src="" alt="Selected leaf" style="display:none;" />
+     <p id="form-leaf-prompt" class="leaf-prompt"></p>
+   </div>
 <div id="content-warning" class="hidden" data-i18n="contentWarning" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); border-radius: 8px; padding: 12px 16px; color: white; font-size: 1.2em; line-height: 1.4;">
   Please revise your message to keep this space kind and respectful for everyone.
 </div>
@@ -841,6 +862,7 @@ function setLang(code) {
   document.querySelectorAll('.leaf-option .leaf-prompt').forEach(function(el) {
     el.style.display = code !== 'en' ? 'block' : 'none';
   });
+  document.getElementById('form-leaf-prompt').style.display = code !== 'en' ? 'block' : 'none';
 }
 
 // Lang picker — dropdown anchored to top-right
@@ -1019,7 +1041,9 @@ function showLeafForm(leafNumber) {
   document.getElementById('selected-leaf-img').src = leafImages[leafNumber];
   document.getElementById('selected-leaf-img').style.display = 'block';
   const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
-  document.getElementById('form-leaf-prompt').textContent = t['leaf' + leafNumber + 'prompt'] || '';
+  const fp = document.getElementById('form-leaf-prompt');
+  fp.textContent = t['leaf' + leafNumber + 'prompt'] || '';
+  fp.style.display = currentLang !== 'en' ? 'block' : 'none';
 }
 
 document.getElementById('btn-back-to-landing').addEventListener('click', function() {
