@@ -125,12 +125,13 @@ a-scene {
 }
 
 .leaf-option .leaf-prompt {
+  display: none; /* hidden by default; shown for non-English UI only */
   position: absolute;
-  top: 42%;
+  top: 44%;
   left: 0;
   right: 0;
-  padding-left: 28%;
-  padding-right: 8%;
+  padding-left: 31%;
+  padding-right: 16%;
   font-size: 0.9em;
   color: #2a1a00;
   pointer-events: none;
@@ -336,8 +337,8 @@ a {
 }
 
 #lang-btn {
-  position: absolute;
-  top: 12px;
+  position: fixed;
+  top: 8px;
   right: 12px;
   background: transparent;
   border: 1px solid rgba(255,255,255,0.5);
@@ -353,6 +354,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 15;
 }
 
 #lang-btn:active {
@@ -362,38 +364,36 @@ a {
 #lang-picker {
   display: none;
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 56px;
+  right: 12px;
   z-index: 300;
-  background: rgba(0,0,0,0.88);
-  align-items: center;
-  justify-content: center;
+  background: rgba(18,18,18,0.97);
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.14);
+  overflow: hidden;
 }
 
 #lang-picker-inner {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  max-height: 90vh;
+  align-items: stretch;
+  padding: 6px 0;
+  width: 190px;
+  max-height: 75vh;
   overflow-y: auto;
-  padding: 20px;
-  width: 100%;
-  max-width: 320px;
 }
 
 .lang-option {
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  font-size: 1.3em;
+  font-size: 1.1em;
   color: rgba(255,255,255,0.8);
   background: transparent;
   border: none;
-  padding: 10px 20px;
+  padding: 10px 18px;
   cursor: pointer;
   min-height: 44px;
   width: 100%;
-  text-align: center;
-  border-radius: 4px;
+  text-align: left;
 }
 
 .lang-option:active {
@@ -404,22 +404,6 @@ a {
 .lang-option.active-lang {
   color: white;
   font-weight: bold;
-}
-
-#lang-picker-close {
-  margin-top: 12px;
-  font-size: 1.5em;
-  color: rgba(255,255,255,0.5);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 8px 16px;
-  min-width: 44px;
-  min-height: 44px;
-}
-
-#lang-picker-close:active {
-  color: white;
 }
   </style>
 
@@ -513,7 +497,7 @@ a {
       <div id="leaf-options">
         <div class="leaf-option" data-leaf="1" role="button" aria-label="Leaf 1">
           <img src="/Leaf-1.png" alt="Leaf 1" />
-          <p class="leaf-prompt" data-i18n="leaf1prompt">I feel rich because...</p>
+          <p class="leaf-prompt" data-i18n="leaf1prompt">Today I feel rich because...</p>
         </div>
         <div class="leaf-option" data-leaf="2" role="button" aria-label="Leaf 2">
           <img src="/Leaf-2.png" alt="Leaf 2" />
@@ -579,7 +563,6 @@ a {
       <button class="lang-option" data-lang="ko">한국어</button>
       <button class="lang-option" data-lang="pt">Português</button>
       <button class="lang-option" data-lang="zh">中文</button>
-      <button id="lang-picker-close" aria-label="Close language picker">✕</button>
     </div>
   </div>
 
@@ -604,7 +587,7 @@ const TRANSLATIONS = {
     studioLink: 'Click to see more at studiostang.com',
     contentWarning: 'Please revise your message to keep this space kind and respectful for everyone.',
     /* Fix 1: leaf1 = "I feel rich because", leaf3 = "I feel most alive when" */
-    leaf1prompt: 'I feel rich because...',
+    leaf1prompt: 'Today I feel rich because...',
     leaf2prompt: 'I share my abundance by...',
     leaf3prompt: 'I feel most alive when...',
     translate: 'translate',
@@ -626,7 +609,7 @@ const TRANSLATIONS = {
     tapRead: 'Toca una hoja para leerla',
     studioLink: 'Haz clic para ver más en studiostang.com',
     contentWarning: 'Por favor revisa tu mensaje para mantener este espacio amable y respetuoso.',
-    leaf1prompt: 'Me siento rico/a porque...',
+    leaf1prompt: 'Hoy me siento rico/a porque...',
     leaf2prompt: 'Comparto mi abundancia...',
     leaf3prompt: 'Me siento más vivo/a cuando...',
     translate: 'traducir',
@@ -648,7 +631,7 @@ const TRANSLATIONS = {
     tapRead: 'Kov ib daim nplooj los nyeem',
     studioLink: 'Nyem los saib ntxiv ntawm studiostang.com',
     contentWarning: 'Thov kho koj cov lus kom chaw no zoo thiab hwm.',
-    leaf1prompt: 'Kuv xav nplua nuj vim...',
+    leaf1prompt: 'Hnub no kuv xav nplua nuj vim...',
     leaf2prompt: 'Kuv qhia kuv kev vam meej los ntawm...',
     leaf3prompt: 'Kuv xav tshaj plaws thaum...',
     translate: 'txhais',
@@ -670,7 +653,7 @@ const TRANSLATIONS = {
     tapRead: 'اضغط على ورقة لقراءتها',
     studioLink: 'انقر لرؤية المزيد في studiostang.com',
     contentWarning: 'يرجى مراجعة رسالتك للحفاظ على هذه المساحة لطيفة ومحترمة.',
-    leaf1prompt: 'أشعر بالثراء لأن...',
+    leaf1prompt: 'أشعر اليوم بالثراء لأن...',
     leaf2prompt: 'أشارك وفرتي من خلال...',
     leaf3prompt: 'أشعر بالحيوية أكثر عندما...',
     translate: 'ترجم',
@@ -692,7 +675,7 @@ const TRANSLATIONS = {
     tapRead: 'Touchez une feuille pour la lire',
     studioLink: 'Cliquez pour en voir plus sur studiostang.com',
     contentWarning: 'Veuillez réviser votre message pour garder cet espace bienveillant et respectueux.',
-    leaf1prompt: 'Je me sens riche parce que...',
+    leaf1prompt: "Aujourd'hui je me sens riche parce que...",
     leaf2prompt: 'Je partage mon abondance en...',
     leaf3prompt: 'Je me sens le plus vivant(e) quand...',
     translate: 'traduire',
@@ -714,7 +697,7 @@ const TRANSLATIONS = {
     tapRead: 'Tippe auf ein Blatt, um es zu lesen',
     studioLink: 'Klick für mehr auf studiostang.com',
     contentWarning: 'Bitte überarbeite deine Nachricht, damit dieser Raum freundlich und respektvoll bleibt.',
-    leaf1prompt: 'Ich fühle mich reich, weil...',
+    leaf1prompt: 'Heute fühle ich mich reich, weil...',
     leaf2prompt: 'Ich teile meinen Überfluss, indem...',
     leaf3prompt: 'Ich fühle mich am lebendigsten, wenn...',
     translate: 'übersetzen',
@@ -736,7 +719,7 @@ const TRANSLATIONS = {
     tapRead: 'पत्ती पढ़ने के लिए उसे दबाएँ',
     studioLink: 'studiostang.com पर अधिक देखने के लिए क्लिक करें',
     contentWarning: 'कृपया अपना संदेश संशोधित करें ताकि यह स्थान सभी के लिए दयालु और सम्मानजनक रहे।',
-    leaf1prompt: 'मैं समृद्ध महसूस करता/करती हूँ क्योंकि...',
+    leaf1prompt: 'आज मैं समृद्ध महसूस करता/करती हूँ क्योंकि...',
     leaf2prompt: 'मैं अपनी प्रचुरता इस तरह साझा करता/करती हूँ...',
     leaf3prompt: 'मैं सबसे जीवंत महसूस करता/करती हूँ जब...',
     translate: 'अनुवाद करें',
@@ -758,7 +741,7 @@ const TRANSLATIONS = {
     tapRead: '葉をタップして読む',
     studioLink: 'studiostang.comでもっと見る',
     contentWarning: 'このスペースをみんなに優しく敬意ある場所に保つため、メッセージを見直してください。',
-    leaf1prompt: '豊かだと感じるのは...',
+    leaf1prompt: '今日、豊かだと感じるのは...',
     leaf2prompt: '豊かさをシェアするのは...',
     leaf3prompt: '一番生き生きとするのは...',
     translate: '翻訳',
@@ -780,7 +763,7 @@ const TRANSLATIONS = {
     tapRead: '나뭇잎을 탭해서 읽어보세요',
     studioLink: 'studiostang.com에서 더 보기',
     contentWarning: '이 공간을 모두에게 친절하고 존중하는 공간으로 유지하기 위해 메시지를 수정해 주세요.',
-    leaf1prompt: '풍요롭다고 느끼는 이유는...',
+    leaf1prompt: '오늘 풍요롭다고 느끼는 이유는...',
     leaf2prompt: '나의 풍요를 나누는 방법은...',
     leaf3prompt: '가장 살아있다고 느낄 때는...',
     translate: '번역',
@@ -802,7 +785,7 @@ const TRANSLATIONS = {
     tapRead: 'Toque em uma folha para lê-la',
     studioLink: 'Clique para ver mais em studiostang.com',
     contentWarning: 'Por favor, revise sua mensagem para manter este espaço gentil e respeitoso para todos.',
-    leaf1prompt: 'Eu me sinto rico/a porque...',
+    leaf1prompt: 'Hoje eu me sinto rico/a porque...',
     leaf2prompt: 'Eu compartilho minha abundância...',
     leaf3prompt: 'Eu me sinto mais vivo/a quando...',
     translate: 'traduzir',
@@ -824,7 +807,7 @@ const TRANSLATIONS = {
     tapRead: '点击一片叶子来阅读',
     studioLink: '点击在studiostang.com上查看更多',
     contentWarning: '请修改您的留言，以保持这个空间对所有人友善和尊重。',
-    leaf1prompt: '我感到富足，因为...',
+    leaf1prompt: '今天我感到富足，因为...',
     leaf2prompt: '我通过...分享我的丰盛',
     leaf3prompt: '我最有活力的时候是...',
     translate: '翻译',
@@ -854,19 +837,16 @@ function setLang(code) {
   document.querySelectorAll('.lang-option').forEach(function(btn) {
     btn.classList.toggle('active-lang', btn.dataset.lang === code);
   });
+  // Fix 3: hide translated prompts for English, show for all other languages
+  document.querySelectorAll('.leaf-option .leaf-prompt').forEach(function(el) {
+    el.style.display = code !== 'en' ? '' : 'none';
+  });
 }
 
-// Lang picker
-document.getElementById('lang-btn').addEventListener('click', function() {
-  document.getElementById('lang-picker').style.display = 'flex';
-});
-
-document.getElementById('lang-picker-close').addEventListener('click', function() {
-  document.getElementById('lang-picker').style.display = 'none';
-});
-
-document.getElementById('lang-picker').addEventListener('click', function(e) {
-  if (e.target === this) this.style.display = 'none';
+// Lang picker — dropdown anchored to top-right
+document.getElementById('lang-btn').addEventListener('click', function(e) {
+  e.stopPropagation();
+  document.getElementById('lang-picker').style.display = 'block';
 });
 
 document.querySelectorAll('.lang-option').forEach(function(btn) {
@@ -874,6 +854,16 @@ document.querySelectorAll('.lang-option').forEach(function(btn) {
     setLang(this.dataset.lang);
     document.getElementById('lang-picker').style.display = 'none';
   });
+});
+
+// Close dropdown when tapping outside
+document.addEventListener('click', function(e) {
+  const picker = document.getElementById('lang-picker');
+  if (picker.style.display !== 'none' &&
+      !picker.contains(e.target) &&
+      e.target !== document.getElementById('lang-btn')) {
+    picker.style.display = 'none';
+  }
 });
 
 let hideTimeout;
@@ -1217,12 +1207,11 @@ function fitModalText() {
   }
 }
 
-// Show translate button when: non-English UI (user may want English text translated),
-// or message contains non-ASCII characters (suggests a non-English message).
+// Show translate button only when message contains non-ASCII characters,
+// indicating a non-English script (CJK, Arabic, Devanagari, etc.).
+// Never prompt translation of English-script messages.
 function shouldShowTranslate(text) {
-  if (!text) return false;
-  if (currentLang !== 'en') return true;
-  return /[^\x00-\x7F]/.test(text);
+  return !!text && /[^\x00-\x7F]/.test(text);
 }
 
 function showLeafModal(leafEl) {
