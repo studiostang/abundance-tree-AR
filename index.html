@@ -127,11 +127,11 @@ a-scene {
 .leaf-option .leaf-prompt {
   display: none; /* hidden by default; shown for non-English UI only */
   position: absolute;
-  top: 44%;
+  top: 42%;
   left: 0;
   right: 0;
   padding-left: 31%;
-  padding-right: 16%;
+  padding-right: 18%;
   font-size: 0.9em;
   color: #2a1a00;
   pointer-events: none;
@@ -837,9 +837,9 @@ function setLang(code) {
   document.querySelectorAll('.lang-option').forEach(function(btn) {
     btn.classList.toggle('active-lang', btn.dataset.lang === code);
   });
-  // Fix 3: hide translated prompts for English, show for all other languages
+  // Hide translated prompts for English, show for all other languages
   document.querySelectorAll('.leaf-option .leaf-prompt').forEach(function(el) {
-    el.style.display = code !== 'en' ? '' : 'none';
+    el.style.display = code !== 'en' ? 'block' : 'none';
   });
 }
 
@@ -1058,6 +1058,10 @@ document.querySelectorAll('.color-swatch').forEach(function(swatch) {
 // Submit button
 document.getElementById('btn-submit').addEventListener('click', async function() {
   const message = document.getElementById('leaf-message').value.trim();
+
+  // --- All validation runs first, before any AR or state changes ---
+  if (!message) { alert('Please write something on your leaf first.'); return; }
+
   const bannedWords = ['fuck', 'shit', 'bitch', 'asshole', 'cunt', 'dick',
   'pussy', 'nigger', 'faggot', 'retard', 'whore', 'slut', 'bastard',
   'chink', 'spic', 'kike', 'wetback', 'cracker', 'tranny', 'dyke',
@@ -1065,7 +1069,6 @@ document.getElementById('btn-submit').addEventListener('click', async function()
 
   const messageLower = message.toLowerCase();
   const hasBannedWord = bannedWords.some(word => messageLower.includes(word));
-
   if (hasBannedWord) {
     document.getElementById('content-warning').classList.remove('hidden');
     return;
@@ -1073,9 +1076,9 @@ document.getElementById('btn-submit').addEventListener('click', async function()
 
   const selectedSwatch = document.querySelector('.color-swatch.selected');
   const selectedLeaf = document.querySelector('.leaf-option.selected');
-
-  if (!message) { alert('Please write something on your leaf first.'); return; }
   if (!selectedSwatch) { alert('Please choose a color for your leaf.'); return; }
+  if (!selectedLeaf) { alert('Please choose a leaf shape first.'); return; }
+  // --- End validation ---
 
   const color = selectedSwatch.getAttribute('data-color');
   const leafNumber = selectedLeaf.getAttribute('data-leaf');
