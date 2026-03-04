@@ -167,7 +167,7 @@ async function spawnLeafElement(leaf, point, initialOpacity, pulse) {
   const el = document.createElement('a-image');
   el.classList.add('ar-leaf');
   el.setAttribute('src', dataURL);
-  el.setAttribute('position', point.x + ' ' + point.y + ' ' + point.z);
+  el.setAttribute('position', point.x + ' ' + (point.y - 2.0) + ' ' + point.z);
   el.setAttribute('width', '0.5');
   el.setAttribute('height', '0.25');
   el.setAttribute('transparent', 'true');
