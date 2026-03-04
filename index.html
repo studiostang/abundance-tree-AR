@@ -431,7 +431,6 @@ a {
 
 </head>
 <body>
-<div id="ar-debug" style="position:fixed;top:50%;left:10px;background:rgba(0,0,0,0.8);color:lime;font-size:24px;padding:10px;z-index:9999;"></div>
   <a-scene mindar-image="imageTargetSrc: /targets.mind; filterMinCF: 0.001; filterBeta: 1000; warmupTolerance: 5; missTolerance: 10" color-space="sRGB" renderer="colorManagement: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
  <a-entity mindar-image-target="targetIndex: 0" position="0 -3.0 0">
@@ -1172,9 +1171,6 @@ const screenX = (e.clientX - rect.left) / rect.width;
 const screenY = (e.clientY - rect.top) / rect.height;
 const arX = (screenX - 0.5) * 0.08;
 const arY = (0.5 - screenY) * 1.5 + 1.3;
-const debugDiv = document.getElementById('ar-debug');
-if(debugDiv) debugDiv.textContent = 'arX: ' + arX.toFixed(2) + ' arY: ' + arY.toFixed(2);
-
 window.placeLeafAtTap(arX, arY);
 
     hideTapPlacePrompt();
@@ -1388,9 +1384,6 @@ document.querySelector('a-scene').addEventListener('click', function(e) {
   const screenY = (e.clientY - rect.top) / rect.height;
   const arX = (screenX - 0.5) * 0.08;
   const arY = (0.5 - screenY) * 1.5 + 1.3;
-  const debugDiv = document.getElementById('ar-debug');
-  if(debugDiv) debugDiv.textContent = 'arX: ' + arX.toFixed(2) + ' arY: ' + arY.toFixed(2);
-
   let nearest = null;
   let nearestDist = Infinity;
   document.querySelectorAll('.ar-leaf').forEach(function(el) {
