@@ -275,17 +275,17 @@ async function placeLeafAtTap(tapX, tapY) {
   const leaf = window._pendingLeaf;
 
   // Divide screen into 6 zones based on tap position
-  const xZone = tapX < -0.2 ? 'left' : tapX > 0.2 ? 'right' : 'center';
-  const yZone = tapY > 1.4 ? 'top' : 'bottom';
+  const xZone = tapX < -0.15 ? 'left' : tapX > 0.15 ? 'right' : 'center';
+  const yZone = tapY > 1.40 ? 'top' : 'bottom';
 
   // Zone coordinate ranges
   const zones = {
-    'left-top':     { xMin: -0.45, xMax: -0.18, yMin: 1.40, yMax: 1.55 },
-    'left-bottom':  { xMin: -0.45, xMax: -0.18, yMin: 1.25, yMax: 1.40 },
-    'center-top':   { xMin: -0.18, xMax:  0.18, yMin: 1.40, yMax: 1.55 },
-    'center-bottom':{ xMin: -0.18, xMax:  0.18, yMin: 1.25, yMax: 1.40 },
-    'right-top':    { xMin:  0.18, xMax:  0.45, yMin: 1.40, yMax: 1.55 },
-    'right-bottom': { xMin:  0.18, xMax:  0.45, yMin: 1.25, yMax: 1.40 },
+    'left-top':     { xMin: -0.50, xMax: -0.15, yMin: 1.40, yMax: 1.55 },
+    'left-bottom':  { xMin: -0.50, xMax: -0.15, yMin: 1.25, yMax: 1.40 },
+    'center-top':   { xMin: -0.15, xMax:  0.15, yMin: 1.40, yMax: 1.55 },
+    'center-bottom':{ xMin: -0.15, xMax:  0.15, yMin: 1.25, yMax: 1.40 },
+    'right-top':    { xMin:  0.15, xMax:  0.50, yMin: 1.40, yMax: 1.55 },
+    'right-bottom': { xMin:  0.15, xMax:  0.50, yMin: 1.25, yMax: 1.40 },
   };
 
   const zone = zones[xZone + '-' + yZone];
