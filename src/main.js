@@ -75,23 +75,6 @@ function getLeafRotation(x) {
   return '0 0 ' + (baseAngle + randomVariation);
 }
 
-// Find nearest available snap point to a tapped AR position
-function getNearestSnapPoint(tapX, tapY) {
-  let nearest = null;
-  let nearestDist = Infinity;
-  SNAP_POINTS.forEach((point, index) => {
-    if (takenSnapPoints[index]) return;
-    const dist = Math.sqrt(
-      Math.pow(point.x - tapX, 2) +
-      Math.pow(point.y - tapY, 2)
-    );
-    if (dist < nearestDist) {
-      nearestDist = dist;
-      nearest = { point, index };
-    }
-  });
-  return nearest;
-}
 
 export async function loadLeaves() {
   const q = query(collection(db, 'leaves'));
