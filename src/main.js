@@ -280,12 +280,12 @@ async function placeLeafAtTap(tapX, tapY) {
 
   // Zone coordinate ranges
   const zones = {
-    'left-top':     { xMin: -0.50, xMax: -0.15, yMin: 1.40, yMax: 1.55 },
-    'left-bottom':  { xMin: -0.50, xMax: -0.15, yMin: 1.25, yMax: 1.40 },
-    'center-top':   { xMin: -0.15, xMax:  0.15, yMin: 1.40, yMax: 1.55 },
-    'center-bottom':{ xMin: -0.15, xMax:  0.15, yMin: 1.25, yMax: 1.40 },
-    'right-top':    { xMin:  0.15, xMax:  0.50, yMin: 1.40, yMax: 1.55 },
-    'right-bottom': { xMin:  0.15, xMax:  0.50, yMin: 1.25, yMax: 1.40 },
+    'left-top':     { xMin: -1.20, xMax: -0.25, yMin: 1.40, yMax: 1.60 },
+    'left-bottom':  { xMin: -1.20, xMax: -0.25, yMin: 1.25, yMax: 1.40 },
+    'center-top':   { xMin: -0.25, xMax:  0.25, yMin: 1.40, yMax: 1.60 },
+    'center-bottom':{ xMin: -0.25, xMax:  0.25, yMin: 1.25, yMax: 1.40 },
+    'right-top':    { xMin:  0.25, xMax:  1.20, yMin: 1.40, yMax: 1.60 },
+    'right-bottom': { xMin:  0.25, xMax:  1.20, yMin: 1.25, yMax: 1.40 },
   };
 
   const zone = zones[xZone + '-' + yZone];
