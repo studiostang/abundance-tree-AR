@@ -1177,7 +1177,7 @@ document.getElementById('btn-submit').addEventListener('click', async function()
     const rect = scene.getBoundingClientRect();
 const screenX = (e.clientX - rect.left) / rect.width;
 const screenY = (e.clientY - rect.top) / rect.height;
-const arX = (screenX - 0.5) * 0.5;
+const arX = (screenX - 0.5) * 1.2;
 const arY = (0.5 - screenY) * 1.5 + 1.3;
 console.log('SCREEN:', screenX, screenY, 'AR:', arX, arY);
 window.placeLeafAtTap(arX, arY);
@@ -1391,7 +1391,7 @@ document.querySelector('a-scene').addEventListener('click', function(e) {
   const rect = this.getBoundingClientRect();
   const screenX = (e.clientX - rect.left) / rect.width;
   const screenY = (e.clientY - rect.top) / rect.height;
-  const arX = (screenX - 0.5) * 0.5;
+  const arX = (screenX - 0.5) * 1.2;
   const arY = (0.5 - screenY) * 1.5 + 1.3;
   let nearest = null;
   let nearestDist = Infinity;
