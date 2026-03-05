@@ -970,6 +970,7 @@ function checkAlreadyTracking(onTracked) {
 
 // AR back button
 document.getElementById('ar-back-btn').addEventListener('click', function() {
+  document.querySelector('a-scene').components['mindar-image'].stopAR();
   this.style.display = 'none';
   inARMode = false;
   cleanupARListeners();
