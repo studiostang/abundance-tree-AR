@@ -274,11 +274,7 @@ async function placeLeafAtTap(tapX, tapY) {
 
   const leaf = window._pendingLeaf;
 
-  const point = {
-    x: tapX + (Math.random() - 0.5) * 0.1,
-    y: tapY + (Math.random() - 0.5) * 0.1,
-    z: 0,
-  };
+  const point = { x: tapX + (Math.random() - 0.5) * 0.08, y: tapY + (Math.random() - 0.5) * 0.08, z: (Math.random() - 0.5) * 0.04 };
 
   // Spawn their leaf at full opacity with pulse
   console.log('tapX:', tapX, 'tapY:', tapY, 'point:', JSON.stringify(point));
