@@ -969,15 +969,8 @@ function checkAlreadyTracking(onTracked) {
 }
 
 // AR back button
-document.getElementById('ar-back-btn').addEventListener('click', function() {
-  try {
-    const sceneEl = document.querySelector('a-scene');
-    if (sceneEl && sceneEl.components && sceneEl.components['mindar-image']) {
-      sceneEl.components['mindar-image'].stopAR();
-    }
-  } catch(e) {
-    console.log('stopAR error:', e);
-  }
+document.getElementById('ar-back-btn').addEventListener('click', function(e) {
+  e.stopPropagation();
   this.style.display = 'none';
   inARMode = false;
   cleanupARListeners();
