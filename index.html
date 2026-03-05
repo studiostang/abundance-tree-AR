@@ -591,6 +591,15 @@ a {
   </div>
 
   <script type="module" src="/src/main.js"></script>
+<script>
+var consoleDiv = document.createElement("div");
+consoleDiv.style.cssText = "position:fixed;bottom:0;left:0;right:0;height:120px;background:rgba(0,0,0,0.85);color:lime;font-size:11px;overflow-y:auto;z-index:9999;padding:4px;";
+document.body.appendChild(consoleDiv);
+var origLog = console.log, origErr = console.error, origWarn = console.warn;
+console.log = function(){consoleDiv.innerHTML += "<div>" + Array.from(arguments).join(" ") + "</div>"; origLog.apply(console,arguments);};
+console.error = function(){consoleDiv.innerHTML += "<div style=color:red>" + Array.from(arguments).join(" ") + "</div>"; origErr.apply(console,arguments);};
+console.warn = function(){consoleDiv.innerHTML += "<div style=color:yellow>" + Array.from(arguments).join(" ") + "</div>"; origWarn.apply(console,arguments);};
+</script>
 
 <script>
 const TRANSLATIONS = {
