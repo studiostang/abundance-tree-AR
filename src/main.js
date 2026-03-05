@@ -73,9 +73,9 @@ const COLOR_MAP = {
 
 // Calculate rotation based on x position (leaf tip points outward from trunk)
 function getLeafRotation(x) {
-  const normalized = x / 0.675; // -1 to 1
-  const baseAngle = normalized * 90 + 90; // 0 to 180 degrees
-  const randomVariation = (Math.random() * 20) - 10; // ±10 degrees
+  const normalized = x / 0.675;
+  const baseAngle = normalized * 90 + 90;
+  const randomVariation = (Math.random() * 80) - 40;
   return '0 0 ' + (baseAngle + randomVariation);
 }
 
