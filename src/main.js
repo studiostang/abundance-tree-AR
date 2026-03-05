@@ -14,9 +14,8 @@ const TIERS = [
 TIERS.forEach((tier, tierIndex) => {
   for (let i = 0; i < tier.count; i++) {
     const side = i % 2 === 0 ? 1 : -1;
-    const xBase = (Math.random() * tier.xRange) * side;
-    const xJitter = (Math.random() - 0.5) * 0.04;
-    const x = Math.max(-tier.xRange, Math.min(tier.xRange, xBase + xJitter));
+    const xBase = (tier.xRange * 0.4) + (Math.random() * tier.xRange * 0.6);
+    const x = (xBase * side) + (Math.random() - 0.5) * 0.02;
     const y = tier.yMin + Math.random() * (tier.yMax - tier.yMin);
     const z = (Math.random() - 0.5) * 0.04;
     SNAP_POINTS.push({ x, y, z, tier: tierIndex });
