@@ -281,6 +281,7 @@ async function placeLeafAtTap(tapX, tapY) {
   };
 
   // Spawn their leaf at full opacity with pulse
+  console.log('tapX:', tapX, 'tapY:', tapY, 'point:', JSON.stringify(point));
   await spawnLeafElement(leaf, point, 1, true);
 
   // Save to Firebase
