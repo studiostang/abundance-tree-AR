@@ -1,31 +1,62 @@
 import { db } from './firebase.js';
 import { collection, addDoc, getDocs, query } from 'firebase/firestore';
 
-export const SNAP_POINTS = [
-  { x: -0.05, y: 1.42, z: 0.0  },
-  { x: 0.05,  y: 1.45, z: 0.01 },
-  { x: -0.1,  y: 1.38, z: -0.01},
-  { x: 0.1,   y: 1.40, z: 0.02 },
-  { x: 0.0,   y: 1.35, z: 0.0  },
-  { x: -0.05, y: 1.28, z: 0.01 },
-  { x: 0.1,   y: 1.30, z: 0.0  },
-  { x: 0.0,   y: 1.25, z: 0.02 },
-  { x: 0.08,  y: 1.22, z: -0.01},
-  { x: -0.08, y: 1.25, z: 0.01 },
-  { x: -0.15, y: 1.32, z: 0.0  },
-  { x: 0.15,  y: 1.35, z: 0.01 },
-  { x: -0.18, y: 1.28, z: 0.02 },
-  { x: 0.18,  y: 1.30, z: 0.0  },
-  { x: -0.20, y: 1.38, z: 0.01 },
-  { x: 0.20,  y: 1.40, z: 0.02 },
-  { x: -0.12, y: 1.42, z: 0.0  },
-  { x: 0.12,  y: 1.44, z: 0.01 },
-  { x: -0.22, y: 1.32, z: 0.02 },
-  { x: 0.22,  y: 1.35, z: 0.0  },
+export const SNAP_POINTS = [];
+
+// Tier definitions: { xRange, yMin, yMax, count }
+const TIERS = [
+  { xRange: 0.10, yMin: 1.28, yMax: 1.40, count: 30 },  // Tier 1 — tight core
+  { xRange: 0.20, yMin: 1.24, yMax: 1.44, count: 80 },  // Tier 2 — mid canopy
+  { xRange: 0.32, yMin: 1.20, yMax: 1.48, count: 140 }, // Tier 3 — full canopy
 ];
 
-// Track which snap points are taken: snapPointIndex -> leafId
+// Generate snap points for each tier with organic randomness
+TIERS.forEach((tier, tierIndex) => {
+  for (let i = 0; i < tier.count; i++) {
+    const side = i % 2 === 0 ? 1 : -1;
+    const xBase = (Math.random() * tier.xRange) * side;
+    const xJitter = (Math.random() - 0.5) * 0.04;
+    const x = Math.max(-tier.xRange, Math.min(tier.xRange, xBase + xJitter));
+    const y = tier.yMin + Math.random() * (tier.yMax - tier.yMin);
+    const z = (Math.random() - 0.5) * 0.04;
+    SNAP_POINTS.push({ x, y, z, tier: tierIndex });
+  }
+});
+
 const takenSnapPoints = {};
+
+const TIER_OPEN_THRESHOLD = 0.8;
+
+function getActiveTier() {
+  const tier0Count = TIERS[0].count;
+  const tier1Count = TIERS[1].count;
+  const tier0Taken = SNAP_POINTS.filter(p => p.tier === 0).filter((p, i) => takenSnapPoints[SNAP_POINTS.indexOf(p)]).length;
+  const tier1Taken = SNAP_POINTS.filter(p => p.tier === 1).filter((p, i) => takenSnapPoints[SNAP_POINTS.indexOf(p)]).length;
+  if (tier0Taken < tier0Count * TIER_OPEN_THRESHOLD) return 0;
+  if (tier1Taken < tier1Count * TIER_OPEN_THRESHOLD) return 1;
+  return 2;
+}
+
+function getNearestSnapPoint(tapX, tapY) {
+  const activeTier = getActiveTier();
+  let nearest = null;
+  let nearestDist = Infinity;
+  SNAP_POINTS.forEach((point, index) => {
+    if (takenSnapPoints[index]) return;
+    if (point.tier > activeTier) return;
+    const xDist = Math.abs(point.x - tapX) * 0.8;
+    const yDist = Math.abs(point.y - tapY);
+    const dist = Math.sqrt(xDist * xDist + yDist * yDist);
+    if (dist < nearestDist) { nearestDist = dist; nearest = { point, index }; }
+  });
+  if (!nearest) {
+    const tier = TIERS[Math.min(activeTier, TIERS.length - 1)];
+    const x = (Math.random() - 0.5) * tier.xRange * 2;
+    const y = tier.yMin + Math.random() * (tier.yMax - tier.yMin);
+    return { point: { x, y, z: (Math.random() - 0.5) * 0.04, tier: activeTier }, index: -1 };
+  }
+  return nearest;
+}
 
 const COLOR_MAP = {
   'pale-yellow': '#FFF9A0',
