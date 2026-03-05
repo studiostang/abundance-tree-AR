@@ -274,35 +274,62 @@ async function placeLeafAtTap(tapX, tapY) {
 
   const leaf = window._pendingLeaf;
 
-  // Divide screen into 6 zones based on tap position
+  // Get current leaf count to determine active tier
+  const existingLeaves = Array.from(document.querySelectorAll('.ar-leaf'));
+  const leafCount = existingLeaves.length;
+
+  // Tier boundaries with soft blend at 80%
+  const tier = leafCount < 40 ? 0 : leafCount < 80 ? 1 : 2;
+
+  // Zone bounds per tier — each tier expands outward
+  const TIER_ZONES = [
+    // Tier 1 — tight central canopy
+    {
+      'left-top':     { xMin: -0.45, xMax: -0.12, yMin: 1.40, yMax: 1.52 },
+      'left-bottom':  { xMin: -0.45, xMax: -0.12, yMin: 1.28, yMax: 1.40 },
+      'center-top':   { xMin: -0.12, xMax:  0.12, yMin: 1.40, yMax: 1.52 },
+      'center-bottom':{ xMin: -0.12, xMax:  0.12, yMin: 1.28, yMax: 1.40 },
+      'right-top':    { xMin:  0.12, xMax:  0.45, yMin: 1.40, yMax: 1.52 },
+      'right-bottom': { xMin:  0.12, xMax:  0.45, yMin: 1.28, yMax: 1.40 },
+    },
+    // Tier 2 — mid canopy
+    {
+      'left-top':     { xMin: -0.65, xMax: -0.15, yMin: 1.42, yMax: 1.58 },
+      'left-bottom':  { xMin: -0.65, xMax: -0.15, yMin: 1.26, yMax: 1.42 },
+      'center-top':   { xMin: -0.15, xMax:  0.15, yMin: 1.42, yMax: 1.58 },
+      'center-bottom':{ xMin: -0.15, xMax:  0.15, yMin: 1.26, yMax: 1.42 },
+      'right-top':    { xMin:  0.15, xMax:  0.65, yMin: 1.42, yMax: 1.58 },
+      'right-bottom': { xMin:  0.15, xMax:  0.65, yMin: 1.26, yMax: 1.42 },
+    },
+    // Tier 3 — full canopy
+    {
+      'left-top':     { xMin: -0.85, xMax: -0.18, yMin: 1.44, yMax: 1.65 },
+      'left-bottom':  { xMin: -0.85, xMax: -0.18, yMin: 1.24, yMax: 1.44 },
+      'center-top':   { xMin: -0.18, xMax:  0.18, yMin: 1.44, yMax: 1.65 },
+      'center-bottom':{ xMin: -0.18, xMax:  0.18, yMin: 1.24, yMax: 1.44 },
+      'right-top':    { xMin:  0.18, xMax:  0.85, yMin: 1.44, yMax: 1.65 },
+      'right-bottom': { xMin:  0.18, xMax:  0.85, yMin: 1.24, yMax: 1.44 },
+    },
+  ];
+
+  // Determine which zone was tapped
   const xZone = tapX < -0.15 ? 'left' : tapX > 0.15 ? 'right' : 'center';
   const yZone = tapY > 1.40 ? 'top' : 'bottom';
-
-  // Zone coordinate ranges
-  const zones = {
-    'left-top':     { xMin: -1.20, xMax: -0.25, yMin: 1.40, yMax: 1.60 },
-    'left-bottom':  { xMin: -1.20, xMax: -0.25, yMin: 1.25, yMax: 1.40 },
-    'center-top':   { xMin: -0.25, xMax:  0.25, yMin: 1.40, yMax: 1.60 },
-    'center-bottom':{ xMin: -0.25, xMax:  0.25, yMin: 1.25, yMax: 1.40 },
-    'right-top':    { xMin:  0.25, xMax:  1.20, yMin: 1.40, yMax: 1.60 },
-    'right-bottom': { xMin:  0.25, xMax:  1.20, yMin: 1.25, yMax: 1.40 },
-  };
-
-  const zone = zones[xZone + '-' + yZone];
+  const zone = TIER_ZONES[tier][xZone + '-' + yZone];
 
   // Minimum distance between leaves
   const MIN_DIST = 0.08;
-  const existingLeaves = Array.from(document.querySelectorAll('.ar-leaf')).map(el => ({
+  const placedPositions = existingLeaves.map(el => ({
     x: parseFloat(el.dataset.arX),
     y: parseFloat(el.dataset.arY),
   })).filter(p => !isNaN(p.x) && !isNaN(p.y));
 
-  // Try up to 10 times to find a non-overlapping spot
+  // Try up to 10 times to find non-overlapping spot
   let point = null;
   for (let attempt = 0; attempt < 10; attempt++) {
     const x = zone.xMin + Math.random() * (zone.xMax - zone.xMin);
     const y = zone.yMin + Math.random() * (zone.yMax - zone.yMin);
-    const tooClose = existingLeaves.some(p =>
+    const tooClose = placedPositions.some(p =>
       Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < MIN_DIST
     );
     if (!tooClose) { point = { x, y, z: (Math.random() - 0.5) * 0.04 }; break; }
