@@ -1169,8 +1169,8 @@ document.getElementById('btn-submit').addEventListener('click', async function()
     const rect = scene.getBoundingClientRect();
 const screenX = (e.clientX - rect.left) / rect.width;
 const screenY = (e.clientY - rect.top) / rect.height;
-const arX = (screenX - 0.5) * 0.05;
-const arY = (0.5 - screenY) * 0.9 + 1.5;
+const arX = (screenX - 0.5) * 0.07;
+const arY = (0.5 - screenY) * 1.2 + 1.4;
 window.placeLeafAtTap(arX, arY);
 
     hideTapPlacePrompt();
@@ -1382,8 +1382,8 @@ document.querySelector('a-scene').addEventListener('click', function(e) {
   const rect = this.getBoundingClientRect();
   const screenX = (e.clientX - rect.left) / rect.width;
   const screenY = (e.clientY - rect.top) / rect.height;
-  const arX = (screenX - 0.5) * 0.05;
-  const arY = (0.5 - screenY) * 0.9 + 1.5;
+  const arX = (screenX - 0.5) * 0.07;
+  const arY = (0.5 - screenY) * 1.2 + 1.4;
   let nearest = null;
   let nearestDist = Infinity;
   document.querySelectorAll('.ar-leaf').forEach(function(el) {
