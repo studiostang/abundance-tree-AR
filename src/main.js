@@ -254,7 +254,7 @@ export async function spawnLeavesInAR(pendingLeaf) {
   // Fade in batches of 5 leaves, 80ms between batches, 0 → 0.80 over 1.5s
   setTimeout(() => {
     document.querySelectorAll('.ar-leaf').forEach((el, i) => {
-      setTimeout(() => fadeOpacity(el, 0, 0.80, 1500), Math.floor(i / 5) * 80);
+      setTimeout(() => { fadeOpacity(el, 0, 0.60, 1500); setTimeout(() => fadeOpacity(el, 0.60, 0.80, 8000), 1600); }, Math.floor(i / 5) * 80);
     });
   }, 50);
 
