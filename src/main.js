@@ -274,13 +274,51 @@ async function placeLeafAtTap(tapX, tapY) {
 
   const leaf = window._pendingLeaf;
 
-  const point = { x: tapX + (Math.random() - 0.5) * 0.08, y: tapY + (Math.random() - 0.5) * 0.08, z: (Math.random() - 0.5) * 0.04 };
+  // Divide screen into 6 zones based on tap position
+  const xZone = tapX < -0.2 ? 'left' : tapX > 0.2 ? 'right' : 'center';
+  const yZone = tapY > 1.4 ? 'top' : 'bottom';
 
-  // Spawn their leaf at full opacity with pulse
-  console.log('tapX:', tapX, 'tapY:', tapY, 'point:', JSON.stringify(point));
+  // Zone coordinate ranges
+  const zones = {
+    'left-top':     { xMin: -0.45, xMax: -0.18, yMin: 1.40, yMax: 1.55 },
+    'left-bottom':  { xMin: -0.45, xMax: -0.18, yMin: 1.25, yMax: 1.40 },
+    'center-top':   { xMin: -0.18, xMax:  0.18, yMin: 1.40, yMax: 1.55 },
+    'center-bottom':{ xMin: -0.18, xMax:  0.18, yMin: 1.25, yMax: 1.40 },
+    'right-top':    { xMin:  0.18, xMax:  0.45, yMin: 1.40, yMax: 1.55 },
+    'right-bottom': { xMin:  0.18, xMax:  0.45, yMin: 1.25, yMax: 1.40 },
+  };
+
+  const zone = zones[xZone + '-' + yZone];
+
+  // Minimum distance between leaves
+  const MIN_DIST = 0.08;
+  const existingLeaves = Array.from(document.querySelectorAll('.ar-leaf')).map(el => ({
+    x: parseFloat(el.dataset.arX),
+    y: parseFloat(el.dataset.arY),
+  })).filter(p => !isNaN(p.x) && !isNaN(p.y));
+
+  // Try up to 10 times to find a non-overlapping spot
+  let point = null;
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const x = zone.xMin + Math.random() * (zone.xMax - zone.xMin);
+    const y = zone.yMin + Math.random() * (zone.yMax - zone.yMin);
+    const tooClose = existingLeaves.some(p =>
+      Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < MIN_DIST
+    );
+    if (!tooClose) { point = { x, y, z: (Math.random() - 0.5) * 0.04 }; break; }
+  }
+
+  // Fallback if all attempts overlap
+  if (!point) {
+    point = {
+      x: zone.xMin + Math.random() * (zone.xMax - zone.xMin),
+      y: zone.yMin + Math.random() * (zone.yMax - zone.yMin),
+      z: (Math.random() - 0.5) * 0.04,
+    };
+  }
+
   await spawnLeafElement(leaf, point, 1, true);
 
-  // Save to Firebase
   try {
     const docRef = await addDoc(collection(db, 'leaves'), {
       leafNumber: leaf.leafNumber,
@@ -298,8 +336,6 @@ async function placeLeafAtTap(tapX, tapY) {
   }
 
   window._pendingLeaf = null;
-
-  // Signal to index.html that placement is done
   window.dispatchEvent(new CustomEvent('leafPlaced'));
 }
 
