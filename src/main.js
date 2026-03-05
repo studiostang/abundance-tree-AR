@@ -5,9 +5,9 @@ export const SNAP_POINTS = [];
 
 // Tier definitions: { xRange, yMin, yMax, count }
 const TIERS = [
-  { xRange: 0.15, yMin: 1.32, yMax: 1.36, count: 30 },  // Tier 1 — tight core
-  { xRange: 0.24, yMin: 1.29, yMax: 1.40, count: 80 },  // Tier 2 — mid canopy
-  { xRange: 0.34, yMin: 1.26, yMax: 1.44, count: 140 }, // Tier 3 — full canopy
+  { xRange: 0.15, yMin: 1.25, yMax: 1.45, count: 30 },  // Tier 1 — tight core
+  { xRange: 0.24, yMin: 1.22, yMax: 1.50, count: 80 },  // Tier 2 — mid canopy
+  { xRange: 0.34, yMin: 1.18, yMax: 1.55, count: 140 }, // Tier 3 — full canopy
 ];
 
 // Generate snap points for each tier with organic randomness
