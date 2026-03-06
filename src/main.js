@@ -310,37 +310,8 @@ async function placeLeafAtTap(tapX, tapY) {
     },
   ];
 
-  // Determine which zone was tapped
-  const xZone = tapX < -0.15 ? 'left' : tapX > 0.15 ? 'right' : 'center';
-  const yZone = tapY > 1.40 ? 'top' : 'bottom';
-  const zone = TIER_ZONES[tier][xZone + '-' + yZone];
-
-  // Minimum distance between leaves
-  const MIN_DIST = 0.03;
-  const placedPositions = existingLeaves.map(el => ({
-    x: parseFloat(el.dataset.arX),
-    y: parseFloat(el.dataset.arY),
-  })).filter(p => !isNaN(p.x) && !isNaN(p.y));
-
-  // Try up to 10 times to find non-overlapping spot
-  let point = null;
-  for (let attempt = 0; attempt < 10; attempt++) {
-    const x = zone.xMin + Math.random() * (zone.xMax - zone.xMin);
-    const y = zone.yMin + Math.random() * (zone.yMax - zone.yMin);
-    const tooClose = placedPositions.some(p =>
-      Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < MIN_DIST
-    );
-    if (!tooClose) { point = { x, y, z: (Math.random() - 0.5) * 0.04 }; break; }
-  }
-
-  // Fallback if all attempts overlap
-  if (!point) {
-    point = {
-      x: zone.xMin + Math.random() * (zone.xMax - zone.xMin),
-      y: zone.yMin + Math.random() * (zone.yMax - zone.yMin),
-      z: (Math.random() - 0.5) * 0.04,
-    };
-  }
+  const { point, index } = getNearestSnapPoint(tapX, tapY);
+  if (index >= 0) takenSnapPoints[index] = true;
 
   await spawnLeafElement(leaf, point, 1, true);
 
