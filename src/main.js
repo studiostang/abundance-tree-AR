@@ -331,7 +331,7 @@ async function placeLeafAtTap(tapX, tapY) {
   const zone = TIER_ZONES[tier][xZone + '-' + yZone];
 
   // Minimum distance between leaves
-  const MIN_DIST = 0.12;
+  const MIN_DIST = 0.04;
   const placedPositions = existingLeaves.map(el => ({
     x: parseFloat(el.dataset.arX),
     y: parseFloat(el.dataset.arY),
