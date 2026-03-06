@@ -296,10 +296,6 @@ async function placeLeafAtTap(tapX, tapY) {
   }
   const chosenTier = availableTiers[chosenTierIndex];
 
-  // Respect tap position within chosen tier bounds
-  const tapXNorm = Math.max(-1, Math.min(1, tapX / chosenTier.xRange));
-  const tapYNorm = Math.max(0, Math.min(1, (tapY - chosenTier.yMin) / (chosenTier.yMax - chosenTier.yMin)));
-
   // Zone is centered on tap position with some randomness
   const xSpread = chosenTier.xRange * 0.3;
   const ySpread = (chosenTier.yMax - chosenTier.yMin) * 0.3;
