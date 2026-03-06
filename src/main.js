@@ -295,6 +295,7 @@ async function placeLeafAtTap(tapX, tapY) {
 
   // Tier boundaries with soft blend at 80%
   const tier = leafCount < 40 ? 0 : leafCount < 80 ? 1 : 2;
+  console.log('Tap placed at x:', tapX.toFixed(3), 'y:', tapY.toFixed(3), 'tier:', tier);
 
   // Zone bounds per tier — each tier expands outward
   const TIER_ZONES = [
