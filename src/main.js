@@ -5,21 +5,41 @@ export const SNAP_POINTS = [];
 
 // Tier definitions: { xRange, yMin, yMax, count }
 const TIERS = [
-  { xRange: 0.15, yMin: 1.25, yMax: 1.45, count: 30 },  // Tier 1 — tight core
-  { xRange: 0.24, yMin: 1.22, yMax: 1.50, count: 80 },  // Tier 2 — mid canopy
-  { xRange: 0.34, yMin: 1.18, yMax: 1.55, count: 140 }, // Tier 3 — full canopy
+  { xRange: 0.20, yMin: 1.30, yMax: 1.60, count: 30 },  // Tier 1 — tight core
+  { xRange: 0.35, yMin: 1.28, yMax: 1.80, count: 80 },  // Tier 2 — mid canopy
+  { xRange: 0.50, yMin: 1.25, yMax: 2.10, count: 140 }, // Tier 3 — full canopy
 ];
 
 const snapGrid = [
-  // Wide canopy — all available from the start
-  [-0.30, 1.28], [-0.24, 1.26], [-0.18, 1.25], [-0.10, 1.26], [-0.04, 1.25], [0.04, 1.25], [0.10, 1.26], [0.18, 1.25], [0.24, 1.26], [0.30, 1.28],
-  [-0.32, 1.33], [-0.25, 1.31], [-0.18, 1.30], [-0.11, 1.29], [-0.04, 1.28], [0.04, 1.28], [0.11, 1.29], [0.18, 1.30], [0.25, 1.31], [0.32, 1.33],
-  [-0.33, 1.38], [-0.26, 1.36], [-0.19, 1.35], [-0.12, 1.34], [-0.05, 1.33], [0.05, 1.33], [0.12, 1.34], [0.19, 1.35], [0.26, 1.36], [0.33, 1.38],
-  [-0.31, 1.43], [-0.24, 1.41], [-0.17, 1.40], [-0.10, 1.39], [-0.03, 1.38], [0.03, 1.38], [0.10, 1.39], [0.17, 1.40], [0.24, 1.41], [0.31, 1.43],
-  [-0.29, 1.48], [-0.22, 1.46], [-0.15, 1.45], [-0.08, 1.44], [-0.02, 1.43], [0.02, 1.43], [0.08, 1.44], [0.15, 1.45], [0.22, 1.46], [0.29, 1.48],
-  [-0.26, 1.52], [-0.19, 1.50], [-0.12, 1.49], [-0.05, 1.48], [0.05, 1.48], [0.12, 1.49], [0.19, 1.50], [0.26, 1.52],
-  [-0.22, 1.55], [-0.15, 1.54], [-0.08, 1.53], [0.08, 1.53], [0.15, 1.54], [0.22, 1.55],
-  [-0.18, 1.58], [-0.10, 1.57], [0.0, 1.56], [0.10, 1.57], [0.18, 1.58],
+  // Base layer — narrow, sits just above trunk
+  [-0.15, 1.30], [-0.08, 1.28], [0.0, 1.27], [0.08, 1.28], [0.15, 1.30],
+
+  // Lower canopy — starts widening
+  [-0.25, 1.38], [-0.18, 1.35], [-0.10, 1.33], [-0.03, 1.32], [0.03, 1.32], [0.10, 1.33], [0.18, 1.35], [0.25, 1.38],
+
+  // Mid-lower — widest zone
+  [-0.38, 1.46], [-0.28, 1.44], [-0.20, 1.42], [-0.12, 1.40], [-0.04, 1.39], [0.04, 1.39], [0.12, 1.40], [0.20, 1.42], [0.28, 1.44], [0.38, 1.46],
+
+  // Mid canopy — still wide
+  [-0.40, 1.54], [-0.30, 1.52], [-0.22, 1.50], [-0.14, 1.48], [-0.05, 1.47], [0.05, 1.47], [0.14, 1.48], [0.22, 1.50], [0.30, 1.52], [0.40, 1.54],
+
+  // Upper-mid — starting to taper
+  [-0.35, 1.63], [-0.26, 1.61], [-0.18, 1.59], [-0.10, 1.57], [-0.03, 1.56], [0.03, 1.56], [0.10, 1.57], [0.18, 1.59], [0.26, 1.61], [0.35, 1.63],
+
+  // Upper canopy — tapering inward
+  [-0.28, 1.72], [-0.20, 1.70], [-0.13, 1.68], [-0.06, 1.67], [0.06, 1.67], [0.13, 1.68], [0.20, 1.70], [0.28, 1.72],
+
+  // High canopy — narrow
+  [-0.20, 1.82], [-0.13, 1.80], [-0.07, 1.78], [0.0, 1.77], [0.07, 1.78], [0.13, 1.80], [0.20, 1.82],
+
+  // Near tips — very narrow
+  [-0.14, 1.92], [-0.08, 1.90], [-0.03, 1.88], [0.03, 1.88], [0.08, 1.90], [0.14, 1.92],
+
+  // Branch tips — sparse and reaching
+  [-0.10, 2.02], [-0.05, 2.00], [0.0, 1.98], [0.05, 2.00], [0.10, 2.02],
+
+  // Very tip — just a few
+  [-0.06, 2.10], [0.0, 2.08], [0.06, 2.10],
 ];
 
 snapGrid.forEach(([x, y], i) => {
@@ -284,32 +304,29 @@ async function placeLeafAtTap(tapX, tapY) {
 
   // Zone bounds per tier — each tier expands outward
   const TIER_ZONES = [
-    // Tier 1 — tight central canopy
     {
-      'left-top':     { xMin: -0.45, xMax: -0.12, yMin: 1.40, yMax: 1.52 },
-      'left-bottom':  { xMin: -0.45, xMax: -0.12, yMin: 1.28, yMax: 1.40 },
-      'center-top':   { xMin: -0.12, xMax:  0.12, yMin: 1.40, yMax: 1.52 },
-      'center-bottom':{ xMin: -0.12, xMax:  0.12, yMin: 1.28, yMax: 1.40 },
-      'right-top':    { xMin:  0.12, xMax:  0.45, yMin: 1.40, yMax: 1.52 },
-      'right-bottom': { xMin:  0.12, xMax:  0.45, yMin: 1.28, yMax: 1.40 },
+      'left-top':     { xMin: -0.20, xMax: -0.05, yMin: 1.45, yMax: 1.60 },
+      'left-bottom':  { xMin: -0.20, xMax: -0.05, yMin: 1.28, yMax: 1.45 },
+      'center-top':   { xMin: -0.05, xMax:  0.05, yMin: 1.45, yMax: 1.60 },
+      'center-bottom':{ xMin: -0.05, xMax:  0.05, yMin: 1.28, yMax: 1.45 },
+      'right-top':    { xMin:  0.05, xMax:  0.20, yMin: 1.45, yMax: 1.60 },
+      'right-bottom': { xMin:  0.05, xMax:  0.20, yMin: 1.28, yMax: 1.45 },
     },
-    // Tier 2 — mid canopy
     {
-      'left-top':     { xMin: -0.65, xMax: -0.15, yMin: 1.42, yMax: 1.58 },
-      'left-bottom':  { xMin: -0.65, xMax: -0.15, yMin: 1.26, yMax: 1.42 },
-      'center-top':   { xMin: -0.15, xMax:  0.15, yMin: 1.42, yMax: 1.58 },
-      'center-bottom':{ xMin: -0.15, xMax:  0.15, yMin: 1.26, yMax: 1.42 },
-      'right-top':    { xMin:  0.15, xMax:  0.65, yMin: 1.42, yMax: 1.58 },
-      'right-bottom': { xMin:  0.15, xMax:  0.65, yMin: 1.26, yMax: 1.42 },
+      'left-top':     { xMin: -0.35, xMax: -0.08, yMin: 1.55, yMax: 1.80 },
+      'left-bottom':  { xMin: -0.35, xMax: -0.08, yMin: 1.28, yMax: 1.55 },
+      'center-top':   { xMin: -0.08, xMax:  0.08, yMin: 1.55, yMax: 1.80 },
+      'center-bottom':{ xMin: -0.08, xMax:  0.08, yMin: 1.28, yMax: 1.55 },
+      'right-top':    { xMin:  0.08, xMax:  0.35, yMin: 1.55, yMax: 1.80 },
+      'right-bottom': { xMin:  0.08, xMax:  0.35, yMin: 1.28, yMax: 1.55 },
     },
-    // Tier 3 — full canopy
     {
-      'left-top':     { xMin: -0.85, xMax: -0.18, yMin: 1.44, yMax: 1.65 },
-      'left-bottom':  { xMin: -0.85, xMax: -0.18, yMin: 1.24, yMax: 1.44 },
-      'center-top':   { xMin: -0.18, xMax:  0.18, yMin: 1.44, yMax: 1.65 },
-      'center-bottom':{ xMin: -0.18, xMax:  0.18, yMin: 1.24, yMax: 1.44 },
-      'right-top':    { xMin:  0.18, xMax:  0.85, yMin: 1.44, yMax: 1.65 },
-      'right-bottom': { xMin:  0.18, xMax:  0.85, yMin: 1.24, yMax: 1.44 },
+      'left-top':     { xMin: -0.50, xMax: -0.10, yMin: 1.65, yMax: 2.10 },
+      'left-bottom':  { xMin: -0.50, xMax: -0.10, yMin: 1.25, yMax: 1.65 },
+      'center-top':   { xMin: -0.10, xMax:  0.10, yMin: 1.65, yMax: 2.10 },
+      'center-bottom':{ xMin: -0.10, xMax:  0.10, yMin: 1.25, yMax: 1.65 },
+      'right-top':    { xMin:  0.10, xMax:  0.50, yMin: 1.65, yMax: 2.10 },
+      'right-bottom': { xMin:  0.10, xMax:  0.50, yMin: 1.25, yMax: 1.65 },
     },
   ];
 
@@ -319,7 +336,7 @@ async function placeLeafAtTap(tapX, tapY) {
   const zone = TIER_ZONES[tier][xZone + '-' + yZone];
 
   // Minimum distance between leaves
-  const MIN_DIST = 0.08;
+  const MIN_DIST = 0.12;
   const placedPositions = existingLeaves.map(el => ({
     x: parseFloat(el.dataset.arX),
     y: parseFloat(el.dataset.arY),
