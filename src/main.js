@@ -5,41 +5,35 @@ export const SNAP_POINTS = [];
 
 // Tier definitions: { xRange, yMin, yMax, count }
 const TIERS = [
-  { xRange: 0.20, yMin: 1.30, yMax: 1.60, count: 30 },  // Tier 1 — tight core
-  { xRange: 0.35, yMin: 1.28, yMax: 1.80, count: 80 },  // Tier 2 — mid canopy
-  { xRange: 0.50, yMin: 1.25, yMax: 2.10, count: 140 }, // Tier 3 — full canopy
+  { xRange: 0.40, yMin: 1.55, yMax: 1.70, count: 30 },
+  { xRange: 0.65, yMin: 1.52, yMax: 1.78, count: 80 },
+  { xRange: 0.90, yMin: 1.48, yMax: 1.88, count: 140 },
 ];
 
 const snapGrid = [
-  // Base layer — narrow, sits just above trunk
-  [-0.15, 1.30], [-0.08, 1.28], [0.0, 1.27], [0.08, 1.28], [0.15, 1.30],
+  // Core — sits right at top of sculpture
+  [-0.18, 1.58], [-0.10, 1.56], [-0.03, 1.55], [0.03, 1.55], [0.10, 1.56], [0.18, 1.58],
 
-  // Lower canopy — starts widening
-  [-0.25, 1.38], [-0.18, 1.35], [-0.10, 1.33], [-0.03, 1.32], [0.03, 1.32], [0.10, 1.33], [0.18, 1.35], [0.25, 1.38],
+  // Inner umbrella — wide and flat
+  [-0.35, 1.62], [-0.26, 1.60], [-0.18, 1.58], [-0.10, 1.57], [-0.03, 1.56], [0.03, 1.56], [0.10, 1.57], [0.18, 1.58], [0.26, 1.60], [0.35, 1.62],
 
-  // Mid-lower — widest zone
-  [-0.38, 1.46], [-0.28, 1.44], [-0.20, 1.42], [-0.12, 1.40], [-0.04, 1.39], [0.04, 1.39], [0.12, 1.40], [0.20, 1.42], [0.28, 1.44], [0.38, 1.46],
+  // Mid umbrella — widest band
+  [-0.52, 1.66], [-0.40, 1.64], [-0.28, 1.62], [-0.18, 1.61], [-0.08, 1.60], [0.0, 1.60], [0.08, 1.60], [0.18, 1.61], [0.28, 1.62], [0.40, 1.64], [0.52, 1.66],
 
-  // Mid canopy — still wide
-  [-0.40, 1.54], [-0.30, 1.52], [-0.22, 1.50], [-0.14, 1.48], [-0.05, 1.47], [0.05, 1.47], [0.14, 1.48], [0.22, 1.50], [0.30, 1.52], [0.40, 1.54],
+  // Outer umbrella — very wide
+  [-0.68, 1.68], [-0.54, 1.67], [-0.40, 1.66], [-0.26, 1.65], [-0.12, 1.64], [0.0, 1.63], [0.12, 1.64], [0.26, 1.65], [0.40, 1.66], [0.54, 1.67], [0.68, 1.68],
 
-  // Upper-mid — starting to taper
-  [-0.35, 1.63], [-0.26, 1.61], [-0.18, 1.59], [-0.10, 1.57], [-0.03, 1.56], [0.03, 1.56], [0.10, 1.57], [0.18, 1.59], [0.26, 1.61], [0.35, 1.63],
+  // Upper dome — starts narrowing
+  [-0.58, 1.73], [-0.44, 1.72], [-0.30, 1.71], [-0.16, 1.70], [-0.05, 1.69], [0.05, 1.69], [0.16, 1.70], [0.30, 1.71], [0.44, 1.72], [0.58, 1.73],
 
-  // Upper canopy — tapering inward
-  [-0.28, 1.72], [-0.20, 1.70], [-0.13, 1.68], [-0.06, 1.67], [0.06, 1.67], [0.13, 1.68], [0.20, 1.70], [0.28, 1.72],
+  // Upper-mid — tapering
+  [-0.45, 1.79], [-0.32, 1.78], [-0.20, 1.77], [-0.08, 1.76], [0.0, 1.75], [0.08, 1.76], [0.20, 1.77], [0.32, 1.78], [0.45, 1.79],
 
-  // High canopy — narrow
-  [-0.20, 1.82], [-0.13, 1.80], [-0.07, 1.78], [0.0, 1.77], [0.07, 1.78], [0.13, 1.80], [0.20, 1.82],
+  // Near top — narrow
+  [-0.30, 1.85], [-0.18, 1.84], [-0.08, 1.83], [0.0, 1.82], [0.08, 1.83], [0.18, 1.84], [0.30, 1.85],
 
-  // Near tips — very narrow
-  [-0.14, 1.92], [-0.08, 1.90], [-0.03, 1.88], [0.03, 1.88], [0.08, 1.90], [0.14, 1.92],
-
-  // Branch tips — sparse and reaching
-  [-0.10, 2.02], [-0.05, 2.00], [0.0, 1.98], [0.05, 2.00], [0.10, 2.02],
-
-  // Very tip — just a few
-  [-0.06, 2.10], [0.0, 2.08], [0.06, 2.10],
+  // Tips — just a few reaching up
+  [-0.18, 1.91], [-0.08, 1.90], [0.0, 1.89], [0.08, 1.90], [0.18, 1.91],
 ];
 
 snapGrid.forEach(([x, y], i) => {
@@ -305,28 +299,28 @@ async function placeLeafAtTap(tapX, tapY) {
   // Zone bounds per tier — each tier expands outward
   const TIER_ZONES = [
     {
-      'left-top':     { xMin: -0.20, xMax: -0.05, yMin: 1.45, yMax: 1.60 },
-      'left-bottom':  { xMin: -0.20, xMax: -0.05, yMin: 1.28, yMax: 1.45 },
-      'center-top':   { xMin: -0.05, xMax:  0.05, yMin: 1.45, yMax: 1.60 },
-      'center-bottom':{ xMin: -0.05, xMax:  0.05, yMin: 1.28, yMax: 1.45 },
-      'right-top':    { xMin:  0.05, xMax:  0.20, yMin: 1.45, yMax: 1.60 },
-      'right-bottom': { xMin:  0.05, xMax:  0.20, yMin: 1.28, yMax: 1.45 },
+      'left-top':     { xMin: -0.40, xMax: -0.05, yMin: 1.62, yMax: 1.70 },
+      'left-bottom':  { xMin: -0.40, xMax: -0.05, yMin: 1.52, yMax: 1.62 },
+      'center-top':   { xMin: -0.05, xMax:  0.05, yMin: 1.62, yMax: 1.70 },
+      'center-bottom':{ xMin: -0.05, xMax:  0.05, yMin: 1.52, yMax: 1.62 },
+      'right-top':    { xMin:  0.05, xMax:  0.40, yMin: 1.62, yMax: 1.70 },
+      'right-bottom': { xMin:  0.05, xMax:  0.40, yMin: 1.52, yMax: 1.62 },
     },
     {
-      'left-top':     { xMin: -0.35, xMax: -0.08, yMin: 1.55, yMax: 1.80 },
-      'left-bottom':  { xMin: -0.35, xMax: -0.08, yMin: 1.28, yMax: 1.55 },
-      'center-top':   { xMin: -0.08, xMax:  0.08, yMin: 1.55, yMax: 1.80 },
-      'center-bottom':{ xMin: -0.08, xMax:  0.08, yMin: 1.28, yMax: 1.55 },
-      'right-top':    { xMin:  0.08, xMax:  0.35, yMin: 1.55, yMax: 1.80 },
-      'right-bottom': { xMin:  0.08, xMax:  0.35, yMin: 1.28, yMax: 1.55 },
+      'left-top':     { xMin: -0.65, xMax: -0.08, yMin: 1.65, yMax: 1.78 },
+      'left-bottom':  { xMin: -0.65, xMax: -0.08, yMin: 1.50, yMax: 1.65 },
+      'center-top':   { xMin: -0.08, xMax:  0.08, yMin: 1.65, yMax: 1.78 },
+      'center-bottom':{ xMin: -0.08, xMax:  0.08, yMin: 1.50, yMax: 1.65 },
+      'right-top':    { xMin:  0.08, xMax:  0.65, yMin: 1.65, yMax: 1.78 },
+      'right-bottom': { xMin:  0.08, xMax:  0.65, yMin: 1.50, yMax: 1.65 },
     },
     {
-      'left-top':     { xMin: -0.50, xMax: -0.10, yMin: 1.65, yMax: 2.10 },
-      'left-bottom':  { xMin: -0.50, xMax: -0.10, yMin: 1.25, yMax: 1.65 },
-      'center-top':   { xMin: -0.10, xMax:  0.10, yMin: 1.65, yMax: 2.10 },
-      'center-bottom':{ xMin: -0.10, xMax:  0.10, yMin: 1.25, yMax: 1.65 },
-      'right-top':    { xMin:  0.10, xMax:  0.50, yMin: 1.65, yMax: 2.10 },
-      'right-bottom': { xMin:  0.10, xMax:  0.50, yMin: 1.25, yMax: 1.65 },
+      'left-top':     { xMin: -0.90, xMax: -0.10, yMin: 1.68, yMax: 1.88 },
+      'left-bottom':  { xMin: -0.90, xMax: -0.10, yMin: 1.48, yMax: 1.68 },
+      'center-top':   { xMin: -0.10, xMax:  0.10, yMin: 1.68, yMax: 1.88 },
+      'center-bottom':{ xMin: -0.10, xMax:  0.10, yMin: 1.48, yMax: 1.68 },
+      'right-top':    { xMin:  0.10, xMax:  0.90, yMin: 1.68, yMax: 1.88 },
+      'right-bottom': { xMin:  0.10, xMax:  0.90, yMin: 1.48, yMax: 1.68 },
     },
   ];
 
