@@ -3,11 +3,16 @@ import { collection, addDoc, getDocs, query } from 'firebase/firestore';
 
 export const SNAP_POINTS = [];
 
-// Tier definitions: { xRange, yMin, yMax, count }
 const TIERS = [
-  { xRange: 0.52, yMin: 1.31, yMax: 1.45, count: 30 },
-  { xRange: 0.72, yMin: 1.29, yMax: 1.60, count: 80 },
-  { xRange: 0.90, yMin: 1.27, yMax: 1.72, count: 140 },
+  { maxLeaves: 7,   xRange: 0.30, yMin: 1.30, yMax: 1.48 },
+  { maxLeaves: 15,  xRange: 0.42, yMin: 1.28, yMax: 1.52 },
+  { maxLeaves: 28,  xRange: 0.54, yMin: 1.26, yMax: 1.56 },
+  { maxLeaves: 48,  xRange: 0.66, yMin: 1.24, yMax: 1.60 },
+  { maxLeaves: 78,  xRange: 0.76, yMin: 1.22, yMax: 1.64 },
+  { maxLeaves: 120, xRange: 0.84, yMin: 1.20, yMax: 1.68 },
+  { maxLeaves: 180, xRange: 0.90, yMin: 1.18, yMax: 1.72 },
+  { maxLeaves: 280, xRange: 0.95, yMin: 1.16, yMax: 1.76 },
+  { maxLeaves: 500, xRange: 1.00, yMin: 1.14, yMax: 1.80 },
 ];
 
 const snapGrid = [
@@ -30,14 +35,11 @@ const takenSnapPoints = {};
 
 const TIER_OPEN_THRESHOLD = 0.8;
 
-function getActiveTier() {
-  const tier0Count = TIERS[0].count;
-  const tier1Count = TIERS[1].count;
-  const tier0Taken = SNAP_POINTS.filter(p => p.tier === 0).filter((p, i) => takenSnapPoints[SNAP_POINTS.indexOf(p)]).length;
-  const tier1Taken = SNAP_POINTS.filter(p => p.tier === 1).filter((p, i) => takenSnapPoints[SNAP_POINTS.indexOf(p)]).length;
-  if (tier0Taken < tier0Count * TIER_OPEN_THRESHOLD) return 0;
-  if (tier1Taken < tier1Count * TIER_OPEN_THRESHOLD) return 1;
-  return 2;
+function getActiveTier(leafCount) {
+  for (let i = 0; i < TIERS.length; i++) {
+    if (leafCount < TIERS[i].maxLeaves) return i;
+  }
+  return TIERS.length - 1;
 }
 
 function getNearestSnapPoint(tapX, tapY) {
@@ -278,40 +280,55 @@ async function placeLeafAtTap(tapX, tapY) {
   const existingLeaves = Array.from(document.querySelectorAll('.ar-leaf'));
   const leafCount = existingLeaves.length;
 
-  // Tier boundaries with soft blend at 80%
-  const tier = leafCount < 40 ? 0 : leafCount < 80 ? 1 : 2;
-  console.log('Tap placed at x:', tapX.toFixed(3), 'y:', tapY.toFixed(3), 'tier:', tier);
+  const activeTierIndex = getActiveTier(leafCount);
 
-  // Zone bounds per tier — each tier expands outward
-  const TIER_ZONES = [
-    {
-      'left-top':     { xMin: -0.52, xMax: -0.05, yMin: 1.38, yMax: 1.45 },
-      'left-bottom':  { xMin: -0.52, xMax: -0.05, yMin: 1.31, yMax: 1.38 },
-      'center-top':   { xMin: -0.05, xMax:  0.05, yMin: 1.38, yMax: 1.45 },
-      'center-bottom':{ xMin: -0.05, xMax:  0.05, yMin: 1.31, yMax: 1.38 },
-      'right-top':    { xMin:  0.05, xMax:  0.52, yMin: 1.38, yMax: 1.45 },
-      'right-bottom': { xMin:  0.05, xMax:  0.52, yMin: 1.31, yMax: 1.38 },
-    },
-    {
-      'left-top':     { xMin: -0.72, xMax: -0.08, yMin: 1.45, yMax: 1.60 },
-      'left-bottom':  { xMin: -0.72, xMax: -0.08, yMin: 1.29, yMax: 1.45 },
-      'center-top':   { xMin: -0.08, xMax:  0.08, yMin: 1.45, yMax: 1.60 },
-      'center-bottom':{ xMin: -0.08, xMax:  0.08, yMin: 1.29, yMax: 1.45 },
-      'right-top':    { xMin:  0.08, xMax:  0.72, yMin: 1.45, yMax: 1.60 },
-      'right-bottom': { xMin:  0.08, xMax:  0.72, yMin: 1.29, yMax: 1.45 },
-    },
-    {
-      'left-top':     { xMin: -0.90, xMax: -0.10, yMin: 1.55, yMax: 1.72 },
-      'left-bottom':  { xMin: -0.90, xMax: -0.10, yMin: 1.27, yMax: 1.55 },
-      'center-top':   { xMin: -0.10, xMax:  0.10, yMin: 1.55, yMax: 1.72 },
-      'center-bottom':{ xMin: -0.10, xMax:  0.10, yMin: 1.27, yMax: 1.55 },
-      'right-top':    { xMin:  0.10, xMax:  0.90, yMin: 1.55, yMax: 1.72 },
-      'right-bottom': { xMin:  0.10, xMax:  0.90, yMin: 1.27, yMax: 1.55 },
-    },
-  ];
+  // All tiers up to and including active are available (additive)
+  const availableTiers = TIERS.slice(0, activeTierIndex + 1);
 
-  const { point, index } = getNearestSnapPoint(tapX, tapY);
-  if (index >= 0) takenSnapPoints[index] = true;
+  // Pick a random available tier weighted toward newer/outer tiers
+  const weights = availableTiers.map((_, i) => i + 1);
+  const totalWeight = weights.reduce((a, b) => a + b, 0);
+  let r = Math.random() * totalWeight;
+  let chosenTierIndex = 0;
+  for (let i = 0; i < weights.length; i++) {
+    r -= weights[i];
+    if (r <= 0) { chosenTierIndex = i; break; }
+  }
+  const chosenTier = availableTiers[chosenTierIndex];
+
+  // Respect tap position within chosen tier bounds
+  const tapXNorm = Math.max(-1, Math.min(1, tapX / chosenTier.xRange));
+  const tapYNorm = Math.max(0, Math.min(1, (tapY - chosenTier.yMin) / (chosenTier.yMax - chosenTier.yMin)));
+
+  // Zone is centered on tap position with some randomness
+  const xSpread = chosenTier.xRange * 0.3;
+  const ySpread = (chosenTier.yMax - chosenTier.yMin) * 0.3;
+
+  const MIN_DIST = 0.06;
+  const placedPositions = existingLeaves.map(el => ({
+    x: parseFloat(el.dataset.arX),
+    y: parseFloat(el.dataset.arY),
+  })).filter(p => !isNaN(p.x) && !isNaN(p.y));
+
+  let point = null;
+  for (let attempt = 0; attempt < 15; attempt++) {
+    const x = Math.max(-chosenTier.xRange, Math.min(chosenTier.xRange,
+      tapX + (Math.random() - 0.5) * xSpread));
+    const y = Math.max(chosenTier.yMin, Math.min(chosenTier.yMax,
+      tapY + (Math.random() - 0.5) * ySpread));
+    const tooClose = placedPositions.some(p =>
+      Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < MIN_DIST
+    );
+    if (!tooClose) { point = { x, y, z: (Math.random() - 0.5) * 0.04 }; break; }
+  }
+
+  if (!point) {
+    point = {
+      x: Math.max(-chosenTier.xRange, Math.min(chosenTier.xRange, tapX + (Math.random() - 0.5) * xSpread)),
+      y: Math.max(chosenTier.yMin, Math.min(chosenTier.yMax, tapY + (Math.random() - 0.5) * ySpread)),
+      z: (Math.random() - 0.5) * 0.04,
+    };
+  }
 
   await spawnLeafElement(leaf, point, 1, true);
 
