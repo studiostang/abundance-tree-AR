@@ -186,8 +186,9 @@ async function spawnLeafElement(leaf, point, initialOpacity, pulse) {
   el.classList.add('ar-leaf');
   el.setAttribute('src', dataURL);
   el.setAttribute('position', (point.x * 0.3) + ' ' + (point.y - 1.2) + ' ' + point.z);
-  el.setAttribute('width', '0.10');
-  el.setAttribute('height', '0.05');
+  const sizeScale = 0.7 + Math.random() * 0.8;
+  el.setAttribute('width', (0.10 * sizeScale).toFixed(3));
+  el.setAttribute('height', (0.05 * sizeScale).toFixed(3));
   el.setAttribute('transparent', 'true');
   el.setAttribute('material', 'alphaTest: 0.1; transparent: true; opacity: ' + initialOpacity);
   el.setAttribute('rotation', rotation);
