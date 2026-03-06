@@ -429,14 +429,6 @@ a {
 }
   </style>
 
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4L9YEG3DB8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-4L9YEG3DB8');
-</script>
 </head>
 <body>
   <a-scene mindar-image="imageTargetSrc: /targets.mind; filterMinCF: 0.001; filterBeta: 1000; warmupTolerance: 5; missTolerance: 10" color-space="sRGB" renderer="colorManagement: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
@@ -624,6 +616,10 @@ const TRANSLATIONS = {
     leaf3prompt: 'I feel most alive when...',
     translate: 'translate',
     showOriginal: 'show original',
+    toastNoMessage: 'Please write something on your leaf first ✍️',
+    toastNoColor: 'Please choose a color for your leaf 🎨',
+    toastNoLeaf: 'Please choose a leaf shape first 🍃',
+    toastError: 'Something went wrong, please try again.',
   },
   es: {
     title: 'Árbol de Abundancia',
@@ -646,6 +642,10 @@ const TRANSLATIONS = {
     leaf3prompt: 'Me siento más vivo/a cuando...',
     translate: 'traducir',
     showOriginal: 'ver original',
+    toastNoMessage: 'Por favor escribe algo en tu hoja primero ✍️',
+    toastNoColor: 'Por favor elige un color para tu hoja 🎨',
+    toastNoLeaf: 'Por favor elige una forma de hoja primero 🍃',
+    toastError: 'Algo salió mal, por favor intenta de nuevo.',
   },
   hmn: {
     title: 'Tsob Ntoo Kev Vam Meej',
@@ -668,13 +668,18 @@ const TRANSLATIONS = {
     leaf3prompt: 'Kuv xav tshaj plaws thaum...',
     translate: 'txhais',
     showOriginal: 'qhia niam ntawv qub',
+    toastNoMessage: 'Thov sau ib yam daim nplooj ua ntej ✍️',
+    toastNoColor: 'Thov xaiv ib tug xim rau koj daim nplooj 🎨',
+    toastNoLeaf: 'Thov xaiv ib daim nplooj ua ntej 🍃',
+    toastError: 'Muaj qhov yuam kev, thov sim dua.',
   },
   ar: {
     title: 'شجرة الوفرة',
     subtitle: 'سجل حي من الامتنان الجماعي',
     btnSee: 'شاهد الشجرة',
     btnAdd: 'أضف ورقتك',
-    chooseLeaf: 'اختر ورقتك',
+    chooseLeaf: 'اختر ورقconst TRANSLATIONS = {
+تك',
     placeholder: 'اكتب ردك هنا...',
     placeLeaf: 'ضع ورقتي',
     chooseDiff: '← اختر ورقة مختلفة',
@@ -690,6 +695,10 @@ const TRANSLATIONS = {
     leaf3prompt: 'أشعر بالحيوية أكثر عندما...',
     translate: 'ترجم',
     showOriginal: 'عرض الأصل',
+    toastNoMessage: 'يرجى كتابة شيء على ورقتك أولاً ✍️',
+    toastNoColor: 'يرجى اختيار لون لورقتك 🎨',
+    toastNoLeaf: 'يرجى اختيار شكل الورقة أولاً 🍃',
+    toastError: 'حدث خطأ ما، يرجى المحاولة مرة أخرى.',
   },
   fr: {
     title: "Arbre d'Abondance",
@@ -712,6 +721,10 @@ const TRANSLATIONS = {
     leaf3prompt: 'Je me sens le plus vivant(e) quand...',
     translate: 'traduire',
     showOriginal: "afficher l'original",
+    toastNoMessage: 'Veuillez écrire quelque chose sur votre feuille ✍️',
+    toastNoColor: 'Veuillez choisir une couleur pour votre feuille 🎨',
+    toastNoLeaf: "Veuillez d'abord choisir une forme de feuille 🍃",
+    toastError: 'Une erreur est survenue, veuillez réessayer.',
   },
   de: {
     title: 'Baum der Fülle',
@@ -734,6 +747,10 @@ const TRANSLATIONS = {
     leaf3prompt: 'Ich fühle mich am lebendigsten, wenn...',
     translate: 'übersetzen',
     showOriginal: 'Original anzeigen',
+    toastNoMessage: 'Bitte schreib zuerst etwas auf dein Blatt ✍️',
+    toastNoColor: 'Bitte wähle eine Farbe für dein Blatt 🎨',
+    toastNoLeaf: 'Bitte wähle zuerst eine Blattform 🍃',
+    toastError: 'Etwas ist schiefgelaufen, bitte versuche es erneut.',
   },
   hi: {
     title: 'प्रचुरता वृक्ष',
@@ -756,6 +773,10 @@ const TRANSLATIONS = {
     leaf3prompt: 'मैं सबसे जीवंत महसूस करता/करती हूँ जब...',
     translate: 'अनुवाद करें',
     showOriginal: 'मूल दिखाएं',
+    toastNoMessage: 'कृपया पहले अपनी पत्ती पर कुछ लिखें ✍️',
+    toastNoColor: 'कृपया अपनी पत्ती के लिए एक रंग चुनें 🎨',
+    toastNoLeaf: 'कृपया पहले एक पत्ती का आकार चुनें 🍃',
+    toastError: 'कुछ गलत हो गया, कृपया पुनः प्रयास करें।',
   },
   ja: {
     title: '豊かさの木',
@@ -778,6 +799,10 @@ const TRANSLATIONS = {
     leaf3prompt: '一番生き生きとするのは...',
     translate: '翻訳',
     showOriginal: '原文を表示',
+    toastNoMessage: 'まず葉に何か書いてください ✍️',
+    toastNoColor: '葉の色を選んでください 🎨',
+    toastNoLeaf: 'まず葉の形を選んでください 🍃',
+    toastError: 'エラーが発生しました。もう一度お試しください。',
   },
   ko: {
     title: '풍요의 나무',
@@ -800,6 +825,10 @@ const TRANSLATIONS = {
     leaf3prompt: '가장 살아있다고 느낄 때는...',
     translate: '번역',
     showOriginal: '원문 보기',
+    toastNoMessage: '먼저 나뭇잎에 무언가를 써주세요 ✍️',
+    toastNoColor: '나뭇잎 색상을 선택해주세요 🎨',
+    toastNoLeaf: '먼저 나뭇잎 모양을 선택해주세요 🍃',
+    toastError: '오류가 발생했습니다. 다시 시도해주세요.',
   },
   pt: {
     title: 'Árvore da Abundância',
@@ -822,6 +851,10 @@ const TRANSLATIONS = {
     leaf3prompt: 'Eu me sinto mais vivo/a quando...',
     translate: 'traduzir',
     showOriginal: 'mostrar original',
+    toastNoMessage: 'Por favor escreva algo na sua folha primeiro ✍️',
+    toastNoColor: 'Por favor escolha uma cor para sua folha 🎨',
+    toastNoLeaf: 'Por favor escolha um formato de folha primeiro 🍃',
+    toastError: 'Algo deu errado, por favor tente novamente.',
   },
   zh: {
     title: '丰盛之树',
@@ -844,6 +877,10 @@ const TRANSLATIONS = {
     leaf3prompt: '我最有活力的时候是...',
     translate: '翻译',
     showOriginal: '显示原文',
+    toastNoMessage: '请先在你的叶子上写些什么 ✍️',
+    toastNoColor: '请为你的叶子选择一种颜色 🎨',
+    toastNoLeaf: '请先选择一个叶子形状 🍃',
+    toastError: '出了点问题，请重试。',
   },
 };
 
@@ -969,8 +1006,7 @@ function checkAlreadyTracking(onTracked) {
 }
 
 // AR back button
-document.getElementById('ar-back-btn').addEventListener('click', function(e) {
-  e.stopPropagation();
+document.getElementById('ar-back-btn').addEventListener('click', function() {
   this.style.display = 'none';
   inARMode = false;
   cleanupARListeners();
@@ -1026,7 +1062,7 @@ document.getElementById('btn-see').addEventListener('click', async function() {
   try {
     await window.spawnLeavesInAR(null);
   } catch(e) {
-    alert('Error: ' + e.message);
+    showToast((TRANSLATIONS[currentLang] || TRANSLATIONS.en).toastError);
   }
 });
 
@@ -1096,11 +1132,11 @@ document.getElementById('btn-submit').addEventListener('click', async function()
   const message = document.getElementById('leaf-message').value.trim();
 
   // --- All validation runs first, before any AR or state changes ---
-  if (!message) { alert('Please write something on your leaf first.'); return; }
+  if (!message) { showToast((TRANSLATIONS[currentLang] || TRANSLATIONS.en).toastNoMessage); return; }
 
   const bannedWords = ['fuck', 'shit', 'bitch', 'asshole', 'cunt', 'dick',
   'pussy', 'nigger', 'faggot', 'retard', 'whore', 'slut', 'bastard',
-  'chink', 'kike', 'wetback', 'cracker', 'tranny', 'dyke',
+  'chink', 'spic', 'kike', 'wetback', 'cracker', 'tranny', 'dyke',
   'rape', 'molest', 'lynch', 'nazi', 'hitler', 'kill yourself', 'go die'];
 
   const messageLower = message.toLowerCase();
@@ -1112,8 +1148,8 @@ document.getElementById('btn-submit').addEventListener('click', async function()
 
   const selectedSwatch = document.querySelector('.color-swatch.selected');
   const selectedLeaf = document.querySelector('.leaf-option.selected');
-  if (!selectedSwatch) { alert('Please choose a color for your leaf.'); return; }
-  if (!selectedLeaf) { alert('Please choose a leaf shape first.'); return; }
+  if (!selectedSwatch) { showToast((TRANSLATIONS[currentLang] || TRANSLATIONS.en).toastNoColor); return; }
+  if (!selectedLeaf) { showToast((TRANSLATIONS[currentLang] || TRANSLATIONS.en).toastNoLeaf); return; }
   // --- End validation ---
 
   const color = selectedSwatch.getAttribute('data-color');
@@ -1167,7 +1203,7 @@ document.getElementById('btn-submit').addEventListener('click', async function()
   try {
     await window.spawnLeavesInAR(pendingLeaf);
   } catch(e) {
-    alert('Error: ' + e.message);
+    showToast((TRANSLATIONS[currentLang] || TRANSLATIONS.en).toastError);
   }
 
   const scene = document.querySelector('a-scene');
@@ -1178,7 +1214,7 @@ document.getElementById('btn-submit').addEventListener('click', async function()
     const rect = scene.getBoundingClientRect();
 const screenX = (e.clientX - rect.left) / rect.width;
 const screenY = (e.clientY - rect.top) / rect.height;
-const arX = (screenX - 0.5) * 1.2;
+const arX = (screenX - 0.5) * 0.08;
 const arY = (0.5 - screenY) * 1.5 + 1.3;
 window.placeLeafAtTap(arX, arY);
 
@@ -1232,6 +1268,18 @@ const COLOR_MAP_MODAL = {
   'purple':      '#D4AAFF',
   'pink':        '#FFB7C5',
 };
+
+function showToast(msg, durationMs = 2500) {
+  const toast = document.getElementById('toast-message');
+  toast.textContent = msg;
+  toast.style.display = 'block';
+  toast.style.opacity = '1';
+  setTimeout(() => {
+    toast.style.transition = 'opacity 0.5s ease';
+    toast.style.opacity = '0';
+    setTimeout(() => { toast.style.display = 'none'; toast.style.transition = ''; }, 500);
+  }, durationMs);
+}
 
 function fitModalText() {
   setTimeout(function() {
@@ -1391,7 +1439,7 @@ document.querySelector('a-scene').addEventListener('click', function(e) {
   const rect = this.getBoundingClientRect();
   const screenX = (e.clientX - rect.left) / rect.width;
   const screenY = (e.clientY - rect.top) / rect.height;
-  const arX = (screenX - 0.5) * 1.2;
+  const arX = (screenX - 0.5) * 0.08;
   const arY = (0.5 - screenY) * 1.5 + 1.3;
   let nearest = null;
   let nearestDist = Infinity;
@@ -1411,6 +1459,8 @@ document.querySelector('a-scene').addEventListener('click', function(e) {
   }
 });
 </script>
+
+<div id="toast-message" style="display:none; position:fixed; bottom:120px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.75); color:white; padding:12px 24px; border-radius:24px; font-size:16px; z-index:9999; text-align:center; pointer-events:none;"></div>
 
 </body>
 </html>
