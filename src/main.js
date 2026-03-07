@@ -4,15 +4,15 @@ import { collection, addDoc, getDocs, query } from 'firebase/firestore';
 export const SNAP_POINTS = [];
 
 const TIERS = [
-  { maxLeaves: 7,   xRange: 1.80, yMin: 1.32, yMax: 1.48 },
-  { maxLeaves: 15,  xRange: 2.20, yMin: 1.30, yMax: 1.52 },
-  { maxLeaves: 28,  xRange: 2.60, yMin: 1.28, yMax: 1.56 },
-  { maxLeaves: 48,  xRange: 3.00, yMin: 1.26, yMax: 1.60 },
-  { maxLeaves: 78,  xRange: 3.30, yMin: 1.24, yMax: 1.64 },
-  { maxLeaves: 120, xRange: 3.50, yMin: 1.22, yMax: 1.68 },
-  { maxLeaves: 180, xRange: 3.60, yMin: 1.20, yMax: 1.72 },
-  { maxLeaves: 280, xRange: 3.70, yMin: 1.18, yMax: 1.76 },
-  { maxLeaves: 500, xRange: 3.80, yMin: 1.16, yMax: 1.80 },
+  { maxLeaves: 7,   xRange: 1.80, xRangeTop: 0.80, yMin: 1.32, yMax: 1.48 },
+  { maxLeaves: 15,  xRange: 2.20, xRangeTop: 1.00, yMin: 1.30, yMax: 1.52 },
+  { maxLeaves: 28,  xRange: 2.60, xRangeTop: 1.20, yMin: 1.28, yMax: 1.56 },
+  { maxLeaves: 48,  xRange: 3.00, xRangeTop: 1.40, yMin: 1.26, yMax: 1.60 },
+  { maxLeaves: 78,  xRange: 3.30, xRangeTop: 1.60, yMin: 1.24, yMax: 1.64 },
+  { maxLeaves: 120, xRange: 3.50, xRangeTop: 1.80, yMin: 1.22, yMax: 1.68 },
+  { maxLeaves: 180, xRange: 3.60, xRangeTop: 2.00, yMin: 1.20, yMax: 1.72 },
+  { maxLeaves: 280, xRange: 3.70, xRangeTop: 2.20, yMin: 1.18, yMax: 1.76 },
+  { maxLeaves: 500, xRange: 3.80, xRangeTop: 2.40, yMin: 1.16, yMax: 1.80 },
 ];
 
 const snapGrid = [
@@ -256,7 +256,10 @@ export async function spawnLeavesInAR(pendingLeaf) {
   // Fade in batches of 5 leaves, 40ms between batches, 0 → 0.80 over 0.6s
   setTimeout(() => {
     document.querySelectorAll('.ar-leaf').forEach((el, i) => {
-      setTimeout(() => { fadeOpacity(el, 0, 0.60, 600); setTimeout(() => fadeOpacity(el, 0.60, 0.80, 3000), 700); }, Math.floor(i / 5) * 40);
+      const totalLeaves = document.querySelectorAll('.ar-leaf').length || 1;
+      const maxStagger = Math.min(800, totalLeaves * 8);
+      const stagger = (i / totalLeaves) * maxStagger;
+      setTimeout(() => { fadeOpacity(el, 0, 0.60, 400); setTimeout(() => fadeOpacity(el, 0.60, 0.80, 2000), 500); }, stagger);
     });
   }, 50);
 
@@ -297,7 +300,9 @@ async function placeLeafAtTap(tapX, tapY) {
   const chosenTier = availableTiers[chosenTierIndex];
 
   // Zone is centered on tap position with some randomness
-  const xSpread = chosenTier.xRange * 0.5;
+  const yProgress = (tapY - chosenTier.yMin) / (chosenTier.yMax - chosenTier.yMin);
+  const effectiveXRange = chosenTier.xRange - (chosenTier.xRange - chosenTier.xRangeTop) * yProgress;
+  const xSpread = effectiveXRange * 0.5;
   const ySpread = (chosenTier.yMax - chosenTier.yMin) * 0.5;
 
   const MIN_DIST = 0.18;
@@ -308,7 +313,7 @@ async function placeLeafAtTap(tapX, tapY) {
 
   let point = null;
   for (let attempt = 0; attempt < 15; attempt++) {
-    const x = Math.max(-chosenTier.xRange, Math.min(chosenTier.xRange,
+    const x = Math.max(-effectiveXRange, Math.min(effectiveXRange,
       tapX + (Math.random() - 0.5) * xSpread));
     const y = Math.max(chosenTier.yMin, Math.min(chosenTier.yMax,
       tapY + (Math.random() - 0.5) * ySpread));
@@ -320,7 +325,7 @@ async function placeLeafAtTap(tapX, tapY) {
 
   if (!point) {
     point = {
-      x: Math.max(-chosenTier.xRange, Math.min(chosenTier.xRange, tapX + (Math.random() - 0.5) * xSpread)),
+      x: Math.max(-effectiveXRange, Math.min(effectiveXRange, tapX + (Math.random() - 0.5) * xSpread)),
       y: Math.max(chosenTier.yMin, Math.min(chosenTier.yMax, tapY + (Math.random() - 0.5) * ySpread)),
       z: (Math.random() - 0.5) * 0.04,
     };
