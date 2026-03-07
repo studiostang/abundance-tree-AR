@@ -93,10 +93,6 @@ export async function loadLeaves() {
 
 // Render a single leaf onto a canvas and return a data URL
 async function renderLeafCanvas(leaf) {
-  const font = new FontFace('MyFont', 'url(/Myfont1-Regular.ttf)');
-  await font.load();
-  document.fonts.add(font);
-
   return new Promise((resolve) => {
     const color = COLOR_MAP[leaf.color] || '#ffffff';
     const src = '/Leaf-' + leaf.leafNumber + '.png';
@@ -236,22 +232,27 @@ export async function spawnLeavesInAR(pendingLeaf) {
 
  // Reset taken snap points
   Object.keys(takenSnapPoints).forEach(k => delete takenSnapPoints[k]);
-  
+
+  if (pendingLeaf) { window._pendingLeaf = pendingLeaf; window._tapToPlaceActive = true; }
+
   // Assign snap points to existing leaves, leaving last 3 free
   leaves.forEach((leaf, index) => {
     if (index >= SNAP_POINTS.length - 3) return;
     takenSnapPoints[index] = leaf.id;
   });
 
-  // Spawn existing leaves at opacity 0, then fade in
-  const spawnPromises = leaves.map((leaf, index) => {
-    const point = (typeof leaf.x === 'number' && typeof leaf.y === 'number')
-      ? { x: leaf.x, y: leaf.y, z: leaf.z || 0 }
-      : SNAP_POINTS[index % SNAP_POINTS.length];
-    return spawnLeafElement(leaf, point, 0, false);
-  });
-
-  await Promise.all(spawnPromises.filter(Boolean));
+  // Spawn existing leaves in batches of 3 with 50ms between batches
+  for (let i = 0; i < leaves.length; i += 3) {
+    const batch = leaves.slice(i, i + 3);
+    await Promise.all(batch.map((leaf, batchIndex) => {
+      const index = i + batchIndex;
+      const point = (typeof leaf.x === 'number' && typeof leaf.y === 'number')
+        ? { x: leaf.x, y: leaf.y, z: leaf.z || 0 }
+        : SNAP_POINTS[index % SNAP_POINTS.length];
+      return spawnLeafElement(leaf, point, 0, false);
+    }));
+    await new Promise(r => setTimeout(r, 50));
+  }
 
   // Fade in batches of 5 leaves, 40ms between batches, 0 → 0.80 over 0.6s
   setTimeout(() => {
@@ -264,12 +265,6 @@ export async function spawnLeavesInAR(pendingLeaf) {
   }, 50);
 
   console.log('Spawned ' + leaves.length + ' existing leaves');
-
-  // If there's a pending leaf (from form submission), set up tap-to-place
-  if (pendingLeaf) {
-    window._pendingLeaf = pendingLeaf;
-    window._tapToPlaceActive = true;
-  }
 }
 
 // Called when visitor taps the AR scene to place their leaf
