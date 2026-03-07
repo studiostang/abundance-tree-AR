@@ -1447,7 +1447,7 @@ document.querySelector('a-scene').addEventListener('click', function(e) {
     }
   });
 
-  if (nearest) {
+  if (nearest && nearestDist < 0.35) {
     showLeafModal(nearest);
   }
 });
