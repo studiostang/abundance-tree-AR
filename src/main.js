@@ -4,15 +4,15 @@ import { collection, addDoc, getDocs, query } from 'firebase/firestore';
 export const SNAP_POINTS = [];
 
 const TIERS = [
-  { maxLeaves: 7,   xRange: 0.90, xRangeTop: 0.40, yMin: 1.35, yMax: 1.60 },
-  { maxLeaves: 15,  xRange: 1.10, xRangeTop: 0.50, yMin: 1.33, yMax: 1.65 },
-  { maxLeaves: 28,  xRange: 1.30, xRangeTop: 0.60, yMin: 1.31, yMax: 1.70 },
-  { maxLeaves: 48,  xRange: 1.50, xRangeTop: 0.70, yMin: 1.29, yMax: 1.75 },
-  { maxLeaves: 78,  xRange: 1.65, xRangeTop: 0.80, yMin: 1.27, yMax: 1.80 },
-  { maxLeaves: 120, xRange: 1.75, xRangeTop: 0.90, yMin: 1.25, yMax: 1.85 },
-  { maxLeaves: 180, xRange: 1.82, xRangeTop: 1.00, yMin: 1.23, yMax: 1.90 },
-  { maxLeaves: 280, xRange: 1.88, xRangeTop: 1.10, yMin: 1.21, yMax: 1.95 },
-  { maxLeaves: 500, xRange: 1.92, xRangeTop: 1.20, yMin: 1.19, yMax: 2.00 },
+  { maxLeaves: 7,   xRange: 0.70, xRangeTop: 0.35, yMin: 1.35, yMax: 1.65 },
+  { maxLeaves: 20,  xRange: 0.90, xRangeTop: 0.42, yMin: 1.33, yMax: 1.72 },
+  { maxLeaves: 40,  xRange: 1.10, xRangeTop: 0.50, yMin: 1.31, yMax: 1.79 },
+  { maxLeaves: 70,  xRange: 1.28, xRangeTop: 0.58, yMin: 1.29, yMax: 1.86 },
+  { maxLeaves: 110, xRange: 1.44, xRangeTop: 0.66, yMin: 1.27, yMax: 1.93 },
+  { maxLeaves: 170, xRange: 1.56, xRangeTop: 0.74, yMin: 1.25, yMax: 2.00 },
+  { maxLeaves: 250, xRange: 1.65, xRangeTop: 0.82, yMin: 1.23, yMax: 2.07 },
+  { maxLeaves: 370, xRange: 1.72, xRangeTop: 0.90, yMin: 1.21, yMax: 2.14 },
+  { maxLeaves: 500, xRange: 1.78, xRangeTop: 0.98, yMin: 1.19, yMax: 2.20 },
 ];
 
 const snapGrid = [
@@ -301,7 +301,8 @@ async function placeLeafAtTap(tapX, tapY) {
 
   // Zone is centered on tap position with some randomness
   const yProgress = (tapY - chosenTier.yMin) / (chosenTier.yMax - chosenTier.yMin);
-  const effectiveXRange = chosenTier.xRange - (chosenTier.xRange - chosenTier.xRangeTop) * yProgress;
+  const organicJitter = 1 + (Math.random() - 0.5) * 0.18;
+  const effectiveXRange = (chosenTier.xRange - (chosenTier.xRange - chosenTier.xRangeTop) * yProgress) * organicJitter;
   const xSpread = effectiveXRange * 0.5;
   const ySpread = (chosenTier.yMax - chosenTier.yMin) * 0.5;
 
