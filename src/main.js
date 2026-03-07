@@ -252,14 +252,14 @@ export async function spawnLeavesInAR(pendingLeaf) {
         : SNAP_POINTS[index % SNAP_POINTS.length];
       return spawnLeafElement(leaf, point, 0, false);
     }));
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise(r => setTimeout(r, 30));
   }
 
   // Fade in batches of 5 leaves, 40ms between batches, 0 → 0.80 over 0.6s
   setTimeout(() => {
     document.querySelectorAll('.ar-leaf').forEach((el, i) => {
       const totalLeaves = document.querySelectorAll('.ar-leaf').length || 1;
-      const maxStagger = Math.min(2000, totalLeaves * 80);
+      const maxStagger = Math.min(6000, 1000 + totalLeaves * 10);
       const stagger = (i / totalLeaves) * maxStagger;
       setTimeout(() => { fadeOpacity(el, 0, 0.60, 400); setTimeout(() => fadeOpacity(el, 0.60, 0.80, 2000), 500); }, stagger);
     });
