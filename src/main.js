@@ -302,7 +302,8 @@ async function placeLeafAtTap(tapX, tapY) {
   // Zone is centered on tap position with some randomness
   const yProgress = (tapY - chosenTier.yMin) / (chosenTier.yMax - chosenTier.yMin);
   const organicJitter = 1 + (Math.random() - 0.5) * 0.18;
-  const effectiveXRange = (chosenTier.xRange - (chosenTier.xRange - chosenTier.xRangeTop) * yProgress) * organicJitter;
+  const domeCurve = Math.pow(yProgress, 0.6);
+  const effectiveXRange = (chosenTier.xRange - (chosenTier.xRange - chosenTier.xRangeTop) * domeCurve) * organicJitter;
   const xSpread = effectiveXRange * 0.5;
   const ySpread = (chosenTier.yMax - chosenTier.yMin) * 0.5;
 
