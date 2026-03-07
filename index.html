@@ -1197,6 +1197,8 @@ document.getElementById('btn-submit').addEventListener('click', async function()
   scene.addEventListener('click', function onTap(e) {
     if (!window._tapToPlaceActive) return;
     scene.removeEventListener('click', onTap);
+    window._justPlacedLeaf = true;
+    setTimeout(() => { window._justPlacedLeaf = false; }, 1000);
 
     const rect = scene.getBoundingClientRect();
 const screenX = (e.clientX - rect.left) / rect.width;
@@ -1426,6 +1428,7 @@ document.getElementById('leaf-modal-translate').addEventListener('click', async 
 // Persistent scene click handler for tap-to-read
 document.querySelector('a-scene').addEventListener('click', function(e) {
   if (window._tapToPlaceActive) return;
+  if (window._justPlacedLeaf) return;
   if (!inARMode) return;
   if (document.getElementById('leaf-modal').style.display === 'flex') return;
 
