@@ -218,7 +218,6 @@ async function spawnLeafElement(leaf, point, initialOpacity, pulse) {
 }
 
 export async function spawnLeavesInAR(pendingLeaf) {
-  const leaves = await loadLeaves();
   const target = document.querySelector('[mindar-image-target]');
 
   if (!target) {
@@ -230,10 +229,12 @@ export async function spawnLeavesInAR(pendingLeaf) {
   await font.load();
   document.fonts.add(font);
 
+  if (pendingLeaf) { window._pendingLeaf = pendingLeaf; window._tapToPlaceActive = true; }
+
+  const leaves = await loadLeaves();
+
  // Reset taken snap points
   Object.keys(takenSnapPoints).forEach(k => delete takenSnapPoints[k]);
-
-  if (pendingLeaf) { window._pendingLeaf = pendingLeaf; window._tapToPlaceActive = true; }
 
   // Assign snap points to existing leaves, leaving last 3 free
   leaves.forEach((leaf, index) => {
@@ -258,7 +259,7 @@ export async function spawnLeavesInAR(pendingLeaf) {
   setTimeout(() => {
     document.querySelectorAll('.ar-leaf').forEach((el, i) => {
       const totalLeaves = document.querySelectorAll('.ar-leaf').length || 1;
-      const maxStagger = Math.min(800, totalLeaves * 8);
+      const maxStagger = Math.min(2000, totalLeaves * 80);
       const stagger = (i / totalLeaves) * maxStagger;
       setTimeout(() => { fadeOpacity(el, 0, 0.60, 400); setTimeout(() => fadeOpacity(el, 0.60, 0.80, 2000), 500); }, stagger);
     });
