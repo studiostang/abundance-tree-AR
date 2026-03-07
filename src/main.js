@@ -270,6 +270,7 @@ export async function spawnLeavesInAR(pendingLeaf) {
 
 // Called when visitor taps the AR scene to place their leaf
 async function placeLeafAtTap(tapX, tapY) {
+  console.log('placeLeafAtTap called', window._pendingLeaf, window._tapToPlaceActive);
   if (!window._pendingLeaf) return;
   window._tapToPlaceActive = false;
 
