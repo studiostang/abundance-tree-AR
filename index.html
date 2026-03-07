@@ -1203,6 +1203,7 @@ const screenX = (e.clientX - rect.left) / rect.width;
 const screenY = (e.clientY - rect.top) / rect.height;
 const arX = (screenX - 0.5) * -2.0;
 const arY = (0.5 - screenY) * 1.5 + 1.3;
+console.log('screenX:', screenX.toFixed(2), 'arX:', arX.toFixed(2), 'arY:', arY.toFixed(2));
 window.placeLeafAtTap(arX, arY);
 
     hideTapPlacePrompt();
