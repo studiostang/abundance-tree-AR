@@ -342,11 +342,26 @@ async function placeLeafAtTap(tapX, tapY) {
   }
 
   if (!point) {
-    point = {
-      x: Math.max(-effectiveXRange, Math.min(effectiveXRange, tapX + (Math.random() - 0.5) * xSpread)),
-      y: Math.max(chosenTier.yMin, Math.min(chosenTier.yMax, tapY + (Math.random() - 0.5) * ySpread)),
-      z: (Math.random() - 0.5) * 0.04,
-    };
+    if (placedPositions.length > 0) {
+      const nearest = placedPositions.reduce((a, b) => {
+        const da = Math.sqrt(Math.pow(a.x - tapX, 2) + Math.pow(a.y - tapY, 2));
+        const db = Math.sqrt(Math.pow(b.x - tapX, 2) + Math.pow(b.y - tapY, 2));
+        return da < db ? a : b;
+      });
+      const angle = Math.random() * Math.PI * 2;
+      const dist = MIN_DIST + Math.random() * (MAX_ISOLATION - MIN_DIST);
+      point = {
+        x: nearest.x + Math.cos(angle) * dist,
+        y: nearest.y + Math.sin(angle) * dist,
+        z: (Math.random() - 0.5) * 0.04
+      };
+    } else {
+      point = {
+        x: tapX + (Math.random() - 0.5) * 0.2,
+        y: tapY + (Math.random() - 0.5) * 0.2,
+        z: (Math.random() - 0.5) * 0.04
+      };
+    }
   }
 
   await spawnLeafElement(leaf, point, 1, true);
