@@ -4,15 +4,15 @@ import { collection, addDoc, getDocs, query } from 'firebase/firestore';
 export const SNAP_POINTS = [];
 
 const TIERS = [
-  { maxLeaves: 7,   xRange: 0.55, yMin: 1.30, yMax: 1.50 },
-  { maxLeaves: 15,  xRange: 0.70, yMin: 1.28, yMax: 1.54 },
-  { maxLeaves: 28,  xRange: 0.82, yMin: 1.26, yMax: 1.58 },
-  { maxLeaves: 48,  xRange: 0.92, yMin: 1.24, yMax: 1.62 },
-  { maxLeaves: 78,  xRange: 1.00, yMin: 1.22, yMax: 1.66 },
-  { maxLeaves: 120, xRange: 1.08, yMin: 1.20, yMax: 1.70 },
-  { maxLeaves: 180, xRange: 1.14, yMin: 1.18, yMax: 1.74 },
-  { maxLeaves: 280, xRange: 1.18, yMin: 1.16, yMax: 1.78 },
-  { maxLeaves: 500, xRange: 1.22, yMin: 1.14, yMax: 1.82 },
+  { maxLeaves: 7,   xRange: 1.10, yMin: 1.30, yMax: 1.50 },
+  { maxLeaves: 15,  xRange: 1.30, yMin: 1.28, yMax: 1.54 },
+  { maxLeaves: 28,  xRange: 1.50, yMin: 1.26, yMax: 1.58 },
+  { maxLeaves: 48,  xRange: 1.70, yMin: 1.24, yMax: 1.62 },
+  { maxLeaves: 78,  xRange: 1.88, yMin: 1.22, yMax: 1.66 },
+  { maxLeaves: 120, xRange: 2.00, yMin: 1.20, yMax: 1.70 },
+  { maxLeaves: 180, xRange: 2.10, yMin: 1.18, yMax: 1.74 },
+  { maxLeaves: 280, xRange: 2.18, yMin: 1.16, yMax: 1.78 },
+  { maxLeaves: 500, xRange: 2.24, yMin: 1.14, yMax: 1.82 },
 ];
 
 const snapGrid = [
