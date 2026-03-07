@@ -305,6 +305,7 @@ async function placeLeafAtTap(tapX, tapY) {
   const ySpread = (chosenTier.yMax - chosenTier.yMin) * 0.5;
 
   const MIN_DIST = 0.10;
+  const MAX_ISOLATION = 0.42;
   const placedPositions = existingLeaves.map(el => ({
     x: parseFloat(el.dataset.arX),
     y: parseFloat(el.dataset.arY),
@@ -331,7 +332,6 @@ async function placeLeafAtTap(tapX, tapY) {
     const tooClose = placedPositions.some(p =>
       Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < MIN_DIST
     );
-    const MAX_ISOLATION = 0.42;
     const tooIsolated = placedPositions.length > 0 && !placedPositions.some(p =>
       Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < MAX_ISOLATION
     );
