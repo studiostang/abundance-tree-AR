@@ -4,15 +4,15 @@ import { collection, addDoc, getDocs, query } from 'firebase/firestore';
 export const SNAP_POINTS = [];
 
 const TIERS = [
-  { maxLeaves: 7,   xRange: 0.30, yMin: 1.30, yMax: 1.48 },
-  { maxLeaves: 15,  xRange: 0.42, yMin: 1.28, yMax: 1.52 },
-  { maxLeaves: 28,  xRange: 0.54, yMin: 1.26, yMax: 1.56 },
-  { maxLeaves: 48,  xRange: 0.66, yMin: 1.24, yMax: 1.60 },
-  { maxLeaves: 78,  xRange: 0.76, yMin: 1.22, yMax: 1.64 },
-  { maxLeaves: 120, xRange: 0.84, yMin: 1.20, yMax: 1.68 },
-  { maxLeaves: 180, xRange: 0.90, yMin: 1.18, yMax: 1.72 },
-  { maxLeaves: 280, xRange: 0.95, yMin: 1.16, yMax: 1.76 },
-  { maxLeaves: 500, xRange: 1.00, yMin: 1.14, yMax: 1.80 },
+  { maxLeaves: 7,   xRange: 0.55, yMin: 1.30, yMax: 1.50 },
+  { maxLeaves: 15,  xRange: 0.70, yMin: 1.28, yMax: 1.54 },
+  { maxLeaves: 28,  xRange: 0.82, yMin: 1.26, yMax: 1.58 },
+  { maxLeaves: 48,  xRange: 0.92, yMin: 1.24, yMax: 1.62 },
+  { maxLeaves: 78,  xRange: 1.00, yMin: 1.22, yMax: 1.66 },
+  { maxLeaves: 120, xRange: 1.08, yMin: 1.20, yMax: 1.70 },
+  { maxLeaves: 180, xRange: 1.14, yMin: 1.18, yMax: 1.74 },
+  { maxLeaves: 280, xRange: 1.18, yMin: 1.16, yMax: 1.78 },
+  { maxLeaves: 500, xRange: 1.22, yMin: 1.14, yMax: 1.82 },
 ];
 
 const snapGrid = [
@@ -253,10 +253,10 @@ export async function spawnLeavesInAR(pendingLeaf) {
 
   await Promise.all(spawnPromises.filter(Boolean));
 
-  // Fade in batches of 5 leaves, 80ms between batches, 0 → 0.80 over 1.5s
+  // Fade in batches of 5 leaves, 40ms between batches, 0 → 0.80 over 0.6s
   setTimeout(() => {
     document.querySelectorAll('.ar-leaf').forEach((el, i) => {
-      setTimeout(() => { fadeOpacity(el, 0, 0.60, 1500); setTimeout(() => fadeOpacity(el, 0.60, 0.80, 8000), 1600); }, Math.floor(i / 5) * 80);
+      setTimeout(() => { fadeOpacity(el, 0, 0.60, 600); setTimeout(() => fadeOpacity(el, 0.60, 0.80, 3000), 700); }, Math.floor(i / 5) * 40);
     });
   }, 50);
 

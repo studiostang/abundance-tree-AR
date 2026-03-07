@@ -1261,11 +1261,17 @@ function showToast(msg, durationMs = 2500) {
   toast.textContent = msg;
   toast.style.display = 'block';
   toast.style.opacity = '1';
-  setTimeout(() => {
-    toast.style.transition = 'opacity 0.5s ease';
+  toast.style.transition = '';
+  const dismiss = () => {
+    toast.style.transition = 'opacity 0.3s ease';
     toast.style.opacity = '0';
-    setTimeout(() => { toast.style.display = 'none'; toast.style.transition = ''; }, 500);
-  }, durationMs);
+    setTimeout(() => { toast.style.display = 'none'; toast.style.transition = ''; }, 300);
+    document.removeEventListener('touchstart', dismiss);
+    document.removeEventListener('mousedown', dismiss);
+  };
+  document.addEventListener('touchstart', dismiss, { once: true });
+  document.addEventListener('mousedown', dismiss, { once: true });
+  setTimeout(dismiss, durationMs);
 }
 
 function fitModalText() {
