@@ -1187,12 +1187,6 @@ document.getElementById('btn-submit').addEventListener('click', async function()
   target.addEventListener('targetLost', onTargetLost);
   checkAlreadyTracking(onFound);
 
-  try {
-    await window.spawnLeavesInAR(pendingLeaf);
-  } catch(e) {
-    showToast((TRANSLATIONS[currentLang] || TRANSLATIONS.en).toastError);
-  }
-
   const scene = document.querySelector('a-scene');
   scene.addEventListener('click', function onTap(e) {
   if (!window._tapToPlaceActive) return;
@@ -1205,6 +1199,12 @@ document.getElementById('btn-submit').addEventListener('click', async function()
   window.placeLeafAtTap(arX, arY);
   hideTapPlacePrompt();
 });
+
+  try {
+    await window.spawnLeavesInAR(pendingLeaf);
+  } catch(e) {
+    showToast((TRANSLATIONS[currentLang] || TRANSLATIONS.en).toastError);
+  }
 
 window.addEventListener('leafPlaced', function onPlaced() {
     window.removeEventListener('leafPlaced', onPlaced);
