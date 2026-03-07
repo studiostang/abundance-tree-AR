@@ -1196,10 +1196,6 @@ document.getElementById('btn-submit').addEventListener('click', async function()
   const scene = document.querySelector('a-scene');
   scene.addEventListener('click', function onTap(e) {
   if (!window._tapToPlaceActive) return;
-  e.stopImmediatePropagation();
-  window._tapToPlaceActive = false;
-  window._justPlacedLeaf = true;
-  setTimeout(() => { window._justPlacedLeaf = false; }, 1500);
   scene.removeEventListener('click', onTap);
   const rect = scene.getBoundingClientRect();
   const screenX = (e.clientX - rect.left) / rect.width;
