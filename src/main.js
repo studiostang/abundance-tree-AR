@@ -334,7 +334,11 @@ async function placeLeafAtTap(tapX, tapY) {
     const tooClose = placedPositions.some(p =>
       Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < MIN_DIST
     );
-    if (!tooClose) { point = { x, y, z: (Math.random() - 0.5) * 0.04 }; break; }
+    const MAX_ISOLATION = Math.max(0.55, chosenTier.xRange * 0.35);
+    const tooIsolated = placedPositions.length > 0 && !placedPositions.some(p =>
+      Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < MAX_ISOLATION
+    );
+    if (!tooClose && !tooIsolated) { point = { x, y, z: (Math.random() - 0.5) * 0.04 }; break; }
   }
 
   if (!point) {
