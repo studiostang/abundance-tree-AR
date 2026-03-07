@@ -1,5 +1,5 @@
 import { db } from './firebase.js';
-import { collection, addDoc, getDocs, query } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, onSnapshot } from 'firebase/firestore';
 
 export const SNAP_POINTS = [];
 
@@ -219,11 +219,7 @@ async function spawnLeafElement(leaf, point, initialOpacity, pulse) {
 
 export async function spawnLeavesInAR(pendingLeaf) {
   const target = document.querySelector('[mindar-image-target]');
-
-  if (!target) {
-    console.error('No AR target found');
-    return;
-  }
+  if (!target) { console.error('No AR target found'); return; }
 
   const font = new FontFace('MyFont', 'url(/Myfont1-Regular.ttf)');
   await font.load();
@@ -231,41 +227,29 @@ export async function spawnLeavesInAR(pendingLeaf) {
 
   if (pendingLeaf) { window._pendingLeaf = pendingLeaf; window._tapToPlaceActive = true; }
 
-  const leaves = await loadLeaves();
-
- // Reset taken snap points
   Object.keys(takenSnapPoints).forEach(k => delete takenSnapPoints[k]);
 
-  // Assign snap points to existing leaves, leaving last 3 free
-  leaves.forEach((leaf, index) => {
-    if (index >= SNAP_POINTS.length - 3) return;
-    takenSnapPoints[index] = leaf.id;
+  let leafIndex = 0;
+  const unsubscribe = onSnapshot(query(collection(db, 'leaves')), (snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+      if (change.type === 'added') {
+        const leaf = { id: change.doc.id, ...change.doc.data() };
+        const index = leafIndex++;
+        const point = (typeof leaf.x === 'number' && typeof leaf.y === 'number')
+          ? { x: leaf.x, y: leaf.y, z: leaf.z || 0 }
+          : SNAP_POINTS[index % SNAP_POINTS.length];
+        spawnLeafElement(leaf, point, 0, false).then(el => {
+          if (el) setTimeout(() => fadeOpacity(el, 0, 0.80, 600), 100);
+        });
+      }
+    });
   });
 
-  // Spawn existing leaves in batches of 3 with 50ms between batches
-  for (let i = 0; i < leaves.length; i += 3) {
-    const batch = leaves.slice(i, i + 3);
-    await Promise.all(batch.map((leaf, batchIndex) => {
-      const index = i + batchIndex;
-      const point = (typeof leaf.x === 'number' && typeof leaf.y === 'number')
-        ? { x: leaf.x, y: leaf.y, z: leaf.z || 0 }
-        : SNAP_POINTS[index % SNAP_POINTS.length];
-      return spawnLeafElement(leaf, point, 0, false);
-    }));
-    await new Promise(r => setTimeout(r, 30));
-  }
+  window.addEventListener('leafPlaced', function cleanup() {
+    window.removeEventListener('leafPlaced', cleanup);
+  });
 
-  // Fade in batches of 5 leaves, 40ms between batches, 0 → 0.80 over 0.6s
-  setTimeout(() => {
-    document.querySelectorAll('.ar-leaf').forEach((el, i) => {
-      const totalLeaves = document.querySelectorAll('.ar-leaf').length || 1;
-      const maxStagger = Math.min(6000, 1000 + totalLeaves * 10);
-      const stagger = (i / totalLeaves) * maxStagger;
-      setTimeout(() => { fadeOpacity(el, 0, 0.60, 400); setTimeout(() => fadeOpacity(el, 0.60, 0.80, 2000), 500); }, stagger);
-    });
-  }, 50);
-
-  console.log('Spawned ' + leaves.length + ' existing leaves');
+  window._unsubscribeLeaves = unsubscribe;
 }
 
 // Called when visitor taps the AR scene to place their leaf
