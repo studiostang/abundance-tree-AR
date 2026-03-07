@@ -315,10 +315,22 @@ async function placeLeafAtTap(tapX, tapY) {
 
   let point = null;
   for (let attempt = 0; attempt < 15; attempt++) {
+    let baseX = tapX;
+    let baseY = tapY;
+    if (leafCount > 0 && leafCount < 50 && placedPositions.length > 0) {
+      const nearest = placedPositions.reduce((a, b) => {
+        const da = Math.sqrt(Math.pow(a.x - tapX, 2) + Math.pow(a.y - tapY, 2));
+        const db = Math.sqrt(Math.pow(b.x - tapX, 2) + Math.pow(b.y - tapY, 2));
+        return da < db ? a : b;
+      });
+      const biasFactor = Math.max(0, (1 - leafCount / 50) * 0.3);
+      baseX = tapX * (1 - biasFactor) + nearest.x * biasFactor;
+      baseY = tapY * (1 - biasFactor) + nearest.y * biasFactor;
+    }
     const x = Math.max(-effectiveXRange, Math.min(effectiveXRange,
-      tapX + (Math.random() - 0.5) * xSpread));
+      baseX + (Math.random() - 0.5) * xSpread));
     const y = Math.max(chosenTier.yMin, Math.min(chosenTier.yMax,
-      tapY + (Math.random() - 0.5) * ySpread));
+      baseY + (Math.random() - 0.5) * ySpread));
     const tooClose = placedPositions.some(p =>
       Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < MIN_DIST
     );
