@@ -1001,6 +1001,7 @@ document.getElementById('ar-back-btn').addEventListener('click', function() {
   resetPrompts();
   hideLeafModal();
   window._tapToPlaceActive = false;
+  if (window._unsubscribeLeaves) { window._unsubscribeLeaves(); window._unsubscribeLeaves = null; }
   window._pendingLeaf = null;
 
   document.querySelectorAll('a-image').forEach(function(leaf) {
