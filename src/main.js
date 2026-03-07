@@ -4,15 +4,15 @@ import { collection, addDoc, getDocs, query } from 'firebase/firestore';
 export const SNAP_POINTS = [];
 
 const TIERS = [
-  { maxLeaves: 7,   xRange: 1.10, yMin: 1.30, yMax: 1.50 },
-  { maxLeaves: 15,  xRange: 1.30, yMin: 1.28, yMax: 1.54 },
-  { maxLeaves: 28,  xRange: 1.50, yMin: 1.26, yMax: 1.58 },
-  { maxLeaves: 48,  xRange: 1.70, yMin: 1.24, yMax: 1.62 },
-  { maxLeaves: 78,  xRange: 1.88, yMin: 1.22, yMax: 1.66 },
-  { maxLeaves: 120, xRange: 2.00, yMin: 1.20, yMax: 1.70 },
-  { maxLeaves: 180, xRange: 2.10, yMin: 1.18, yMax: 1.74 },
-  { maxLeaves: 280, xRange: 2.18, yMin: 1.16, yMax: 1.78 },
-  { maxLeaves: 500, xRange: 2.24, yMin: 1.14, yMax: 1.82 },
+  { maxLeaves: 7,   xRange: 1.80, yMin: 1.32, yMax: 1.48 },
+  { maxLeaves: 15,  xRange: 2.20, yMin: 1.30, yMax: 1.52 },
+  { maxLeaves: 28,  xRange: 2.60, yMin: 1.28, yMax: 1.56 },
+  { maxLeaves: 48,  xRange: 3.00, yMin: 1.26, yMax: 1.60 },
+  { maxLeaves: 78,  xRange: 3.30, yMin: 1.24, yMax: 1.64 },
+  { maxLeaves: 120, xRange: 3.50, yMin: 1.22, yMax: 1.68 },
+  { maxLeaves: 180, xRange: 3.60, yMin: 1.20, yMax: 1.72 },
+  { maxLeaves: 280, xRange: 3.70, yMin: 1.18, yMax: 1.76 },
+  { maxLeaves: 500, xRange: 3.80, yMin: 1.16, yMax: 1.80 },
 ];
 
 const snapGrid = [
@@ -297,10 +297,10 @@ async function placeLeafAtTap(tapX, tapY) {
   const chosenTier = availableTiers[chosenTierIndex];
 
   // Zone is centered on tap position with some randomness
-  const xSpread = chosenTier.xRange * 0.3;
-  const ySpread = (chosenTier.yMax - chosenTier.yMin) * 0.3;
+  const xSpread = chosenTier.xRange * 0.5;
+  const ySpread = (chosenTier.yMax - chosenTier.yMin) * 0.5;
 
-  const MIN_DIST = 0.06;
+  const MIN_DIST = 0.18;
   const placedPositions = existingLeaves.map(el => ({
     x: parseFloat(el.dataset.arX),
     y: parseFloat(el.dataset.arY),
