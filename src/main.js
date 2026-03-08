@@ -179,7 +179,7 @@ function startBreezeAnimation() {
     const leaves = Array.from(document.querySelectorAll('.ar-leaf'));
     if (leaves.length === 0) return;
 
-    const count = Math.max(1, Math.floor(leaves.length * 0.15));
+    const count = Math.max(1, Math.floor(leaves.length * 0.30));
     const shuffled = leaves.sort(() => Math.random() - 0.5).slice(0, count);
 
     shuffled.forEach((leaf, i) => {
@@ -205,9 +205,9 @@ function startBreezeAnimation() {
     setTimeout(swayBatch, nextBatch);
   }
 
-  setTimeout(swayBatch, 1000);
+  setTimeout(swayBatch, 500);
+  setTimeout(swayBatch, 1500);
   setTimeout(swayBatch, 3000);
-  setTimeout(swayBatch, 5500);
 }
 
 // Spawn a leaf element in AR at a given snap point
