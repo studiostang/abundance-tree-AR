@@ -1,5 +1,5 @@
 import { db } from './firebase.js';
-import { collection, addDoc, getDocs, query, onSnapshot } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 
 export const SNAP_POINTS = [];
 
@@ -392,6 +392,31 @@ async function placeLeafAtTap(tapX, tapY) {
         y: tapY + (Math.random() - 0.5) * 0.2,
         z: (Math.random() - 0.5) * 0.04
       };
+    }
+  }
+
+  // 500 leaf cap — delete oldest leaf before adding new one
+  const allLeaves = Array.from(document.querySelectorAll('.ar-leaf'));
+  if (allLeaves.length >= 500) {
+    let oldestEl = null;
+    let oldestTimestamp = Infinity;
+    allLeaves.forEach(el => {
+      const ts = parseInt(el.dataset.timestamp, 10);
+      if (!isNaN(ts) && ts < oldestTimestamp) {
+        oldestTimestamp = ts;
+        oldestEl = el;
+      }
+    });
+    if (oldestEl) {
+      const oldestId = oldestEl.dataset.leafId;
+      oldestEl.parentNode.removeChild(oldestEl);
+      if (oldestId) {
+        try {
+          await deleteDoc(doc(db, 'leaves', oldestId));
+        } catch (e) {
+          console.error('Error deleting oldest leaf:', e);
+        }
+      }
     }
   }
 
