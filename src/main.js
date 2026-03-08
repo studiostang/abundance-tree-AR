@@ -186,28 +186,28 @@ function startBreezeAnimation() {
       const currentRot = leaf.getAttribute('rotation');
       if (!currentRot) return;
       const baseZ = currentRot.z;
-      const swayDeg = (Math.random() * 12 + 8) * (Math.random() < 0.5 ? 1 : -1);
-      const duration = 2500 + Math.random() * 1000;
-      const delay = i * 300 + Math.random() * 200;
+      const swayDeg = (Math.random() * 10 + 6) * (Math.random() < 0.5 ? 1 : -1);
+      const duration = 3000 + Math.random() * 2000;
+      const delay = i * 400 + Math.random() * 300;
       const start = performance.now() + delay;
 
       function animate(now) {
         if (now < start) { requestAnimationFrame(animate); return; }
         const t = Math.min(1, (now - start) / duration);
-        const ease = Math.sin(t * Math.PI);
-        leaf.setAttribute('rotation', { x: currentRot.x, y: currentRot.y, z: baseZ + swayDeg * ease });
+        const ease = 0.5 - Math.cos(t * Math.PI) * 0.5;
+        leaf.setAttribute('rotation', { x: currentRot.x, y: currentRot.y, z: baseZ + swayDeg * Math.sin(ease * Math.PI) });
         if (t < 1) { requestAnimationFrame(animate); } else { leaf.setAttribute('rotation', { x: currentRot.x, y: currentRot.y, z: baseZ }); }
       }
       requestAnimationFrame(animate);
     });
 
-    const nextBatch = 2000 + Math.random() * 1500;
+    const nextBatch = 2500 + Math.random() * 2000;
     setTimeout(swayBatch, nextBatch);
   }
 
   setTimeout(swayBatch, 1000);
-  setTimeout(swayBatch, 2500);
-  setTimeout(swayBatch, 4500);
+  setTimeout(swayBatch, 3000);
+  setTimeout(swayBatch, 5500);
 }
 
 // Spawn a leaf element in AR at a given snap point
