@@ -183,23 +183,24 @@ function startBreezeAnimation() {
     const shuffled = leaves.sort(() => Math.random() - 0.5).slice(0, count);
 
     shuffled.forEach((leaf, i) => {
-      const currentRot = leaf.getAttribute('rotation');
-      if (!currentRot) return;
-      const baseZ = currentRot.z;
-      const swayDeg = (Math.random() * 20 + 15) * (Math.random() < 0.5 ? 1 : -1);
-      const duration = 3000 + Math.random() * 2000;
       const delay = i * 400 + Math.random() * 300;
-      const start = performance.now() + delay;
+      setTimeout(() => {
+        const currentRot = leaf.getAttribute('rotation');
+        if (!currentRot) return;
+        const baseZ = currentRot.z;
+        const swayDeg = (Math.random() * 20 + 15) * (Math.random() < 0.5 ? 1 : -1);
+        const duration = 3000 + Math.random() * 2000;
+        const start = performance.now();
 
-      function animate(now) {
-        if (now < start) { requestAnimationFrame(animate); return; }
-        const t = Math.min(1, (now - start) / duration);
-        const ease = (1 - Math.cos(t * Math.PI)) / 2;
-        const sway = Math.sin(ease * Math.PI);
-        leaf.setAttribute('rotation', { x: currentRot.x, y: currentRot.y, z: baseZ + swayDeg * sway });
-        if (t < 1) { requestAnimationFrame(animate); } else { leaf.setAttribute('rotation', { x: currentRot.x, y: currentRot.y, z: baseZ }); }
-      }
-      requestAnimationFrame(animate);
+        function animate(now) {
+          const t = Math.min(1, (now - start) / duration);
+          const ease = (1 - Math.cos(t * Math.PI)) / 2;
+          const sway = Math.sin(ease * Math.PI);
+          leaf.setAttribute('rotation', { x: currentRot.x, y: currentRot.y, z: baseZ + swayDeg * sway });
+          if (t < 1) { requestAnimationFrame(animate); } else { leaf.setAttribute('rotation', { x: currentRot.x, y: currentRot.y, z: baseZ }); }
+        }
+        requestAnimationFrame(animate);
+      }, delay);
     });
 
     const nextBatch = 2500 + Math.random() * 2000;
