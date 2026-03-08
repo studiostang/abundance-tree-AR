@@ -179,7 +179,7 @@ function startBreezeAnimation() {
     const leaves = Array.from(document.querySelectorAll('.ar-leaf'));
     if (leaves.length === 0) return;
 
-    const count = Math.max(1, Math.floor(leaves.length * 0.06));
+    const count = Math.max(1, Math.floor(leaves.length * 0.15));
     const shuffled = leaves.sort(() => Math.random() - 0.5).slice(0, count);
 
     shuffled.forEach((leaf, i) => {
