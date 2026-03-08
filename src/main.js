@@ -286,6 +286,7 @@ export async function spawnLeavesInAR(pendingLeaf) {
       if (change.type === 'added') {
         const leaf = { id: change.doc.id, ...change.doc.data() };
         if (window._seenIds.has(leaf.id)) return;
+        if (window._placingLeaf) return;
         window._seenIds.add(leaf.id);
         const index = leafIndex++;
         const point = (typeof leaf.x === 'number' && typeof leaf.y === 'number')
@@ -324,6 +325,7 @@ export async function spawnLeavesInAR(pendingLeaf) {
 async function placeLeafAtTap(tapX, tapY) {
   if (!window._pendingLeaf) return;
   window._tapToPlaceActive = false;
+  window._placingLeaf = true;
 
   const leaf = window._pendingLeaf;
 
@@ -457,6 +459,7 @@ async function placeLeafAtTap(tapX, tapY) {
   }
 
   window._pendingLeaf = null;
+  window._placingLeaf = false;
   window.dispatchEvent(new CustomEvent('leafPlaced'));
 }
 
