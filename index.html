@@ -11,9 +11,10 @@
     @font-face {
   font-family: 'MyFont';
   src: url('/Myfont1-Regular.ttf') format('truetype');
+  unicode-range: U+0000-007F, U+00A0-024F, U+1E00-1EFF;
 }
 html { overflow: hidden; }
-   body { margin: 0; overflow: hidden; position: fixed; width: 100%; height: 100%; font-family: 'MyFont', system-ui, -apple-system, sans-serif; }
+   body { margin: 0; overflow: hidden; position: fixed; width: 100%; height: 100%; font-family: 'MyFont', 'Helvetica Neue', system-ui, -apple-system, sans-serif; }
 
   #ui-overlay {
   position: fixed;
@@ -44,12 +45,14 @@ a-scene {
       font-size: 3em;
       margin-bottom: 10px;
       font-weight: normal;
+      font-family: 'MyFont', system-ui, -apple-system, sans-serif;
     }
 
     #landing-screen p {
       font-size: 2em;
       margin-bottom: 40px;
       opacity: 0.8;
+      font-family: 'MyFont', system-ui, -apple-system, sans-serif;
     }
 
     .main-button {
@@ -120,7 +123,7 @@ a-scene {
 /* Base leaf-prompt style (used by #form-leaf-prompt in form screen) */
 .leaf-prompt {
   font-family: 'MyFont', system-ui, -apple-system, sans-serif;
-  font-style: italic;
+  font-style: normal;
   font-size: 0.85em;
   color: rgba(255,255,255,0.72);
   text-align: center;
@@ -135,7 +138,7 @@ a-scene {
   right: 0;
   padding-left: 31%;
   padding-right: 18%;
-  font-size: clamp(0.7em, 2.5vw, 0.9em);
+  font-size: clamp(0.8em, 2.8vw, 1.0em);
   font-family: 'MyFont', system-ui, -apple-system, sans-serif;
   color: #2a1a00;
   pointer-events: none;
@@ -197,8 +200,9 @@ textarea#leaf-message {
   border: 1px solid rgba(255,255,255,0.4);
   border-radius: 8px;
   color: white;
-  font-family: 'MyFont', cursive;
+  font-family: 'MyFont', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
   font-size: 1.6em;
+  font-style: normal;
   padding: 12px;
   resize: none;
 }
@@ -207,8 +211,9 @@ textarea#leaf-message {
   width: 85vw;
   max-width: 350px;
   text-align: right;
-  font-family: 'MyFont', cursive;
+  font-family: 'MyFont', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
   font-size: 0.9em;
+  font-style: normal;
   color: rgba(255,255,255,0.6);
   margin-top: -8px;
 }
@@ -238,8 +243,9 @@ textarea#leaf-message {
   background: transparent;
   border: none;
   color: rgba(255,255,255,0.6);
-  font-family: 'MyFont', cursive;
+  font-family: 'MyFont', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
   font-size: 1em;
+  font-style: normal;
   cursor: pointer;
   margin-top: 5px;
 }
@@ -257,6 +263,8 @@ a {
   text-align: center;
   color: rgba(255, 255, 255, 0.6);
   font-size: 1.1rem;
+  font-family: 'MyFont', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+  font-style: normal;
   text-decoration: none;
   letter-spacing: 0.05em;
 }
