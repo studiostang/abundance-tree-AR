@@ -175,6 +175,8 @@ function fadeOpacity(el, from, to, durationMs) {
 }
 
 function startBreezeAnimation() {
+  const swayingLeaves = new WeakMap();
+
   function swayBatch() {
     const leaves = Array.from(document.querySelectorAll('.ar-leaf'));
     if (leaves.length === 0) return;
@@ -183,21 +185,29 @@ function startBreezeAnimation() {
     const shuffled = leaves.sort(() => Math.random() - 0.5).slice(0, count);
 
     shuffled.forEach((leaf, i) => {
+      if (swayingLeaves.get(leaf)) return;
       const delay = i * 400 + Math.random() * 300;
       setTimeout(() => {
+        if (swayingLeaves.get(leaf)) return;
         const currentRot = leaf.getAttribute('rotation');
         if (!currentRot) return;
         const baseZ = currentRot.z;
         const swayDeg = (Math.random() * 20 + 15) * (Math.random() < 0.5 ? 1 : -1);
         const duration = 3000 + Math.random() * 2000;
         const start = performance.now();
+        swayingLeaves.set(leaf, true);
 
         function animate(now) {
           const t = Math.min(1, (now - start) / duration);
           const ease = (1 - Math.cos(t * Math.PI)) / 2;
           const sway = Math.sin(ease * Math.PI);
           leaf.setAttribute('rotation', { x: currentRot.x, y: currentRot.y, z: baseZ + swayDeg * sway });
-          if (t < 1) { requestAnimationFrame(animate); } else { leaf.setAttribute('rotation', { x: currentRot.x, y: currentRot.y, z: baseZ }); }
+          if (t < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            leaf.setAttribute('rotation', { x: currentRot.x, y: currentRot.y, z: baseZ });
+            swayingLeaves.set(leaf, false);
+          }
         }
         requestAnimationFrame(animate);
       }, delay);
