@@ -187,8 +187,8 @@ function startBreezeAnimation() {
       if (!currentRot) return;
       const baseZ = currentRot.z;
       const swayDeg = (Math.random() * 12 + 8) * (Math.random() < 0.5 ? 1 : -1);
-      const duration = 1000 + Math.random() * 1000;
-      const delay = i * 200 + Math.random() * 150;
+      const duration = 2500 + Math.random() * 1000;
+      const delay = i * 300 + Math.random() * 200;
       const start = performance.now() + delay;
 
       function animate(now) {
@@ -201,12 +201,13 @@ function startBreezeAnimation() {
       requestAnimationFrame(animate);
     });
 
-    const nextBatch = 1000 + Math.random() * 1000;
+    const nextBatch = 2000 + Math.random() * 1500;
     setTimeout(swayBatch, nextBatch);
   }
 
-  setTimeout(swayBatch, 1500);
-  setTimeout(swayBatch, 3000);
+  setTimeout(swayBatch, 1000);
+  setTimeout(swayBatch, 2500);
+  setTimeout(swayBatch, 4500);
 }
 
 // Spawn a leaf element in AR at a given snap point
