@@ -312,7 +312,7 @@ export async function spawnLeavesInAR(pendingLeaf) {
     sorted.slice(0, cutoff).forEach(el => {
       fadeOpacity(el, 0.80, 0.40, 2000);
     });
-  }, 4000);
+  }, 3000);
 
   startBreezeAnimation();
 }
