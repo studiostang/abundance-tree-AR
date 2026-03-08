@@ -252,13 +252,15 @@ async function spawnLeafElement(leaf, point, initialOpacity, pulse) {
     setTimeout(() => {
       const obj = el.object3D;
       if (!obj) return;
-      obj.scale.set(1, 1, 1);
-      setTimeout(() => obj.scale.set(1.8, 1.8, 1), 50);
-      setTimeout(() => obj.scale.set(0.9, 0.9, 1), 500);
-      setTimeout(() => obj.scale.set(1.3, 1.3, 1), 800);
-      setTimeout(() => obj.scale.set(1, 1, 1), 1200);
+      obj.scale.set(0.1, 0.1, 1);
+      setTimeout(() => obj.scale.set(3.5, 3.5, 1), 50);
+      setTimeout(() => obj.scale.set(2.2, 2.2, 1), 350);
+      setTimeout(() => obj.scale.set(2.8, 2.8, 1), 600);
+      setTimeout(() => obj.scale.set(1.6, 1.6, 1), 900);
+      setTimeout(() => obj.scale.set(2.0, 2.0, 1), 1100);
+      setTimeout(() => obj.scale.set(1.0, 1.0, 1), 1400);
       // After pulse ends, fade from 1.0 down to resting opacity 0.80
-      setTimeout(() => fadeOpacity(el, 1.0, 0.80, 2500), 1400);
+      setTimeout(() => fadeOpacity(el, 1.0, 0.80, 2500), 1600);
     }, 200);
   }
 
