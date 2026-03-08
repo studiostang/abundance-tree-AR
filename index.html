@@ -965,11 +965,16 @@ function enterAR() {
 
 function showTapReadPrompt() {
   const tapRead = document.getElementById('tap-read-prompt');
+  tapRead.style.opacity = '0';
   tapRead.style.display = 'block';
-  setTimeout(() => { tapRead.style.opacity = '1'; }, 100);
   setTimeout(() => {
+    tapRead.style.transition = 'opacity 0.4s ease';
+    tapRead.style.opacity = '1';
+  }, 100);
+  setTimeout(() => {
+    tapRead.style.transition = 'opacity 1s ease';
     tapRead.style.opacity = '0';
-    setTimeout(() => { tapRead.style.display = 'none'; }, 1000);
+    setTimeout(() => { tapRead.style.display = 'none'; tapRead.style.transition = ''; }, 1000);
   }, 6000);
 }
 
