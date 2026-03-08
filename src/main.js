@@ -279,11 +279,14 @@ export async function spawnLeavesInAR(pendingLeaf) {
 
   Object.keys(takenSnapPoints).forEach(k => delete takenSnapPoints[k]);
 
+  const seenIds = new Set();
   let leafIndex = 0;
   const unsubscribe = onSnapshot(query(collection(db, 'leaves')), (snapshot) => {
     snapshot.docChanges().forEach((change) => {
       if (change.type === 'added') {
         const leaf = { id: change.doc.id, ...change.doc.data() };
+        if (seenIds.has(leaf.id)) return;
+        seenIds.add(leaf.id);
         const index = leafIndex++;
         const point = (typeof leaf.x === 'number' && typeof leaf.y === 'number')
           ? { x: leaf.x, y: leaf.y, z: leaf.z || 0 }
