@@ -174,6 +174,42 @@ function fadeOpacity(el, from, to, durationMs) {
   requestAnimationFrame(step);
 }
 
+function startBreezeAnimation() {
+  function swayBatch() {
+    const leaves = Array.from(document.querySelectorAll('.ar-leaf'));
+    if (leaves.length === 0) return;
+
+    const count = Math.max(1, Math.floor(leaves.length * 0.08));
+    const shuffled = leaves.sort(() => Math.random() - 0.5).slice(0, count);
+
+    shuffled.forEach(leaf => {
+      const obj = leaf.object3D;
+      if (!obj) return;
+      const baseZ = obj.rotation.z;
+      const swayAmount = (Math.random() * 0.04 + 0.02) * (Math.random() < 0.5 ? 1 : -1);
+      const duration = 1500 + Math.random() * 1500;
+      const delay = Math.random() * 1200;
+      const start = performance.now() + delay;
+
+      function animate(now) {
+        if (now < start) { requestAnimationFrame(animate); return; }
+        const t = Math.min(1, (now - start) / duration);
+        const ease = Math.sin(t * Math.PI);
+        obj.rotation.z = baseZ + swayAmount * ease;
+        if (t < 1) { requestAnimationFrame(animate); } else { obj.rotation.z = baseZ; }
+      }
+      requestAnimationFrame(animate);
+    });
+
+    const nextBatch = 800 + Math.random() * 1000;
+    setTimeout(swayBatch, nextBatch);
+  }
+
+  setTimeout(swayBatch, 1000);
+  setTimeout(swayBatch, 1500);
+  setTimeout(swayBatch, 2800);
+}
+
 // Spawn a leaf element in AR at a given snap point
 async function spawnLeafElement(leaf, point, initialOpacity, pulse) {
   const dataURL = await renderLeafCanvas(leaf);
@@ -250,6 +286,7 @@ export async function spawnLeavesInAR(pendingLeaf) {
   });
 
   window._unsubscribeLeaves = unsubscribe;
+  startBreezeAnimation();
 }
 
 // Called when visitor taps the AR scene to place their leaf
