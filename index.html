@@ -587,6 +587,7 @@ a {
       <button class="lang-option" data-lang="ko">한국어</button>
       <button class="lang-option" data-lang="pt">Português</button>
       <button class="lang-option" data-lang="zh">中文</button>
+      <button class="lang-option" data-lang="ru">Русский</button>
     </div>
   </div>
 
@@ -870,14 +871,39 @@ const TRANSLATIONS = {
     toastNoColor: '请为你的叶子选择一种颜色。',
     toastError: '出了点问题，请重试。',
   },
+  ru: {
+    title: 'Дерево изобилия',
+    subtitle: 'Живая летопись коллективной благодарности',
+    btnSee: 'Посмотреть дерево',
+    btnAdd: 'Добавить свой лист',
+    chooseLeaf: 'Выберите свой лист',
+    placeholder: 'напишите свой ответ здесь...',
+    placeLeaf: 'разместить мой лист',
+    chooseDiff: '← выбрать другой лист',
+    charsRemaining: 'символов осталось',
+    back: '← назад',
+    cameraInstruction: 'Направьте камеру на всё дерево',
+    tapPlace: 'Нажмите на место, чтобы разместить лист',
+    tapRead: 'Нажмите на лист, чтобы прочитать',
+    studioLink: 'Нажмите, чтобы узнать больше на studiostang.com',
+    contentWarning: 'Пожалуйста, исправьте сообщение, чтобы сохранить это пространство добрым и уважительным.',
+    leaf1prompt: 'Сегодня я чувствую себя богатым/богатой, потому что...',
+    leaf2prompt: 'Я делюсь своим изобилием...',
+    leaf3prompt: 'Я чувствую себя наиболее живым/живой, когда...',
+    translate: 'перевести',
+    showOriginal: 'показать оригинал',
+    toastNoMessage: 'Пожалуйста, сначала напишите что-нибудь на своём листе.',
+    toastNoColor: 'Пожалуйста, выберите цвет для своего листа.',
+    toastError: 'Что-то пошло не так, пожалуйста, попробуйте снова.',
+  },
 };
 
 /* Fix 3: Google Translate language code map */
-const GT_LANG = { en:'en', es:'es', hmn:'hmn', ar:'ar', fr:'fr', de:'de', hi:'hi', ja:'ja', ko:'ko', pt:'pt', zh:'zh-CN' };
+const GT_LANG = { en:'en', es:'es', hmn:'hmn', ar:'ar', fr:'fr', de:'de', hi:'hi', ja:'ja', ko:'ko', pt:'pt', zh:'zh-CN', ru:'ru' };
 
 let currentLang = 'en';
 let currentLeafNumber = '1';
-const LANG_LABELS = { en:'EN', es:'ES', hmn:'HM', ar:'AR', fr:'FR', de:'DE', hi:'HI', ja:'JP', ko:'KO', pt:'PT', zh:'中文' };
+const LANG_LABELS = { en:'EN', es:'ES', hmn:'HM', ar:'AR', fr:'FR', de:'DE', hi:'HI', ja:'JP', ko:'KO', pt:'PT', zh:'中文', ru:'RU' };
 
 function setLang(code) {
   currentLang = code;
