@@ -177,6 +177,7 @@ function fadeOpacity(el, from, to, durationMs) {
 function startBreezeAnimation() {
   function swayBatch() {
     const leaves = Array.from(document.querySelectorAll('.ar-leaf'));
+    console.log('swayBatch firing, leaf count:', leaves.length);
     if (leaves.length === 0) return;
 
     const count = Math.max(1, Math.floor(leaves.length * 0.08));
@@ -187,6 +188,7 @@ function startBreezeAnimation() {
       if (!obj) return;
       const baseZ = obj.rotation.z;
       const swayAmount = (Math.random() * 0.04 + 0.02) * (Math.random() < 0.5 ? 1 : -1);
+      console.log('swaying leaf, baseZ:', baseZ, 'swayAmount:', swayAmount);
       const duration = 1500 + Math.random() * 1500;
       const delay = Math.random() * 1200;
       const start = performance.now() + delay;
