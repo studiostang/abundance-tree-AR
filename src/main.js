@@ -300,6 +300,20 @@ export async function spawnLeavesInAR(pendingLeaf) {
   });
 
   window._unsubscribeLeaves = unsubscribe;
+
+  // Single pass after initial load — fade oldest 10% of leaves to 40% opacity for depth
+  setTimeout(() => {
+    const allLeaves = Array.from(document.querySelectorAll('.ar-leaf'));
+    if (allLeaves.length < 30) return;
+    const sorted = allLeaves
+      .filter(el => !isNaN(parseInt(el.dataset.timestamp, 10)))
+      .sort((a, b) => parseInt(a.dataset.timestamp, 10) - parseInt(b.dataset.timestamp, 10));
+    const cutoff = Math.floor(sorted.length * 0.10);
+    sorted.slice(0, cutoff).forEach(el => {
+      fadeOpacity(el, 0.80, 0.40, 2000);
+    });
+  }, 4000);
+
   startBreezeAnimation();
 }
 
