@@ -186,7 +186,7 @@ function startBreezeAnimation() {
       const currentRot = leaf.getAttribute('rotation');
       if (!currentRot) return;
       const baseZ = currentRot.z;
-      const swayDeg = (Math.random() * 10 + 6) * (Math.random() < 0.5 ? 1 : -1);
+      const swayDeg = (Math.random() * 20 + 15) * (Math.random() < 0.5 ? 1 : -1);
       const duration = 3000 + Math.random() * 2000;
       const delay = i * 400 + Math.random() * 300;
       const start = performance.now() + delay;
