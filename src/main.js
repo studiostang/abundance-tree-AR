@@ -179,7 +179,7 @@ function startBreezeAnimation() {
     const leaves = Array.from(document.querySelectorAll('.ar-leaf'));
     if (leaves.length === 0) return;
 
-    const count = Math.max(1, Math.floor(leaves.length * 0.30));
+    const count = Math.max(1, Math.floor(leaves.length * 0.20));
     const shuffled = leaves.sort(() => Math.random() - 0.5).slice(0, count);
 
     shuffled.forEach((leaf, i) => {
@@ -194,8 +194,8 @@ function startBreezeAnimation() {
       function animate(now) {
         if (now < start) { requestAnimationFrame(animate); return; }
         const t = Math.min(1, (now - start) / duration);
-        const ease = 0.5 - Math.cos(t * Math.PI) * 0.5;
-        leaf.setAttribute('rotation', { x: currentRot.x, y: currentRot.y, z: baseZ + swayDeg * Math.sin(ease * Math.PI) });
+        const ease = Math.sin(t * Math.PI);
+        leaf.setAttribute('rotation', { x: currentRot.x, y: currentRot.y, z: baseZ + swayDeg * ease });
         if (t < 1) { requestAnimationFrame(animate); } else { leaf.setAttribute('rotation', { x: currentRot.x, y: currentRot.y, z: baseZ }); }
       }
       requestAnimationFrame(animate);
