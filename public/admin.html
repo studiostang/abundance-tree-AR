@@ -234,6 +234,12 @@
       "pink":        "#ffb7c5",
     };
 
+    const promptMap = {
+  "1": "Today I feel rich because…",
+  "2": "I share my abundance by…",
+  "3": "I feel most alive when…",
+};
+
     // ── Auth ──────────────────────────────────────────────────────────────
     function checkPassword() {
       const input = document.getElementById("password-input").value;
@@ -291,9 +297,10 @@
             ${escapeHtml(leaf.message || "(no message)")}
             <div class="leaf-meta">
               <span class="color-dot" style="background:${color}"></span>
-              ${leaf.color || "unknown"} &nbsp;·&nbsp;
-              ${leaf.language || "unknown"} &nbsp;·&nbsp;
-              ${date}
+            ${leaf.color || "unknown"} &nbsp;·&nbsp;
+            ${leaf.language || "unknown"} &nbsp;·&nbsp;
+            ${date}
+            <br/><span style="color:#a8c89a; font-style:italic;">${promptMap[leaf.leafNumber] || "unknown prompt"}</span>
             </div>
           </div>
           <div class="leaf-actions">
