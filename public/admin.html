@@ -109,25 +109,12 @@
       gap: 16px;
     }
 
-    .leaf-card.pending { border-left: 3px solid #e0a040; }
     .leaf-card.approved { border-left: 3px solid #4a7a3a; }
 
     .leaf-message { font-size: 15px; color: #e0e0e0; line-height: 1.4; flex: 1; }
     .leaf-meta { font-size: 12px; color: #666; margin-top: 6px; }
 
     .leaf-actions { display: flex; gap: 8px; flex-shrink: 0; }
-
-    .btn-approve {
-      padding: 6px 14px;
-      background: #4a7a3a;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 13px;
-      cursor: pointer;
-    }
-
-    .btn-approve:hover { background: #5a8a4a; }
 
     .btn-delete {
       padding: 6px 14px;
@@ -212,25 +199,16 @@
         <div class="number" id="count-approved">—</div>
         <div class="label">Approved</div>
       </div>
-      <div class="stat-box">
-        <div class="number" id="count-pending">—</div>
-        <div class="label">Pending Review</div>
-      </div>
     </div>
 
     <div class="section">
-      <h2>Pending Approval</h2>
-      <div id="pending-list"><div class="loading">Loading...</div></div>
-    </div>
-
-    <div class="section">
-      <h2>Approved Leaves</h2>
+      <h2>All Leaves</h2>
       <div id="approved-list"><div class="loading">Loading...</div></div>
     </div>
   </div>
 
   <script>
-    // ─── CONFIG — replace YOUR_API_KEY_HERE with your actual key ───────────
+    // ─── CONFIG ─────────────────────────────────────────────────────────────
     const firebaseConfig = {
       apiKey: "AIzaSyD8t_SxvKnNcjRlTOrMGpGzD3sO_zxLLWc"
 ,
@@ -240,7 +218,7 @@
       messagingSenderId: "893663544560",
       appId: "1:893663544560:web:e775bebf16086bbc0eee35"
     };
-    // ───────────────────────────────────────────────────────────────────────
+    // ────────────────────────────────────────────────────────────────────────
 
     const ADMIN_PASSWORD = "Abundance1!";
 
@@ -248,11 +226,12 @@
     const db = firebase.firestore();
 
     const colorMap = {
-      "deep-green":    "#2d5a27",
-      "golden-yellow": "#d4a017",
-      "burnt-orange":  "#c45c26",
-      "pale-yellow":   "#e8d87f",
-      "rust-red":      "#8b3a2a"
+      "pale-yellow": "#e8d87f",
+      "peach":       "#ffaa80",
+      "turquoise":   "#7fffd4",
+      "lime":        "#ccff90",
+      "purple":      "#d4aaff",
+      "pink":        "#ffb7c5",
     };
 
     // ── Auth ──────────────────────────────────────────────────────────────
@@ -278,7 +257,6 @@
 
     // ── Load Data ─────────────────────────────────────────────────────────
     async function loadData() {
-      document.getElementById("pending-list").innerHTML  = '<div class="loading">Loading...</div>';
       document.getElementById("approved-list").innerHTML = '<div class="loading">Loading...</div>';
 
       const snapshot = await db.collection("leaves").get();
@@ -287,25 +265,19 @@
 
       leaves.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
-      const pending  = leaves.filter(l => !l.approved);
-      const approved = leaves.filter(l =>  l.approved);
+      const approved = leaves;
 
       document.getElementById("count-total").textContent    = leaves.length;
       document.getElementById("count-approved").textContent = approved.length;
-      document.getElementById("count-pending").textContent  = pending.length;
-
-      const pendingEl = document.getElementById("pending-list");
-      pendingEl.innerHTML = pending.length === 0
-        ? '<div class="empty-state">No leaves pending — you\'re all caught up 🌿</div>'
-        : pending.map(l => leafCard(l, true)).join("");
 
       const approvedEl = document.getElementById("approved-list");
       approvedEl.innerHTML = approved.length === 0
-        ? '<div class="empty-state">No approved leaves yet.</div>'
-        : approved.map(l => leafCard(l, false)).join("");
+        ? '<div class="empty-state">No leaves yet.</div>'
+        : approved.map(l => leafCard(l)).join("");
     }
 
-    function leafCard(leaf, isPending) {
+    function leafCard(leaf) {
+      console.log(leaf.color);
       const date = leaf.timestamp
         ? new Date(leaf.timestamp * 1000).toLocaleDateString("en-US", {
             month: "short", day: "numeric",
@@ -313,11 +285,8 @@
           })
         : "unknown date";
       const color = colorMap[leaf.color] || "#888";
-      const approveBtn = isPending
-        ? `<button class="btn-approve" onclick="approveLeaf('${leaf.id}')">Approve</button>`
-        : "";
       return `
-        <div class="leaf-card ${isPending ? "pending" : "approved"}" id="card-${leaf.id}">
+        <div class="leaf-card approved" id="card-${leaf.id}">
           <div class="leaf-message">
             ${escapeHtml(leaf.message || "(no message)")}
             <div class="leaf-meta">
@@ -328,7 +297,6 @@
             </div>
           </div>
           <div class="leaf-actions">
-            ${approveBtn}
             <button class="btn-delete" onclick="deleteLeaf('${leaf.id}')">Delete</button>
           </div>
         </div>`;
@@ -342,11 +310,6 @@
     }
 
     // ── Actions ───────────────────────────────────────────────────────────
-    async function approveLeaf(id) {
-      await db.collection("leaves").doc(id).update({ approved: true });
-      loadData();
-    }
-
     async function deleteLeaf(id) {
       if (!confirm("Delete this leaf permanently?")) return;
       await db.collection("leaves").doc(id).delete();
