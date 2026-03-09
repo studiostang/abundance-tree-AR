@@ -516,7 +516,7 @@ a {
 ">← back</button>
   </a-scene>
 
-<button id="btn-read-all" style="display:none; position:fixed; bottom:120px; left:50%; transform:translateX(-50%); z-index:9999; background:rgba(0,0,0,0.55); color:rgba(255,255,255,0.9); border:1px solid rgba(255,255,255,0.4); border-radius:24px; padding:12px 28px; font-family:'MyFont',cursive; font-size:1.1em; letter-spacing:0.05em; cursor:pointer; white-space:nowrap; pointer-events:auto;">✦ Explore all messages</button>
+<button id="btn-read-all" style="display:none; position:fixed; bottom:32px; left:50%; transform:translateX(-50%); z-index:9999; background:rgba(0,0,0,0.55); color:rgba(255,255,255,0.9); border:1px solid rgba(255,255,255,0.4); border-radius:24px; padding:12px 28px; font-family:'MyFont',cursive; font-size:1.1em; letter-spacing:0.05em; cursor:pointer; white-space:nowrap; pointer-events:auto;">Explore all messages</button>
 
   <div id="ui-overlay">
     <div id="landing-screen">
@@ -1048,6 +1048,7 @@ document.getElementById('ar-back-btn').addEventListener('click', function() {
   resetPrompts();
   hideLeafModal();
   window._tapToPlaceActive = false;
+  window._inSeeTreeMode = false;
   document.getElementById('btn-read-all').style.display = 'none';
   closeMessagesOverlay();
   if (window._unsubscribeLeaves) { window._unsubscribeLeaves(); window._unsubscribeLeaves = null; }
@@ -1069,6 +1070,7 @@ document.getElementById('btn-see').addEventListener('click', async function() {
   enterAR();
 
   function onFound() {
+    window._inSeeTreeMode = true;
     instruction.style.opacity = '0';
     clearTimeout(hideTimeout);
     hideTimeout = setTimeout(() => {
@@ -1539,16 +1541,17 @@ function openMessagesOverlay() {
     const item = document.createElement('div');
     item.style.cssText = 'padding:16px 0; border-bottom:1px solid rgba(255,255,255,0.08);';
     item.innerHTML =
-      '<p style="margin:0 0 6px 0; font-family:MyFont,cursive; font-size:0.8em; color:rgba(255,255,255,0.45); letter-spacing:0.03em;">' +
+      '<p style="margin:0 0 6px 0; font-family:MyFont,cursive; font-size:1em; color:rgba(255,255,255,0.45); letter-spacing:0.03em;">' +
       prompt +
       '</p>' +
-      '<p class="overlay-message" style="margin:0; font-family:MyFont,cursive; font-size:1.1em; color:' + hex + '; line-height:1.5;" data-original="' + leaf.message.replace(/"/g, '&quot;') + '" data-color="' + leaf.color + '" data-leaf="' + leaf.leafNumber + '" data-translated="false">' +
+      '<p class="overlay-message" style="margin:0; font-family:MyFont,cursive; font-size:1.3em; color:' + hex + '; line-height:1.5;" data-original="' + leaf.message.replace(/"/g, '&quot;') + '" data-color="' + leaf.color + '" data-leaf="' + leaf.leafNumber + '" data-translated="false">' +
       leaf.message +
       '</p>';
     list.appendChild(item);
   });
 
   // Show overlay
+  document.getElementById('btn-read-all').style.display = 'none';
   overlay.style.display = 'flex';
 
   // Lazy translation via IntersectionObserver
@@ -1586,6 +1589,7 @@ function openMessagesOverlay() {
 function closeMessagesOverlay() {
   document.getElementById('messages-overlay').style.display = 'none';
   document.getElementById('messages-list').innerHTML = '';
+  if (window._inSeeTreeMode) document.getElementById('btn-read-all').style.display = 'block';
 }
 
 document.getElementById('btn-read-all').addEventListener('click', function(e) {
@@ -1593,9 +1597,11 @@ document.getElementById('btn-read-all').addEventListener('click', function(e) {
   openMessagesOverlay();
 });
 
-document.getElementById('messages-overlay-close').addEventListener('click', function(e) {
-  e.stopPropagation();
-  closeMessagesOverlay();
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.id === 'messages-overlay-close') {
+    e.stopPropagation();
+    closeMessagesOverlay();
+  }
 });
 </script>
 
