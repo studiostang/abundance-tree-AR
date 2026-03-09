@@ -516,6 +516,8 @@ a {
 ">← back</button>
   </a-scene>
 
+<button id="btn-read-all" style="display:none; position:fixed; bottom:120px; left:50%; transform:translateX(-50%); z-index:9999; background:rgba(0,0,0,0.55); color:rgba(255,255,255,0.9); border:1px solid rgba(255,255,255,0.4); border-radius:24px; padding:12px 28px; font-family:'MyFont',cursive; font-size:1.1em; letter-spacing:0.05em; cursor:pointer; white-space:nowrap; pointer-events:auto;">✦ Explore all messages</button>
+
   <div id="ui-overlay">
     <div id="landing-screen">
       <button id="lang-btn" aria-label="Select language">EN</button>
@@ -999,6 +1001,8 @@ function enterAR() {
     instruction.style.transition = 'opacity 1.5s ease';
     instruction.style.opacity = '1';
   }, 100);
+  document.getElementById('btn-read-all').style.display = 'block';
+  console.log('enterAR called, btn-read-all:', document.getElementById('btn-read-all') ? 'FOUND, display=' + document.getElementById('btn-read-all').style.display : 'NOT FOUND IN DOM');
 }
 
 function showTapReadPrompt() {
@@ -1044,6 +1048,8 @@ document.getElementById('ar-back-btn').addEventListener('click', function() {
   resetPrompts();
   hideLeafModal();
   window._tapToPlaceActive = false;
+  document.getElementById('btn-read-all').style.display = 'none';
+  closeMessagesOverlay();
   if (window._unsubscribeLeaves) { window._unsubscribeLeaves(); window._unsubscribeLeaves = null; }
   window._pendingLeaf = null;
 
@@ -1076,6 +1082,7 @@ document.getElementById('btn-see').addEventListener('click', async function() {
     clearTimeout(hideTimeout);
     document.getElementById('tap-read-prompt').style.opacity = '0';
     document.getElementById('tap-read-prompt').style.display = 'none';
+    document.getElementById('btn-read-all').style.display = 'none';
     instruction.style.transition = 'none';
     instruction.style.opacity = '0';
     instruction.style.display = 'block';
@@ -1494,7 +1501,112 @@ document.querySelector('a-scene').addEventListener('click', function(e) {
     showLeafModal(nearest);
   }
 });
+
+// --- Read All Messages overlay ---
+
+const COLOR_MAP_OVERLAY = {
+  'pale-yellow': '#FFF9A0',
+  'peach':       '#FFAA80',
+  'turquoise':   '#7FFFD4',
+  'lime':        '#CCFF90',
+  'purple':      '#D4AAFF',
+  'pink':        '#FFB7C5',
+};
+
+function openMessagesOverlay() {
+  const overlay = document.getElementById('messages-overlay');
+  const list = document.getElementById('messages-list');
+
+  // Gather all leaf data from DOM
+  const leaves = Array.from(document.querySelectorAll('.ar-leaf')).map(el => ({
+    message: el.dataset.message || '',
+    color: el.dataset.color || '',
+    leafNumber: el.dataset.leafNumber || '1',
+  })).filter(l => l.message.trim() !== '');
+
+  // Shuffle
+  for (let i = leaves.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [leaves[i], leaves[j]] = [leaves[j], leaves[i]];
+  }
+
+  // Build list HTML
+  list.innerHTML = '';
+  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
+  leaves.forEach(function(leaf) {
+    const hex = COLOR_MAP_OVERLAY[leaf.color] || '#ffffff';
+    const prompt = t['leaf' + leaf.leafNumber + 'prompt'] || '';
+    const item = document.createElement('div');
+    item.style.cssText = 'padding:16px 0; border-bottom:1px solid rgba(255,255,255,0.08);';
+    item.innerHTML =
+      '<p style="margin:0 0 6px 0; font-family:MyFont,cursive; font-size:0.8em; color:rgba(255,255,255,0.45); letter-spacing:0.03em;">' +
+      prompt +
+      '</p>' +
+      '<p class="overlay-message" style="margin:0; font-family:MyFont,cursive; font-size:1.1em; color:' + hex + '; line-height:1.5;" data-original="' + leaf.message.replace(/"/g, '&quot;') + '" data-color="' + leaf.color + '" data-leaf="' + leaf.leafNumber + '" data-translated="false">' +
+      leaf.message +
+      '</p>';
+    list.appendChild(item);
+  });
+
+  // Show overlay
+  overlay.style.display = 'flex';
+
+  // Lazy translation via IntersectionObserver
+  const uiLang = currentLang;
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      if (el.dataset.translated === 'true') return;
+      const original = el.dataset.original || '';
+      if (!original.trim()) return;
+      // Simple language check — skip if likely already in UI language
+      detectMessageLang(original).then(function(detectedLang) {
+        if (detectedLang === uiLang || detectedLang === null) return;
+        el.dataset.translated = 'true';
+        fetch('https://api.mymemory.translated.net/get?q=' +
+          encodeURIComponent(original) + '&langpair=autodetect|' + uiLang)
+          .then(r => r.json())
+          .then(function(data) {
+            if (data.responseStatus === 200 && data.responseData && data.responseData.translatedText) {
+              el.textContent = data.responseData.translatedText;
+            }
+          })
+          .catch(function() {});
+      });
+      observer.unobserve(el);
+    });
+  }, { threshold: 0.1 });
+
+  list.querySelectorAll('.overlay-message').forEach(function(el) {
+    observer.observe(el);
+  });
+}
+
+function closeMessagesOverlay() {
+  document.getElementById('messages-overlay').style.display = 'none';
+  document.getElementById('messages-list').innerHTML = '';
+}
+
+document.getElementById('btn-read-all').addEventListener('click', function(e) {
+  e.stopPropagation();
+  openMessagesOverlay();
+});
+
+document.getElementById('messages-overlay-close').addEventListener('click', function(e) {
+  e.stopPropagation();
+  closeMessagesOverlay();
+});
 </script>
+
+<div id="messages-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:500; background:rgba(0,0,0,0.92); flex-direction:column; overflow:hidden;">
+  <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.12); flex-shrink:0;">
+    <span style="color:white; font-family:'MyFont',cursive; font-size:1.2em; letter-spacing:0.05em;">All Messages</span>
+    <button id="messages-overlay-close" style="background:transparent; border:none; color:rgba(255,255,255,0.7); font-size:1.5em; cursor:pointer; padding:8px; min-width:44px; min-height:44px;">✕</button>
+  </div>
+  <div id="messages-list" style="overflow-y:auto; flex:1; padding:16px 20px;">
+  </div>
+</div>
 
 <div id="toast-message" style="display:none; position:fixed; top:210px; left:50%; transform:translateX(-50%); background:rgba(180,120,0,0.92); color:white; padding:14px 28px; border-radius:24px; font-size:17px; font-weight:600; z-index:9999; text-align:center; pointer-events:none; letter-spacing:0.3px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);"></div>
 
