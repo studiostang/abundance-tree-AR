@@ -315,7 +315,7 @@ a {
 }
 
 #leaf-modal-message {
-  font-family: 'MyFont', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+  font-family: 'MyFont', cursive;
   font-size: 1.2em;
   color: #2a1a00;
   line-height: 1.4;
@@ -356,7 +356,7 @@ a {
 
 #leaf-modal-translate {
   color: rgba(255,255,255,0.7);
-  font-family: 'MyFont', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+  font-family: 'MyFont', cursive;
   font-size: 0.9em;
   letter-spacing: 0.05em;
   background: transparent;
@@ -459,7 +459,7 @@ a {
   text-align: center;
   z-index: 100;
   color: #FFC499;
-  font-family: 'MyFont', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+  font-family: 'MyFont', cursive;
   font-size: 1.5em;
   opacity: 0;
   transition: opacity 1.5s ease;
@@ -475,7 +475,7 @@ a {
   transform: translateX(-50%);
   z-index: 100;
   color: white;
-  font-family: 'MyFont', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+  font-family: 'MyFont', cursive;
   font-size: 1.5em;
   text-align: center;
   opacity: 0;
@@ -492,7 +492,7 @@ a {
   transform: translateX(-50%);
   z-index: 100;
   color: white;
-  font-family: 'MyFont', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+  font-family: 'MyFont', cursive;
   font-size: 1.5em;
   text-align: center;
   opacity: 0;
@@ -512,7 +512,7 @@ a {
   border: 1px solid white;
   border-radius: 4px;
   padding: 10px 16px;
-  font-family: 'MyFont', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+  font-family: 'MyFont', cursive;
   font-size: 1.2em;
   cursor: pointer;
 ">← back</button>
@@ -1554,10 +1554,10 @@ function openMessagesOverlay() {
     const item = document.createElement('div');
     item.style.cssText = 'padding:16px 0; border-bottom:1px solid rgba(255,255,255,0.08);';
     item.innerHTML =
-      '<p style="margin:0 0 6px 0; font-family:'MyFont', 'Helvetica Neue', system-ui, -apple-system, sans-serif; font-size:1.3em; color:' + hex + '; opacity:0.6; letter-spacing:0.03em;">' +
+      '<p style="margin:0 0 6px 0; font-family:MyFont,cursive; font-size:1.3em; color:' + hex + '; opacity:0.6; letter-spacing:0.03em;">' +
       prompt +
       '</p>' +
-      '<p class="overlay-message" style="margin:0; font-family:'MyFont', 'Helvetica Neue', system-ui, -apple-system, sans-serif; font-size:1.5em; color:' + hex + '; line-height:1.5;" data-original="' + leaf.message.replace(/"/g, '&quot;') + '" data-color="' + leaf.color + '" data-leaf="' + leaf.leafNumber + '" data-translated="false">' +
+      '<p class="overlay-message" style="margin:0; font-family:MyFont,cursive; font-size:1.5em; color:' + hex + '; line-height:1.5;" data-original="' + leaf.message.replace(/"/g, '&quot;') + '" data-color="' + leaf.color + '" data-leaf="' + leaf.leafNumber + '" data-translated="false">' +
       leaf.message +
       '</p>';
     list.appendChild(item);
