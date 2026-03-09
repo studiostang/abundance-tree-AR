@@ -285,7 +285,7 @@
     function leafCard(leaf) {
       console.log(leaf.color);
       const date = leaf.timestamp
-        ? new Date(leaf.timestamp * 1000).toLocaleDateString("en-US", {
+        ? new Date(leaf.timestamp).toLocaleDateString("en-US", {
             month: "short", day: "numeric",
             hour: "2-digit", minute: "2-digit"
           })
