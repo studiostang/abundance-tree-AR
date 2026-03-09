@@ -451,7 +451,7 @@ a {
 <div id="ar-instruction" data-i18n="cameraInstruction" style="
   display: none;
   position: fixed;
-  bottom: 80px;
+  bottom: 60px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
@@ -516,7 +516,7 @@ a {
 ">← back</button>
   </a-scene>
 
-<button id="btn-read-all" style="display:none; position:fixed; bottom:32px; left:50%; transform:translateX(-50%); z-index:9999; background:rgba(0,0,0,0.55); color:rgba(255,255,255,0.9); border:1px solid rgba(255,255,255,0.4); border-radius:24px; padding:12px 28px; font-family:'MyFont',cursive; font-size:1.1em; letter-spacing:0.05em; cursor:pointer; white-space:nowrap; pointer-events:auto;">Explore all messages</button>
+<button id="btn-read-all" style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:9999; background:transparent; color:rgba(255,255,255,0.9); border:none; border-radius:24px; padding:6px 16px; font-family:'MyFont',cursive; font-size:1.1em; letter-spacing:0.05em; cursor:pointer; white-space:nowrap; pointer-events:auto;">Explore all messages</button>
 
   <div id="ui-overlay">
     <div id="landing-screen">
@@ -1541,10 +1541,10 @@ function openMessagesOverlay() {
     const item = document.createElement('div');
     item.style.cssText = 'padding:16px 0; border-bottom:1px solid rgba(255,255,255,0.08);';
     item.innerHTML =
-      '<p style="margin:0 0 6px 0; font-family:MyFont,cursive; font-size:1em; color:rgba(255,255,255,0.45); letter-spacing:0.03em;">' +
+      '<p style="margin:0 0 6px 0; font-family:MyFont,cursive; font-size:1.1em; color:rgba(255,255,255,0.45); letter-spacing:0.03em;">' +
       prompt +
       '</p>' +
-      '<p class="overlay-message" style="margin:0; font-family:MyFont,cursive; font-size:1.3em; color:' + hex + '; line-height:1.5;" data-original="' + leaf.message.replace(/"/g, '&quot;') + '" data-color="' + leaf.color + '" data-leaf="' + leaf.leafNumber + '" data-translated="false">' +
+      '<p class="overlay-message" style="margin:0; font-family:MyFont,cursive; font-size:1.5em; color:' + hex + '; line-height:1.5;" data-original="' + leaf.message.replace(/"/g, '&quot;') + '" data-color="' + leaf.color + '" data-leaf="' + leaf.leafNumber + '" data-translated="false">' +
       leaf.message +
       '</p>';
     list.appendChild(item);
@@ -1589,7 +1589,7 @@ function openMessagesOverlay() {
 function closeMessagesOverlay() {
   document.getElementById('messages-overlay').style.display = 'none';
   document.getElementById('messages-list').innerHTML = '';
-  if (window._inSeeTreeMode) document.getElementById('btn-read-all').style.display = 'block';
+  document.getElementById('btn-read-all').style.display = 'block';
 }
 
 document.getElementById('btn-read-all').addEventListener('click', function(e) {
@@ -1606,8 +1606,7 @@ document.addEventListener('click', function(e) {
 </script>
 
 <div id="messages-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:500; background:rgba(0,0,0,0.92); flex-direction:column; overflow:hidden;">
-  <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.12); flex-shrink:0;">
-    <span style="color:white; font-family:'MyFont',cursive; font-size:1.2em; letter-spacing:0.05em;">All Messages</span>
+  <div style="display:flex; align-items:center; justify-content:flex-end; padding:8px 12px; flex-shrink:0;">
     <button id="messages-overlay-close" style="background:transparent; border:none; color:rgba(255,255,255,0.7); font-size:1.5em; cursor:pointer; padding:8px; min-width:44px; min-height:44px;">✕</button>
   </div>
   <div id="messages-list" style="overflow-y:auto; flex:1; padding:16px 20px;">
