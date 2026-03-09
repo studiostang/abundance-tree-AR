@@ -1554,10 +1554,10 @@ function openMessagesOverlay() {
     const item = document.createElement('div');
     item.style.cssText = 'padding:16px 0; border-bottom:1px solid rgba(255,255,255,0.08);';
     item.innerHTML =
-      '<p style="margin:0 0 6px 0; font-family:\'Helvetica Neue\',system-ui,-apple-system,sans-serif; font-size:1.3em; color:' + hex + '; opacity:0.6; letter-spacing:0.03em;">' +
+      '<p style="margin:0 0 6px 0; font-family:\'MyFont\',\'Helvetica Neue\',system-ui,-apple-system,sans-serif; font-size:1.3em; color:' + hex + '; opacity:0.6; letter-spacing:0.03em;">' +
       prompt +
       '</p>' +
-      '<p class="overlay-message" style="margin:0; font-family:\'Helvetica Neue\',system-ui,-apple-system,sans-serif; font-size:1.5em; color:' + hex + '; line-height:1.5;" data-original="' + leaf.message.replace(/"/g, '&quot;') + '" data-color="' + leaf.color + '" data-leaf="' + leaf.leafNumber + '" data-translated="false">' +
+      '<p class="overlay-message" style="margin:0; font-family:\'MyFont\',\'Helvetica Neue\',system-ui,-apple-system,sans-serif; font-size:1.5em; color:' + hex + '; line-height:1.5;" data-original="' + leaf.message.replace(/"/g, '&quot;') + '" data-color="' + leaf.color + '" data-leaf="' + leaf.leafNumber + '" data-translated="false">' +
       leaf.message +
       '</p>';
     list.appendChild(item);
