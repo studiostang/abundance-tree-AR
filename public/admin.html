@@ -294,13 +294,13 @@
       return `
         <div class="leaf-card approved" id="card-${leaf.id}">
           <div class="leaf-message">
+            <div style="color:#a8c89a; font-style:italic; font-size:12px; margin-bottom:6px;">${promptMap[leaf.leafNumber] || "unknown prompt"}</div>
             ${escapeHtml(leaf.message || "(no message)")}
             <div class="leaf-meta">
               <span class="color-dot" style="background:${color}"></span>
             ${leaf.color || "unknown"} &nbsp;·&nbsp;
             ${leaf.language || "unknown"} &nbsp;·&nbsp;
             ${date}
-            <br/><span style="color:#a8c89a; font-style:italic;">${promptMap[leaf.leafNumber] || "unknown prompt"}</span>
             </div>
           </div>
           <div class="leaf-actions">
