@@ -1539,16 +1539,24 @@ function openMessagesOverlay() {
     leafNumber: el.dataset.leafNumber || '1',
   })).filter(l => l.message.trim() !== '');
 
+  // Deduplicate by message
+  const seen = new Set();
+  const uniqueLeaves = leaves.filter(function(l) {
+    if (seen.has(l.message)) return false;
+    seen.add(l.message);
+    return true;
+  });
+
   // Shuffle
-  for (let i = leaves.length - 1; i > 0; i--) {
+  for (let i = uniqueLeaves.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [leaves[i], leaves[j]] = [leaves[j], leaves[i]];
+    [uniqueLeaves[i], uniqueLeaves[j]] = [uniqueLeaves[j], uniqueLeaves[i]];
   }
 
   // Build list HTML
   list.innerHTML = '';
   const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
-  leaves.forEach(function(leaf) {
+  uniqueLeaves.forEach(function(leaf) {
     const hex = COLOR_MAP_OVERLAY[leaf.color] || '#ffffff';
     const prompt = t['leaf' + leaf.leafNumber + 'prompt'] || '';
     const item = document.createElement('div');
