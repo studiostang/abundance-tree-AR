@@ -4,10 +4,10 @@ import { collection, addDoc, getDocs, query, onSnapshot, deleteDoc, doc } from '
 export const SNAP_POINTS = [];
 
 const TIERS = [
-  { maxLeaves: 7,   xRange: 1.80, xRangeTop: 0.60, yMin: 1.35, yMax: 1.62 },
-  { maxLeaves: 20,  xRange: 2.10, xRangeTop: 0.75, yMin: 1.33, yMax: 1.69 },
-  { maxLeaves: 40,  xRange: 2.40, xRangeTop: 0.90, yMin: 1.31, yMax: 1.76 },
-  { maxLeaves: 70,  xRange: 2.65, xRangeTop: 1.05, yMin: 1.29, yMax: 1.83 },
+  { maxLeaves: 7,   xRange: 1.80, xRangeTop: 0.60, yMin: 1.45, yMax: 1.62 },
+  { maxLeaves: 20,  xRange: 2.10, xRangeTop: 0.75, yMin: 1.43, yMax: 1.69 },
+  { maxLeaves: 40,  xRange: 2.40, xRangeTop: 0.90, yMin: 1.41, yMax: 1.76 },
+  { maxLeaves: 70,  xRange: 2.65, xRangeTop: 1.05, yMin: 1.39, yMax: 1.83 },
   { maxLeaves: 110, xRange: 2.85, xRangeTop: 1.20, yMin: 1.27, yMax: 1.90 },
   { maxLeaves: 170, xRange: 3.00, xRangeTop: 1.35, yMin: 1.25, yMax: 1.97 },
   { maxLeaves: 250, xRange: 3.10, xRangeTop: 1.50, yMin: 1.23, yMax: 2.04 },
@@ -358,7 +358,7 @@ async function placeLeafAtTap(tapX, tapY) {
   const ySpread = (chosenTier.yMax - chosenTier.yMin) * 0.5;
 
   const MIN_DIST = 0.10;
-  const MAX_ISOLATION = 0.42;
+  const MAX_ISOLATION = 0.30;
   const placedPositions = existingLeaves.map(el => ({
     x: parseFloat(el.dataset.arX),
     y: parseFloat(el.dataset.arY),
