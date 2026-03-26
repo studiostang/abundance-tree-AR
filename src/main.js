@@ -412,6 +412,7 @@ async function placeLeafAtTap(tapX, tapY) {
         z: (Math.random() - 0.5) * 0.04
       };
     }
+    point.y = Math.max(chosenTier.yMin, point.y);
   }
 
   // 500 leaf cap — delete oldest leaf before adding new one
